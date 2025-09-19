@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Teknisi - Estimasi Sparepart</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #e74c3c;
+            --light: #ecf0f1;
+            --success: #2ecc71;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+        }
+        
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .sidebar {
+            background-color: var(--primary);
+            color: white;
+            height: 100vh;
+            position: fixed;
+            padding-top: 60px;
+        }
+        
+        .sidebar .nav-link {
+            color: rgba(255, 255, 255, 0.8);
+            padding: 15px 20px;
+            margin: 5px 0;
+            border-radius: 5px;
+        }
+        
+        .sidebar .nav-link:hover, .sidebar .nav-link.active {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+        
+        .sidebar .nav-link i {
+            margin-right: 10px;
+        }
+        
+        .main-content {
+            margin-left: 250px;
+            padding: 20px;
+            padding-top: 80px;
+        }
+        
+        .navbar {
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            width: calc(100% - 250px);
+            margin-left: 250px;
+            z-index: 1000;
+        }
+        
+        .card {
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
+            border: none;
+        }
+        
+        .card-header {
+            background-color: white;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            font-weight: 600;
+            padding: 15px 20px;
+            border-radius: 10px 10px 0 0 !important;
+        }
+        
+        .tag-input {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 10px;
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+            min-height: 100px;
+            align-items: flex-start;
+        }
+        
+        .tag {
+            background-color: var(--secondary);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            display: inline-flex;
+            align-items: center;
+            font-size: 14px;
+        }
+        
+        .tag .close {
+            margin-left: 8px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        .tag-input input {
+            border: none;
+            outline: none;
+            flex-grow: 1;
+            min-width: 60px;
+            padding: 5px 0;
+        }
+        
+        .status-ready {
+            color: var(--success);
+            font-weight: 600;
+        }
+        
+        .status-tam {
+            color: var(--warning);
+            font-weight: 600;
+        }
+        
+        .status-bo {
+            color: var(--danger);
+            font-weight: 600;
+        }
+        
+        .estimasi-card {
+            transition: transform 0.2s;
+        }
+        
+        .estimasi-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+                padding-top: 20px;
+            }
+            
+            .main-content, .navbar {
+                margin-left: 0;
+                width: 100%;
+            }
+            
+            .main-content {
+                padding-top: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar col-md-3 col-lg-2 d-md-block">
+        <div class="text-center mb-4">
+            <h4>Dashboard Teknisi</h4>
+        </div>
+        <div class="nav flex-column">
+            <a href="#input" class="nav-link active" data-bs-toggle="tab" data-bs-target="#input">
+                <i class="bi bi-plus-circle"></i> Input Estimasi
+            </a>
+            <a href="#hasil" class="nav-link" data-bs-toggle="tab" data-bs-target="#hasil">
+                <i class="bi bi-list-check"></i> Hasil Estimasi
+            </a>
+            <a href="#sparepart" class="nav-link" data-bs-toggle="tab" data-bs-target="#sparepart">
+                <i class="bi bi-gear"></i> Data Sparepart
+            </a>
+            <a href="#" class="nav-link mt-5">
+                <i class="bi bi-box-arrow-right"></i> Logout
+            </a>
+        </div>
+    </div>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <div class="container-fluid">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#">Dashboard</a>
+                    </li>
+                </ul>
+                <form class="d-flex">
+                    <input class="form-control me-2" type="search" placeholder="Cari estimasi...">
+                    <button class="btn btn-outline-primary" type="submit">Cari</button>
+                </form>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="tab-content">
+            <!-- Tab Input Estimasi -->
+            <div class="tab-pane fade show active" id="input">
+                <div class="card">
+                    <div class="card-header">
+                        Input Estimasi Sparepart
+                    </div>
+                    <div class="card-body">
+                        <form id="estimasiForm">
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="nopol" class="form-label">Nomor Polisi</label>
+                                    <input type="text" class="form-control" id="nopol" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="jenisMobil" class="form-label">Jenis Mobil</label>
+                                    <input type="text" class="form-control" id="jenisMobil" required>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="komponen" class="form-label">Komponen yang Diestimasi</label>
+                                <div class="tag-input" id="tagContainer">
+                                    <input type="text" id="komponenInput" placeholder="Ketik komponen dan tekan koma untuk menambahkan">
+                                </div>
+                                <div class="form-text">Pisahkan setiap komponen dengan koma</div>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary">Simpan Estimasi</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab Hasil Estimasi -->
+            <div class="tab-pane fade" id="hasil">
+                <h2 class="mb-4">Daftar Estimasi</h2>
+                
+                <div class="row" id="estimasiList">
+                    <!-- Data estimasi akan dimuat di sini -->
+                </div>
+            </div>
+
+            <!-- Tab Data Sparepart -->
+            <div class="tab-pane fade" id="sparepart">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <span>Data Sparepart</span>
+                        <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#tambahSparepartModal">
+                            <i class="bi bi-plus"></i> Tambah
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Nama Sparepart</th>
+                                        <th>Nomor Part</th>
+                                        <th>Harga</th>
+                                        <th>Ketersediaan</th>
+                                        <th>Jumlah</th>
+                                        <th>Harga Final</th>
+                                        <th>Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="sparepartTable">
+                                    <!-- Data sparepart akan dimuat di sini -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Edit Estimasi -->
+    <div class="modal fade" id="editEstimasiModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Estimasi</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editEstimasiForm">
+                        <input type="hidden" id="editId">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="editNopol" class="form-label">Nomor Polisi</label>
+                                <input type="text" class="form-control" id="editNopol" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="editJenisMobil" class="form-label">Jenis Mobil</label>
+                                <input type="text" class="form-control" id="editJenisMobil" required>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="editKomponen" class="form-label">Komponen</label>
+                            <textarea class="form-control" id="editKomponen" rows="3" required></textarea>
+                            <div class="form-text">Pisahkan setiap komponen dengan koma</div>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Tambah Sparepart -->
+    <div class="modal fade" id="tambahSparepartModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Tambah Sparepart</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="tambahSparepartForm">
+                        <div class="mb-3">
+                            <label for="sparepartNama" class="form-label">Nama Sparepart</label>
+                            <input type="text" class="form-control" id="sparepartNama" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="sparepartNo" class="form-label">Nomor Part</label>
+                            <input type="text" class="form-control" id="sparepartNo" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="sparepartHarga" class="form-label">Harga</label>
+                            <input type="number" class="form-control" id="sparepartHarga" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="sparepartKetersediaan" class="form-label">Ketersediaan</label>
+                            <select class="form-select" id="sparepartKetersediaan" required>
+                                <option value="ready">Ready</option>
+                                <option value="tam">TAM</option>
+                                <option value="bo">BO</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="sparepartJumlah" class="form-label">Jumlah</label>
+                            <input type="number" class="form-control" id="sparepartJumlah" value="1" min="1" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Simpan</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Inisialisasi Supabase
+        const supabaseUrl = 'https://pjawwektzazcxakgopou.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBqYXd3ZWt0emF6Y3hha2dvcG91Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgyNjQ5MTUsImV4cCI6MjA3Mzg0MDkxNX0.dNEB80t7LcTsvAtHHqgIeJfxcwmmZNsWxPTIAlrj11c';
+        
+        // Simulasi data (dalam implementasi nyata, ini akan diambil dari Supabase)
+        let estimasiData = [
+            { 
+                id: 1, 
+                nopol: 'B 1234 ABC', 
+                jenisMobil: 'Toyota Avanza', 
+                komponen: ['Oli Mesin', 'Filter Udara', 'Kampas Rem'], 
+                tanggal: '2023-10-15 14:30:22' 
+            },
+            { 
+                id: 2, 
+                nopol: 'D 5678 XYZ', 
+                jenisMobil: 'Honda Civic', 
+                komponen: ['Aki', 'Busi', 'Radiator Coolant'], 
+                tanggal: '2023-10-16 09:15:47' 
+            }
+        ];
+        
+        let sparepartData = [
+            {
+                id: 1,
+                nama: 'Oli Mesin',
+                noPart: 'OM-001',
+                harga: 250000,
+                ketersediaan: 'ready',
+                jumlah: 1,
+                hargaFinal: 250000
+            },
+            {
+                id: 2,
+                nama: 'Filter Udara',
+                noPart: 'FU-002',
+                harga: 80000,
+                ketersediaan: 'tam',
+                jumlah: 1,
+                hargaFinal: 80000
+            },
+            {
+                id: 3,
+                nama: 'Kampas Rem',
+                noPart: 'KR-003',
+                harga: 350000,
+                ketersediaan: 'bo',
+                jumlah: 1,
+                hargaFinal: 350000
+            }
+        ];
+        
+        // Fungsi untuk memuat data estimasi
+        function loadEstimasiData() {
+            const estimasiList = document.getElementById('estimasiList');
+            estimasiList.innerHTML = '';
+            
+            estimasiData.forEach(estimasi => {
+                const card = document.createElement('div');
+                card.className = 'col-md-6 col-lg-4';
+                card.innerHTML = `
+                    <div class="card estimasi-card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <h5 class="card-title">${estimasi.nopol}</h5>
+                                <small class="text-muted">${estimasi.tanggal}</small>
+                            </div>
+                            <h6 class="card-subtitle mb-2 text-muted">${estimasi.jenisMobil}</h6>
+                            <div class="mb-3">
+                                ${estimasi.komponen.map(k => `<span class="tag me-1 mb-1">${k}</span>`).join('')}
+                            </div>
+                            <div class="d-flex justify-content-end">
+                                <button class="btn btn-sm btn-outline-primary me-2 edit-btn" data-id="${estimasi.id}">
+                                    <i class="bi bi-pencil"></i> Edit
+                                </button>
+                                <button class="btn btn-sm btn-outline-danger delete-btn" data-id="${estimasi.id}">
+                                    <i class="bi bi-trash"></i> Hapus
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                estimasiList.appendChild(card);
+            });
+            
+            // Tambahkan event listener untuk tombol edit dan hapus
+            document.querySelectorAll('.edit-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const id = this.getAttribute('data-id');
+                    editEstimasi(id);
+                });
+            });
+            
+            document.querySelectorAll('.delete-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const id = this.getAttribute('data-id');
+                    deleteEstimasi(id);
+                });
+            });
+        }
+        
+        // Fungsi untuk memuat data sparepart
+        function loadSparepartData() {
+            const sparepartTable = document.getElementById('sparepartTable');
+            sparepartTable.innerHTML = '';
+            
+            sparepartData.forEach(sparepart => {
+                const row = document.createElement('tr');
+                let statusClass = '';
+                
+                if (sparepart.ketersediaan === 'ready') statusClass = 'status-ready';
+                else if (sparepart.ketersediaan === 'tam') statusClass = 'status-tam';
+                else if (sparepart.ketersediaan === 'bo') statusClass = 'status-bo';
+                
+                row.innerHTML = `
+                    <td>${sparepart.nama}</td>
+                    <td>${sparepart.noPart}</td>
+                    <td>Rp ${sparepart.harga.toLocaleString('id-ID')}</td>
+                    <td class="${statusClass}">${sparepart.ketersediaan.toUpperCase()}</td>
+                    <td>${sparepart.jumlah}</td>
+                    <td>Rp ${sparepart.hargaFinal.toLocaleString('id-ID')}</td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-primary me-1">
+                            <i class="bi bi-pencil"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-danger">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </td>
+                `;
+                sparepartTable.appendChild(row);
+            });
+        }
+        
+        // Fungsi untuk menangani input tag
+        function setupTagInput() {
+            const tagContainer = document.getElementById('tagContainer');
+            const input = document.getElementById('komponenInput');
+            
+            input.addEventListener('keydown', function(e) {
+                if (e.key === ',' || e.key === 'Enter') {
+                    e.preventDefault();
+                    const tagText = this.value.trim();
+                    
+                    if (tagText !== '') {
+                        const tag = document.createElement('span');
+                        tag.className = 'tag';
+                        tag.innerHTML = `
+                            ${tagText}
+                            <span class="close">&times;</span>
+                        `;
+                        
+                        tag.querySelector('.close').addEventListener('click', function() {
+                            tag.remove();
+                        });
+                        
+                        tagContainer.insertBefore(tag, input);
+                        this.value = '';
+                    }
+                }
+            });
+        }
+        
+        // Fungsi untuk mendapatkan nilai dari tag input
+        function getTagValues() {
+            const tags = document.querySelectorAll('#tagContainer .tag');
+            const values = [];
+            
+            tags.forEach(tag => {
+                // Hapus tombol close dari teks
+                const tagText = tag.textContent.replace('×', '').trim();
+                values.push(tagText);
+            });
+            
+            return values;
+        }
+        
+        // Fungsi untuk mengedit estimasi
+        function editEstimasi(id) {
+            const estimasi = estimasiData.find(e => e.id == id);
+            
+            if (estimasi) {
+                document.getElementById('editId').value = estimasi.id;
+                document.getElementById('editNopol').value = estimasi.nopol;
+                document.getElementById('editJenisMobil').value = estimasi.jenisMobil;
+                document.getElementById('editKomponen').value = estimasi.komponen.join(', ');
+                
+                const modal = new bootstrap.Modal(document.getElementById('editEstimasiModal'));
+                modal.show();
+            }
+        }
+        
+        // Fungsi untuk menghapus estimasi
+        function deleteEstimasi(id) {
+            if (confirm('Apakah Anda yakin ingin menghapus estimasi ini?')) {
+                estimasiData = estimasiData.filter(e => e.id != id);
+                loadEstimasiData();
+                alert('Estimasi berhasil dihapus');
+            }
+        }
+        
+        // Event listener untuk form input estimasi
+        document.getElementById('estimasiForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const nopol = document.getElementById('nopol').value;
+            const jenisMobil = document.getElementById('jenisMobil').value;
+            const komponen = getTagValues();
+            
+            if (komponen.length === 0) {
+                alert('Harap tambahkan minimal satu komponen');
+                return;
+            }
+            
+            const newEstimasi = {
+                id: Date.now(), // ID unik berdasarkan timestamp
+                nopol,
+                jenisMobil,
+                komponen,
+                tanggal: new Date().toLocaleString('id-ID')
+            };
+            
+            estimasiData.push(newEstimasi);
+            loadEstimasiData();
+            
+            // Reset form
+            this.reset();
+            document.querySelectorAll('#tagContainer .tag').forEach(tag => tag.remove());
+            
+            // Tampilkan notifikasi
+            alert('Estimasi berhasil disimpan!');
+            
+            // Beralih ke tab hasil
+            const tabTrigger = document.querySelector('a[data-bs-target="#hasil"]');
+            new bootstrap.Tab(tabTrigger).show();
+        });
+        
+        // Event listener untuk form edit estimasi
+        document.getElementById('editEstimasiForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const id = document.getElementById('editId').value;
+            const nopol = document.getElementById('editNopol').value;
+            const jenisMobil = document.getElementById('editJenisMobil').value;
+            const komponen = document.getElementById('editKomponen').value.split(',').map(k => k.trim());
+            
+            const index = estimasiData.findIndex(e => e.id == id);
+            
+            if (index !== -1) {
+                estimasiData[index].nopol = nopol;
+                estimasiData[index].jenisMobil = jenisMobil;
+                estimasiData[index].komponen = komponen;
+                
+                loadEstimasiData();
+                
+                // Tutup modal
+                const modal = bootstrap.Modal.getInstance(document.getElementById('editEstimasiModal'));
+                modal.hide();
+                
+                alert('Estimasi berhasil diperbarui!');
+            }
+        });
+        
+        // Event listener untuk form tambah sparepart
+        document.getElementById('tambahSparepartForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const nama = document.getElementById('sparepartNama').value;
+            const noPart = document.getElementById('sparepartNo').value;
+            const harga = parseInt(document.getElementById('sparepartHarga').value);
+            const ketersediaan = document.getElementById('sparepartKetersediaan').value;
+            const jumlah = parseInt(document.getElementById('sparepartJumlah').value);
+            const hargaFinal = harga * jumlah;
+            
+            const newSparepart = {
+                id: Date.now(),
+                nama,
+                noPart,
+                harga,
+                ketersediaan,
+                jumlah,
+                hargaFinal
+            };
+            
+            sparepartData.push(newSparepart);
+            loadSparepartData();
+            
+            // Reset form dan tutup modal
+            this.reset();
+            const modal = bootstrap.Modal.getInstance(document.getElementById('tambahSparepartModal'));
+            modal.hide();
+            
+            alert('Sparepart berhasil ditambahkan!');
+        });
+        
+        // Inisialisasi saat halaman dimuat
+        document.addEventListener('DOMContentLoaded', function() {
+            loadEstimasiData();
+            loadSparepartData();
+            setupTagInput();
+        });
+    </script>
+</body>
+</html>
