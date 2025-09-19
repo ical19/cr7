@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dashboard Teknisi - Sistem Estimasi CR7</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      --primary-color: #2c3e50;
+      --secondary-color: #34495e;
+      --accent-color: #3498db;
+      --success-color: #27ae60;
+      --warning-color: #f39c12;
+      --info-color: #2980b9;
+      --light-color: #ecf0f1;
+      --dark-color: #2c3e50;
+      --teknisi-color: #3498db;
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      background-color: #f8f9fa;
+      font-family: 'Roboto', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: #2c3e50;
+    }
+    
+    /* Sidebar Styles */
+    .sidebar {
+      height: 100vh;
+      background: linear-gradient(180deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+      color: white;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 250px;
+      padding-top: 20px;
+      z-index: 1000;
+      box-shadow: 3px 0 15px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s;
+    }
+    
+    .sidebar-brand {
+      padding: 0 20px 20px;
+      text-align: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      margin-bottom: 20px;
+    }
+    
+    .sidebar-brand h4 {
+      font-weight: 700;
+      margin: 0;
+    }
+    
+    .sidebar-menu {
+      list-style: none;
+      padding: 0;
+    }
+    
+    .sidebar-menu li {
+      margin-bottom: 5px;
+    }
+    
+    .sidebar-menu a {
+      color: rgba(255, 255, 255, 0.8);
+      text-decoration: none;
+      padding: 12px 20px;
+      display: block;
+      transition: all 0.3s;
+      border-left: 4px solid transparent;
+    }
+    
+    .sidebar-menu a:hover, .sidebar-menu a.active {
+      background-color: rgba(255, 255, 255, 0.1);
+      border-left: 4px solid var(--accent-color);
+      color: white;
+    }
+    
+    .sidebar-menu i {
+      width: 25px;
+      margin-right: 10px;
+    }
+    
+    .user-info {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      padding: 15px;
+      background-color: rgba(0, 0, 0, 0.2);
+      text-align: center;
+    }
+    
+    /* Main Content Styles */
+    .main-content {
+      margin-left: 250px;
+      padding: 20px;
+      transition: all 0.3s;
+    }
+    
+    .header {
+      background-color: white;
+      padding: 15px 20px;
+      border-radius: 10px;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .page-title {
+      margin: 0;
+      color: var(--primary-color);
+      font-weight: 600;
+    }
+    
+    .card {
+      border: none;
+      border-radius: 10px;
+      box-shadow: 0 3px 15px rgba(0, 0, 0, 0.08);
+      margin-bottom: 20px;
+      transition: transform 0.3s;
+    }
+    
+    .card:hover {
+      transform: translateY(-5px);
+    }
+    
+    .card-header {
+      background-color: white;
+      border-bottom: 1px solid #eee;
+      padding: 15px 20px;
+      font-weight: 600;
+      border-radius: 10px 10px 0 0 !important;
+      color: var(--primary-color);
+    }
+    
+    .card-body {
+      padding: 20px;
+    }
+    
+    /* Stats Cards */
+    .stats-card {
+      text-align: center;
+      padding: 20px;
+    }
+    
+    .stats-icon {
+      font-size: 2rem;
+      margin-bottom: 15px;
+      color: var(--accent-color);
+    }
+    
+    .stats-number {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 5px;
+      color: var(--primary-color);
+    }
+    
+    .stats-label {
+      color: #6c757d;
+      font-weight: 500;
+    }
+    
+    /* Form Styles */
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+    
+    .form-label {
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+      color: var(--secondary-color);
+    }
+    
+    .form-control, .form-select {
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      border: 1px solid #e1e5eb;
+    }
+    
+    .form-control:focus, .form-select:focus {
+      border-color: var(--accent-color);
+      box-shadow: 0 0 0 0.25rem rgba(52, 152, 219, 0.25);
+    }
+    
+    .btn-primary {
+      background-color: var(--accent-color);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 0.75rem 1.5rem;
+      font-weight: 500;
+    }
+    
+    .btn-primary:hover {
+      background-color: #2980b9;
+      color: white;
+    }
+    
+    /* Table Styles */
+    .table th {
+      font-weight: 600;
+      border-top: none;
+      color: var(--primary-color);
+    }
+    
+    .status-badge {
+      padding: 0.35rem 0.65rem;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    
+    .status-pending {
+      background-color: #fff3cd;
+      color: #856404;
+    }
+    
+    .status-progress {
+      background-color: #cce5ff;
+      color: #004085;
+    }
+    
+    .status-completed {
+      background-color: #d4edda;
+      color: #155724;
+    }
+    
+    /* Activity Timeline */
+    .activity-timeline {
+      position: relative;
+      padding-left: 30px;
+    }
+    
+    .activity-timeline::before {
+      content: '';
+      position: absolute;
+      left: 10px;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background-color: #e9ecef;
+    }
+    
+    .activity-item {
+      position: relative;
+      margin-bottom: 20px;
+    }
+    
+    .activity-item::before {
+      content: '';
+      position: absolute;
+      left: -20px;
+      top: 5px;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background-color: var(--accent-color);
+      border: 2px solid white;
+    }
+    
+    .activity-time {
+      font-size: 0.75rem;
+      color: #6c757d;
+    }
+    
+    /* Responsive Styles */
+    @media (max-width: 992px) {
+      .sidebar {
+        width: 80px;
+        text-align: center;
+      }
+      
+      .sidebar-brand h4, .sidebar-menu span {
+        display: none;
+      }
+      
+      .sidebar-menu i {
+        margin-right: 0;
+        font-size: 1.25rem;
+      }
+      
+      .user-info {
+        display: none;
+      }
+      
+      .main-content {
+        margin-left: 80px;
+      }
+    }
+    
+    @media (max-width: 768px) {
+      .main-content {
+        margin-left: 0;
+        padding: 15px;
+      }
+      
+      .sidebar {
+        left: -250px;
+        box-shadow: none;
+      }
+      
+      .sidebar.show {
+        left: 0;
+        box-shadow: 3px 0 15px rgba(0, 0, 0, 0.1);
+      }
+      
+      .mobile-header {
+        display: flex !important;
+        background: white;
+        padding: 15px;
+        border-radius: 10px;
+        margin-bottom: 15px;
+        align-items: center;
+        justify-content: space-between;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+      }
+      
+      .mobile-menu-btn {
+        display: flex !important;
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 10px;
+        align-items: center;
+        justify-content: center;
+      }
+      
+      .mobile-title {
+        font-weight: 600;
+        color: var(--primary-color);
+        margin: 0;
+      }
+    }
+    
+    .mobile-header {
+      display: none;
+    }
+    
+    .mobile-menu-btn {
+      display: none;
+    }
+    
+    /* Section Styles */
+    .content-section {
+      display: none;
+    }
+    
+    .content-section.active {
+      display: block;
+      animation: fadeIn 0.5s;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Mobile Header -->
+  <div class="mobile-header">
+    <button class="mobile-menu-btn" id="mobileMenuBtn">
+      <i class="fas fa-bars"></i>
+    </button>
+    <h4 class="mobile-title" id="mobileTitle">Dashboard</h4>
+    <button class="btn btn-outline-secondary btn-sm" id="logoutBtn">
+      <i class="fas fa-sign-out-alt"></i>
+    </button>
+  </div>
+
+  <!-- Sidebar -->
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <h4>CR7 <span class="d-none d-md-inline">Estimasi</span></h4>
+    </div>
+    
+    <ul class="sidebar-menu">
+      <li>
+        <a href="#" class="active" data-section="dashboard">
+          <i class="fas fa-tachometer-alt"></i>
+          <span>Dashboard</span>
+        </a>
+      </li>
+      <li>
+        <a href="#" data-section="input-estimasi">
+          <i class="fas fa-plus-circle"></i>
+          <span>Input Estimasi</span>
+        </a>
+      </li>
+      <li>
+        <a href="#" data-section="estimasi-saya">
+          <i class="fas fa-list-alt"></i>
+          <span>Estimasi Saya</span>
+        </a>
+      </li>
+      <li>
+        <a href="#" data-section="riwayat">
+          <i class="fas fa-history"></i>
+          <span>Riwayat</span>
+        </a>
+      </li>
+      <li>
+        <a href="#" data-section="profil">
+          <i class="fas fa-user"></i>
+          <span>Profil</span>
+        </a>
+      </li>
+    </ul>
+    
+    <div class="user-info">
+      <p class="mb-0">Halo, <strong id="userName">Teknisi</strong></p>
+      <small>Role: <span class="badge status-badge status-progress">Teknisi</span></small>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <div class="header d-none d-md-flex">
+      <h2 class="page-title" id="pageTitle">Dashboard</h2>
+      <div>
+        <button class="btn btn-outline-secondary btn-sm" id="logoutBtnDesktop">
+          <i class="fas fa-sign-out-alt me-1"></i> Logout
+        </button>
+      </div>
+    </div>
+
+    <!-- Dashboard Section -->
+    <div class="content-section active" id="dashboard">
+      <div class="row">
+        <div class="col-md-3 mb-3">
+          <div class="card stats-card">
+            <div class="stats-icon">
+              <i class="fas fa-clipboard-list"></i>
+            </div>
+            <div class="stats-number" id="totalEstimasi">0</div>
+            <div class="stats-label">Total Estimasi</div>
+          </div>
+        </div>
+        <div class="col-md-3 mb-3">
+          <div class="card stats-card">
+            <div class="stats-icon">
+              <i class="fas fa-spinner"></i>
+            </div>
+            <div class="stats-number" id="estimasiProgress">0</div>
+            <div class="stats-label">Dalam Proses</div>
+          </div>
+        </div>
+        <div class="col-md-3 mb-3">
+          <div class="card stats-card">
+            <div class="stats-icon">
+              <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="stats-number" id="estimasiSelesai">0</div>
+            <div class="stats-label">Selesai</div>
+          </div>
+        </div>
+        <div class="col-md-3 mb-3">
+          <div class="card stats-card">
+            <div class="stats-icon">
+              <i class="fas fa-car"></i>
+            </div>
+            <div class="stats-number" id="totalMobil">0</div>
+            <div class="stats-label">Jenis Mobil</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-8 mb-3">
+          <div class="card">
+            <div class="card-header">
+              Aktivitas Terbaru
+            </div>
+            <div class="card-body">
+              <div class="activity-timeline" id="activityTimeline">
+                <div class="activity-item">
+                  <div class="activity-time">Hari ini, 14:30</div>
+                  <p>Anda membuat estimasi baru untuk B 1234 ABC (Toyota Avanza)</p>
+                </div>
+                <div class="activity-item">
+                  <div class="activity-time">Kemarin, 09:15</div>
+                  <p>Estimasi untuk B 5678 XYZ (Toyota Fortuner) telah disetujui</p>
+                </div>
+                <div class="activity-item">
+                  <div class="activity-time">12 Nov 2023, 16:45</div>
+                  <p>Estimasi untuk B 9012 XYZ (Toyota Innova) telah selesai</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4 mb-3">
+          <div class="card">
+            <div class="card-header">
+              Statistik Estimasi
+            </div>
+            <div class="card-body">
+              <canvas id="estimasiChart" height="250"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+              <span>Estimasi Terbaru</span>
+              <a href="#" data-section="estimasi-saya" class="btn btn-sm btn-primary">Lihat Semua</a>
+            </div>
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table table-hover">
+                  <thead>
+                    <tr>
+                      <th>No. Polisi</th>
+                      <th>Jenis Mobil</th>
+                      <th>Tanggal</th>
+                      <th>Status</th>
+                      <th>Aksi</th>
+                    </tr>
+                  </thead>
+                  <tbody id="recentEstimasi">
+                    <tr>
+                      <td>B 1234 ABC</td>
+                      <td>Toyota Avanza</td>
+                      <td>13 Nov 2023</td>
+                      <td><span class="status-badge status-pending">Pending</span></td>
+                      <td>
+                        <button class="btn btn-sm btn-outline-primary me-1">
+                          <i class="fas fa-edit"></i>
+                        </button>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>B 5678 XYZ</td>
+                      <td>Toyota Fortuner</td>
+                      <td>12 Nov 2023</td>
+                      <td><span class="status-badge status-completed">Selesai</span></td>
+                      <td>
+                        <button class="btn btn-sm btn-outline-primary me-1">
+                          <i class="fas fa-eye"></i>
+                        </button>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>B 9012 XYZ</td>
+                      <td>Toyota Innova</td>
+                      <td>11 Nov 2023</td>
+                      <td><span class="status-badge status-progress">Proses</span></td>
+                      <td>
+                        <button class="btn btn-sm btn-outline-primary me-1">
+                          <i class="fas fa-eye"></i>
+                        </button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Input Estimasi Section -->
+    <div class="content-section" id="input-estimasi">
+      <div class="card">
+        <div class="card-header">
+          Form Input Estimasi Sparepart
+        </div>
+        <div class="card-body">
+          <form id="estimasiForm">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="nopol" class="form-label">Nomor Polisi</label>
+                  <input type="text" class="form-control" id="nopol" placeholder="Contoh: B 1234 ABC" required>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="jenisMobil" class="form-label">Jenis Mobil</label>
+                  <select class="form-select" id="jenisMobil" required>
+                    <option value="" selected disabled>Pilih Jenis Mobil</option>
+                    <option value="Toyota Avanza">Toyota Avanza</option>
+                    <option value="Toyota Veloz">Toyota Veloz</option>
+                    <option value="Toyota Raize">Toyota Raize</option>
+                    <option value="Toyota Rush">Toyota Rush</option>
+                    <option value="Toyota Fortuner">Toyota Fortuner</option>
+                    <option value="Toyota Innova">Toyota Innova</option>
+                    <option value="Toyota Kijang Innova">Toyota Kijang Innova</option>
+                    <option value="Toyota Yaris">Toyota Yaris</option>
+                    <option value="Toyota Agya">Toyota Agya</option>
+                    <option value="Toyota Calya">Toyota Calya</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label for="komponen" class="form-label">Komponen yang Diestimasi</label>
+              <textarea class="form-control" id="komponen" rows="4" placeholder="Tambahkan komponen, pisahkan dengan koma. Contoh: Oli mesin, Filter oli, Kampas rem" required></textarea>
+              <small class="form-text text-muted">Pisahkan setiap komponen dengan koma (,)</small>
+            </div>
+            
+            <div class="form-group">
+              <label for="keterangan" class="form-label">Keterangan Tambahan</label>
+              <textarea class="form-control" id="keterangan" rows="3" placeholder="Tambahkan keterangan jika diperlukan"></textarea>
+            </div>
+            
+            <button type="submit" class="btn btn-primary">
+              <i class="fas fa-save me-2"></i> Simpan Estimasi
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Estimasi Saya Section -->
+    <div class="content-section" id="estimasi-saya">
+      <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <span>Daftar Estimasi Saya</span>
+          <div class="btn-group">
+            <button class="btn btn-outline-secondary btn-sm">
+              <i class="fas fa-filter me-1"></i> Filter
+            </button>
+            <button class="btn btn-outline-secondary btn-sm">
+              <i class="fas fa-sort me-1"></i> Urutkan
+            </button>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>No. Polisi</th>
+                  <th>Jenis Mobil</th>
+                  <th>Komponen</th>
+                  <th>Tanggal</th>
+                  <th>Status</th>
+                  <th>Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="estimasiList">
+                <tr>
+                  <td>B 1234 ABC</td>
+                  <td>Toyota Avanza</td>
+                  <td>Oli mesin, Filter oli, Kampas rem</td>
+                  <td>13 Nov 2023</td>
+                  <td><span class="status-badge status-pending">Pending</span></td>
+                  <td>
+                    <button class="btn btn-sm btn-outline-primary me-1">
+                      <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="btn btn-sm btn-outline-danger">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>B 5678 XYZ</td>
+                  <td>Toyota Fortuner</td>
+                  <td>Filter udara, Busi, Radiator</td>
+                  <td>12 Nov 2023</td>
+                  <td><span class="status-badge status-completed">Selesai</span></td>
+                  <td>
+                    <button class="btn btn-sm btn-outline-primary me-1">
+                      <i class="fas fa-eye"></i>
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Other sections would be here -->
+    <div class="content-section" id="riwayat">
+      <div class="card">
+        <div class="card-header">
+          Riwayat Estimasi
+        </div>
+        <div class="card-body">
+          <p class="text-center">Fitur riwayat estimasi akan segera hadir.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="content-section" id="profil">
+      <div class="card">
+        <div class="card-header">
+          Profil Saya
+        </div>
+        <div class="card-body">
+          <p class="text-center">Fitur profil akan segera hadir.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap & jQuery JS -->
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Supabase JS -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  
+  <script>
+    // Inisialisasi Supabase
+    const supabaseUrl = 'https://pjawwektzazcxakgopou.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBqYXd3ZWt0emF6Y3hha2dvcG91Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgyNjQ5MTUsImV4cCI6MjA3Mzg0MDkxNX0.dNEB80t7LcTsvAtHHqgIeJfxcwmmZNsWxPTIAlrj11c';
+    const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+    
+    // Inisialisasi Chart.js
+    const ctx = document.getElementById('estimasiChart').getContext('2d');
+    const estimasiChart = new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: ['Pending', 'Dalam Proses', 'Selesai'],
+        datasets: [{
+          data: [3, 5, 8],
+          backgroundColor: [
+            '#fff3cd',
+            '#cce5ff',
+            '#d4edda'
+          ],
+          borderColor: [
+            '#856404',
+            '#004085',
+            '#155724'
+          ],
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            position: 'bottom',
+          }
+        }
+      }
+    });
+    
+    // Cek status autentikasi
+    checkAuthState();
+    
+    // Fungsi untuk cek status autentikasi
+    async function checkAuthState() {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session) {
+          window.location.href = 'login.html';
+          return;
+        }
+        
+        // Dapatkan info user
+        const { data: userData } = await supabase.auth.getUser();
+        if (userData.user) {
+          document.getElementById('userName').textContent = userData.user.email;
+        }
+        
+        // Load data dashboard
+        loadDashboardData();
+        
+      } catch (error) {
+        console.error('Error checking auth state:', error);
+      }
+    }
+    
+    // Load data dashboard
+    async function loadDashboardData() {
+      try {
+        // Simulasi data (dalam aplikasi nyata, ini akan berasal dari Supabase)
+        document.getElementById('totalEstimasi').textContent = '16';
+        document.getElementById('estimasiProgress').textContent = '5';
+        document.getElementById('estimasiSelesai').textContent = '8';
+        document.getElementById('totalMobil').textContent = '9';
+        
+      } catch (error) {
+        console.error('Error loading dashboard data:', error);
+      }
+    }
+    
+    // Sidebar navigation
+    $(document).ready(function() {
+      // Mobile menu toggle
+      $('#mobileMenuBtn').click(function() {
+        $('#sidebar').toggleClass('show');
+      });
+      
+      // Menu item click
+      $('.sidebar-menu a').click(function(e) {
+        e.preventDefault();
+        
+        // Update active menu item
+        $('.sidebar-menu a').removeClass('active');
+        $(this).addClass('active');
+        
+        // Show corresponding section
+        const sectionId = $(this).data('section');
+        $('.content-section').removeClass('active');
+        $('#' + sectionId).addClass('active');
+        
+        // Update page title
+        const sectionTitle = $(this).find('span').text();
+        $('#pageTitle').text(sectionTitle);
+        $('#mobileTitle').text(sectionTitle);
+        
+        // Hide sidebar on mobile after selection
+        if ($(window).width() < 768) {
+          $('#sidebar').removeClass('show');
+        }
+      });
+      
+      // Logout handler
+      $('#logoutBtn, #logoutBtnDesktop').click(async function() {
+        try {
+          const { error } = await supabase.auth.signOut();
+          if (error) throw error;
+          window.location.href = 'login.html';
+        } catch (error) {
+          console.error('Error signing out:', error);
+        }
+      });
+      
+      // Form submission
+      $('#estimasiForm').submit(async function(e) {
+        e.preventDefault();
+        
+        const nopol = $('#nopol').val();
+        const jenisMobil = $('#jenisMobil').val();
+        const komponen = $('#komponen').val();
+        const keterangan = $('#keterangan').val();
+        
+        if (!nopol || !jenisMobil || !komponen) {
+          alert('Harap isi semua field yang diperlukan!');
+          return;
+        }
+        
+        try {
+          // Dapatkan user ID
+          const { data: { user } } = await supabase.auth.getUser();
+          
+          if (!user) {
+            alert('Anda harus login untuk melakukan ini!');
+            return;
+          }
+          
+          // Simpan data ke Supabase
+          const { data, error } = await supabase
+            .from('estimasi')
+            .insert([
+              {
+                nopol: nopol,
+                jenis_mobil: jenisMobil,
+                komponen: komponen.split(',').map(item => item.trim()),
+                keterangan: keterangan,
+                teknisi_id: user.id,
+                status: 'pending'
+              }
+            ])
+            .select();
+            
+          if (error) throw error;
+          
+          // Tampilkan pesan sukses
+          alert('Estimasi berhasil disimpan!');
+          
+          // Reset form
+          $('#estimasiForm')[0].reset();
+          
+          // Redirect ke halaman estimasi
+          $('.sidebar-menu a').removeClass('active');
+          $('[data-section="estimasi-saya"]').addClass('active');
+          $('.content-section').removeClass('active');
+          $('#estimasi-saya').addClass('active');
+          $('#pageTitle').text('Estimasi Saya');
+          $('#mobileTitle').text('Estimasi Saya');
+          
+        } catch (error) {
+          console.error('Error saving estimation:', error);
+          alert('Terjadi kesalahan saat menyimpan estimasi: ' + error.message);
+        }
+      });
+    });
+  </script>
+</body>
+</html>
