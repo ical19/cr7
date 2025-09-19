@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dashboard - Sistem Estimasi CR7</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary-color: #e60000;
+      --secondary-color: #ffffff;
+      --accent-color: #eb0a1e;
+      --dark-color: #000000;
+      --light-color: #f5f5f5;
+      --toyota-red: #e60000;
+      --toyota-gray: #808080;
+      --teknisi-color: #3498db;
+      --sparepart-color: #2ecc71;
+      --sa-color: #f39c12;
+      --mra-color: #9b59b6;
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      background-color: #f8f9fa;
+      font-family: 'Roboto', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    /* Sidebar Styles */
+    .sidebar {
+      height: 100vh;
+      background: linear-gradient(180deg, var(--toyota-red) 0%, #a00000 100%);
+      color: white;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 250px;
+      padding-top: 20px;
+      z-index: 1000;
+      box-shadow: 3px 0 10px rgba(0, 0, 0, 0.1);
+    }
+    
+    .sidebar-brand {
+      padding: 0 20px 20px;
+      text-align: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      margin-bottom: 20px;
+    }
+    
+    .sidebar-brand h4 {
+      font-weight: 700;
+      margin: 0;
+    }
+    
+    .sidebar-menu {
+      list-style: none;
+      padding: 0;
+    }
+    
+    .sidebar-menu li {
+      margin-bottom: 5px;
+    }
+    
+    .sidebar-menu a {
+      color: white;
+      text-decoration: none;
+      padding: 12px 20px;
+      display: block;
+      transition: all 0.3s;
+      border-left: 4px solid transparent;
+    }
+    
+    .sidebar-menu a:hover, .sidebar-menu a.active {
+      background-color: rgba(255, 255, 255, 0.1);
+      border-left: 4px solid white;
+    }
+    
+    .sidebar-menu i {
+      width: 25px;
+      margin-right: 10px;
+    }
+    
+    .user-info {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      padding: 15px;
+      background-color: rgba(0, 0, 0, 0.2);
+      text-align: center;
+    }
+    
+    /* Main Content Styles */
+    .main-content {
+      margin-left: 250px;
+      padding: 20px;
+    }
+    
+    .header {
+      background-color: white;
+      padding: 15px 20px;
+      border-radius: 10px;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .page-title {
+      margin: 0;
+      color: var(--toyota-red);
+    }
+    
+    .card {
+      border: none;
+      border-radius: 10px;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+      margin-bottom: 20px;
+    }
+    
+    .card-header {
+      background-color: white;
+      border-bottom: 1px solid #eee;
+      padding: 15px 20px;
+      font-weight: 600;
+      border-radius: 10px 10px 0 0 !important;
+    }
+    
+    .card-body {
+      padding: 20px;
+    }
+    
+    /* Form Styles */
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+    
+    .form-label {
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+    }
+    
+    .form-control, .form-select {
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      border: 1px solid #e1e5eb;
+    }
+    
+    .form-control:focus, .form-select:focus {
+      border-color: var(--toyota-red);
+      box-shadow: 0 0 0 0.25rem rgba(230, 0, 0, 0.25);
+    }
+    
+    .btn-toyota {
+      background-color: var(--toyota-red);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 0.75rem 1.5rem;
+      font-weight: 500;
+    }
+    
+    .btn-toyota:hover {
+      background-color: #c50000;
+      color: white;
+    }
+    
+    /* Tag Input Styles */
+    .tags-input {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      padding: 0.75rem 1rem;
+      border: 1px solid #e1e5eb;
+      border-radius: 8px;
+      min-height: 50px;
+    }
+    
+    .tags-input:focus-within {
+      border-color: var(--toyota-red);
+      box-shadow: 0 0 0 0.25rem rgba(230, 0, 0, 0.25);
+    }
+    
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      background-color: #e9ecef;
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      margin: 0.25rem;
+      font-size: 0.875rem;
+    }
+    
+    .tag-close {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background-color: #adb5bd;
+      color: white;
+      margin-left: 0.5rem;
+      cursor: pointer;
+      font-size: 0.75rem;
+    }
+    
+    .tags-input input {
+      flex: 1;
+      border: none;
+      outline: none;
+      padding: 0.5rem 0;
+      min-width: 80px;
+    }
+    
+    /* Card Styles for Estimates */
+    .estimate-card {
+      transition: all 0.3s;
+      border-left: 4px solid var(--teknisi-color);
+    }
+    
+    .estimate-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .card-footer {
+      background-color: white;
+      border-top: 1px solid #eee;
+      padding: 15px 20px;
+      border-radius: 0 0 10px 10px !important;
+    }
+    
+    .badge-role {
+      padding: 0.5rem 0.75rem;
+      border-radius: 20px;
+      font-weight: 500;
+    }
+    
+    .badge-teknisi {
+      background-color: var(--teknisi-color);
+      color: white;
+    }
+    
+    .badge-sparepart {
+      background-color: var(--sparepart-color);
+      color: white;
+    }
+    
+    .badge-sa {
+      background-color: var(--sa-color);
+      color: white;
+    }
+    
+    .badge-mra {
+      background-color: var(--mra-color);
+      color: white;
+    }
+    
+    /* Table Styles */
+    .table th {
+      font-weight: 600;
+      border-top: none;
+    }
+    
+    .status-ready {
+      color: #28a745;
+      font-weight: 500;
+    }
+    
+    .status-tam {
+      color: #ffc107;
+      font-weight: 500;
+    }
+    
+    .status-bo {
+      color: #dc3545;
+      font-weight: 500;
+    }
+    
+    /* Responsive Styles */
+    @media (max-width: 992px) {
+      .sidebar {
+        width: 80px;
+        text-align: center;
+      }
+      
+      .sidebar-brand h4, .sidebar-menu span {
+        display: none;
+      }
+      
+      .sidebar-menu i {
+        margin-right: 0;
+        font-size: 1.25rem;
+      }
+      
+      .user-info {
+        display: none;
+      }
+      
+      .main-content {
+        margin-left: 80px;
+      }
+    }
+    
+    @media (max-width: 768px) {
+      .main-content {
+        margin-left: 0;
+        padding: 15px;
+      }
+      
+      .sidebar {
+        left: -80px;
+      }
+      
+      .mobile-menu-btn {
+        display: block !important;
+      }
+    }
+    
+    .mobile-menu-btn {
+      display: none;
+      position: fixed;
+      top: 15px;
+      left: 15px;
+      z-index: 1100;
+      background-color: var(--toyota-red);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+    }
+    
+    /* Section Styles */
+    .content-section {
+      display: none;
+    }
+    
+    .content-section.active {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <!-- Mobile Menu Button -->
+  <button class="mobile-menu-btn" id="mobileMenuBtn">
+    <i class="fas fa-bars"></i>
+  </button>
+
+  <!-- Sidebar -->
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <h4>CR7 <span class="d-none d-md-inline">Estimasi</span></h4>
+    </div>
+    
+    <ul class="sidebar-menu">
+      <li>
+        <a href="#" class="active" data-section="input-estimasi">
+          <i class="fas fa-plus-circle"></i>
+          <span>Input Estimasi</span>
+        </a>
+      </li>
+      <li>
+        <a href="#" data-section="hasil-estimasi">
+          <i class="fas fa-list-alt"></i>
+          <span>Hasil Estimasi</span>
+        </a>
+      </li>
+      <li>
+        <a href="#" data-section="data-sparepart">
+          <i class="fas fa-cog"></i>
+          <span>Data Sparepart</span>
+        </a>
+      </li>
+      <li>
+        <a href="#" data-section="data-sa">
+          <i class="fas fa-user-tie"></i>
+          <span>Data Service Advisor</span>
+        </a>
+      </li>
+      <li>
+        <a href="#" data-section="data-mra">
+          <i class="fas fa-chart-line"></i>
+          <span>Data MRA</span>
+        </a>
+      </li>
+    </ul>
+    
+    <div class="user-info">
+      <p class="mb-0">Halo, <strong>Teknisi</strong></p>
+      <small>Role: <span class="badge badge-role badge-teknisi">Teknisi</span></small>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <div class="header">
+      <h2 class="page-title" id="pageTitle">Input Estimasi</h2>
+      <div>
+        <button class="btn btn-outline-danger btn-sm">
+          <i class="fas fa-sign-out-alt me-1"></i> Logout
+        </button>
+      </div>
+    </div>
+
+    <!-- Input Estimasi Section -->
+    <div class="content-section active" id="input-estimasi">
+      <div class="card">
+        <div class="card-header">
+          Form Input Estimasi Sparepart
+        </div>
+        <div class="card-body">
+          <form id="estimasiForm">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="nopol" class="form-label">Nomor Polisi</label>
+                  <input type="text" class="form-control" id="nopol" placeholder="Contoh: B 1234 ABC" required>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="jenisMobil" class="form-label">Jenis Mobil</label>
+                  <select class="form-select" id="jenisMobil" required>
+                    <option value="" selected disabled>Pilih Jenis Mobil</option>
+                    <option value="Toyota Avanza">Toyota Avanza</option>
+                    <option value="Toyota Innova">Toyota Innova</option>
+                    <option value="Toyota Fortuner">Toyota Fortuner</option>
+                    <option value="Toyota Rush">Toyota Rush</option>
+                    <option value="Toyota Yaris">Toyota Yaris</option>
+                    <option value="Toyota Corolla">Toyota Corolla</option>
+                    <option value="Toyota Camry">Toyota Camry</option>
+                    <option value="Toyota Hiace">Toyota Hiace</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label for="komponen" class="form-label">Komponen yang Diestimasi</label>
+              <div class="tags-input" id="tagsInput">
+                <!-- Tags will be inserted here -->
+                <input type="text" id="komponenInput" placeholder="Tambahkan komponen (tekan koma untuk memisahkan)">
+              </div>
+              <small class="form-text text-muted">Gunakan koma (,) untuk memisahkan setiap komponen</small>
+            </div>
+            
+            <button type="submit" class="btn btn-toyota">
+              <i class="fas fa-save me-2"></i> Simpan Estimasi
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Hasil Estimasi Section -->
+    <div class="content-section" id="hasil-estimasi">
+      <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <span>Daftar Estimasi</span>
+          <div class="btn-group">
+            <button class="btn btn-outline-secondary btn-sm">
+              <i class="fas fa-filter me-1"></i> Filter
+            </button>
+            <button class="btn btn-outline-secondary btn-sm">
+              <i class="fas fa-sort me-1"></i> Urutkan
+            </button>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="row" id="estimasiList">
+            <!-- Estimasi cards will be inserted here -->
+            <div class="col-md-6 col-lg-4 mb-3">
+              <div class="card estimate-card">
+                <div class="card-body">
+                  <div class="d-flex justify-content-between align-items-start mb-2">
+                    <h5 class="card-title">B 1234 ABC</h5>
+                    <span class="badge bg-secondary">Baru</span>
+                  </div>
+                  <h6 class="card-subtitle mb-2 text-muted">Toyota Avanza</h6>
+                  <p class="card-text">
+                    <small class="text-muted">Komponen:</small><br>
+                    <span class="badge bg-light text-dark me-1">Oli Mesin</span>
+                    <span class="badge bg-light text-dark me-1">Filter Oli</span>
+                    <span class="badge bg-light text-dark me-1">Kampas Rem</span>
+                  </p>
+                  <p class="card-text">
+                    <small class="text-muted">Dibuat: 12 Nov 2023, 14:30</small>
+                  </p>
+                </div>
+                <div class="card-footer bg-white">
+                  <div class="d-flex justify-content-between">
+                    <button class="btn btn-sm btn-outline-primary">
+                      <i class="fas fa-edit me-1"></i> Edit
+                    </button>
+                    <button class="btn btn-sm btn-outline-danger">
+                      <i class="fas fa-trash me-1"></i> Hapus
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-4 mb-3">
+              <div class="card estimate-card">
+                <div class="card-body">
+                  <div class="d-flex justify-content-between align-items-start mb-2">
+                    <h5 class="card-title">B 5678 XYZ</h5>
+                    <span class="badge bg-success">Selesai</span>
+                  </div>
+                  <h6 class="card-subtitle mb-2 text-muted">Toyota Fortuner</h6>
+                  <p class="card-text">
+                    <small class="text-muted">Komponen:</small><br>
+                    <span class="badge bg-light text-dark me-1">Filter Udara</span>
+                    <span class="badge bg-light text-dark me-1">Busi</span>
+                    <span class="badge bg-light text-dark me-1">Radiator</span>
+                  </p>
+                  <p class="card-text">
+                    <small class="text-muted">Dibuat: 11 Nov 2023, 09:15</small>
+                  </p>
+                </div>
+                <div class="card-footer bg-white">
+                  <div class="d-flex justify-content-between">
+                    <button class="btn btn-sm btn-outline-primary">
+                      <i class="fas fa-edit me-1"></i> Edit
+                    </button>
+                    <button class="btn btn-sm btn-outline-danger">
+                      <i class="fas fa-trash me-1"></i> Hapus
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Data Sparepart Section -->
+    <div class="content-section" id="data-sparepart">
+      <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <span>Data Sparepart</span>
+          <button class="btn btn-toyota btn-sm">
+            <i class="fas fa-plus me-1"></i> Tambah Sparepart
+          </button>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>Nama Sparepart</th>
+                  <th>Nomor Part</th>
+                  <th>Harga</th>
+                  <th>Ketersediaan</th>
+                  <th>Jumlah</th>
+                  <th>Harga Final</th>
+                  <th>Aksi</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Oli Mesin</td>
+                  <td>TO-001</td>
+                  <td>Rp 120.000</td>
+                  <td class="status-ready">Ready</td>
+                  <td>1</td>
+                  <td>Rp 120.000</td>
+                  <td>
+                    <button class="btn btn-sm btn-outline-primary me-1">
+                      <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="btn btn-sm btn-outline-danger">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Filter Oli</td>
+                  <td>TO-002</td>
+                  <td>Rp 65.000</td>
+                  <td class="status-tam">TAM</td>
+                  <td>1</td>
+                  <td>Rp 65.000</td>
+                  <td>
+                    <button class="btn btn-sm btn-outline-primary me-1">
+                      <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="btn btn-sm btn-outline-danger">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Kampas Rem</td>
+                  <td>TO-003</td>
+                  <td>Rp 250.000</td>
+                  <td class="status-bo">BO</td>
+                  <td>1</td>
+                  <td>Rp 250.000</td>
+                  <td>
+                    <button class="btn btn-sm btn-outline-primary me-1">
+                      <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="btn btn-sm btn-outline-danger">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Data Service Advisor Section -->
+    <div class="content-section" id="data-sa">
+      <div class="card">
+        <div class="card-header">
+          Data Service Advisor
+        </div>
+        <div class="card-body">
+          <div class="alert alert-info">
+            <i class="fas fa-info-circle me-2"></i> 
+            Data dari Sparepart akan ditampilkan di sini. Anda dapat menambahkan nomor rangka, nomor telepon, dan harga jasa.
+          </div>
+          <div class="text-center py-5">
+            <i class="fas fa-lock fa-3x text-muted mb-3"></i>
+            <h5 class="text-muted">Akses Dibatasi</h5>
+            <p class="text-muted">Hanya Sparepart yang dapat mengakses data ini</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Data MRA Section -->
+    <div class="content-section" id="data-mra">
+      <div class="card">
+        <div class="card-header">
+          Data MRA
+        </div>
+        <div class="card-body">
+          <div class="alert alert-info">
+            <i class="fas fa-info-circle me-2"></i> 
+            Data dari Service Advisor akan ditampilkan di sini. Anda dapat menambahkan hasil follow up.
+          </div>
+          <div class="text-center py-5">
+            <i class="fas fa-lock fa-3x text-muted mb-3"></i>
+            <h5 class="text-muted">Akses Dibatasi</h5>
+            <p class="text-muted">Hanya Service Advisor yang dapat mengakses data ini</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap & jQuery JS -->
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  
+  <script>
+    // Sidebar navigation
+    $(document).ready(function() {
+      // Mobile menu toggle
+      $('#mobileMenuBtn').click(function() {
+        $('#sidebar').toggleClass('d-none');
+      });
+      
+      // Menu item click
+      $('.sideb
