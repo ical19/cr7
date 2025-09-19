@@ -10,10 +10,13 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     :root {
-      --primary-color: #321fdb;
-      --secondary-color: #2eb85c;
-      --dark-color: #3c4b64;
-      --light-color: #f5f7fb;
+      --primary-color: #e60000;
+      --secondary-color: #ffffff;
+      --accent-color: #eb0a1e;
+      --dark-color: #000000;
+      --light-color: #f5f5f5;
+      --toyota-red: #e60000;
+      --toyota-gray: #808080;
     }
     
     * {
@@ -23,55 +26,136 @@
     }
     
     body {
-      background: linear-gradient(120deg, var(--light-color) 0%, #e4e9f2 100%);
+      background: linear-gradient(120deg, var(--light-color) 0%, #e5e5e5 100%);
       min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
       padding: 20px;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+      font-family: 'Roboto', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
     
     .auth-container {
       width: 100%;
-      max-width: 500px;
+      max-width: 1200px;
       transition: all 0.3s ease;
     }
     
-    .auth-card {
-      border: none;
-      border-radius: 16px;
-      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    .auth-wrapper {
+      display: flex;
+      border-radius: 20px;
       overflow: hidden;
+      box-shadow: 0 15px 50px rgba(0, 0, 0, 0.1);
       background: white;
+      min-height: 650px;
+    }
+    
+    .auth-illustration {
+      flex: 1;
+      background: linear-gradient(135deg, var(--toyota-red) 0%, #a00000 100%);
+      color: white;
+      padding: 40px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .auth-illustration::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' width='100' height='100'%3E%3Ccircle cx='50' cy='50' r='40' fill='none' stroke='rgba(255,255,255,0.1)' stroke-width='2'/%3E%3C/svg%3E");
+      background-size: 100px;
+      opacity: 0.3;
+    }
+    
+    .toyota-logo {
+      width: 120px;
+      height: 120px;
+      background: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 30px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+    
+    .toyota-logo i {
+      font-size: 60px;
+      color: var(--toyota-red);
+    }
+    
+    .illustration-content {
+      text-align: center;
+      z-index: 1;
+      max-width: 400px;
+    }
+    
+    .illustration-content h3 {
+      font-size: 28px;
+      margin-bottom: 20px;
+      font-weight: 700;
+    }
+    
+    .illustration-content p {
+      font-size: 16px;
+      margin-bottom: 15px;
+      line-height: 1.6;
+    }
+    
+    .toyota-slogan {
+      font-style: italic;
+      margin-top: 30px;
+      font-weight: 500;
+      border-left: 3px solid white;
+      padding-left: 15px;
+    }
+    
+    .auth-form-section {
+      flex: 1;
+      padding: 40px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    
+    .auth-card {
+      width: 100%;
+      max-width: 450px;
+      margin: 0 auto;
     }
     
     .auth-header {
       text-align: center;
-      padding: 30px 20px 10px;
-      background: linear-gradient(120deg, var(--primary-color) 0%, #5533ff 100%);
-      color: white;
-      margin-bottom: 1.5rem;
+      margin-bottom: 30px;
     }
     
     .auth-logo {
       width: 80px;
       height: 80px;
       border-radius: 50%;
-      background: rgba(255, 255, 255, 0.2);
+      background: var(--toyota-red);
       display: flex;
       align-items: center;
       justify-content: center;
       margin: 0 auto 15px;
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 5px 15px rgba(230, 0, 0, 0.2);
     }
     
     .auth-logo i {
       font-size: 2.5rem;
+      color: white;
     }
     
     .auth-body {
-      padding: 0 30px 30px;
+      padding: 0;
     }
     
     .auth-form {
@@ -94,7 +178,7 @@
     }
     
     .input-group-text {
-      background: #f5f7fb;
+      background: #f5f5f5;
       border: none;
       padding: 0.875rem 1rem;
     }
@@ -107,6 +191,7 @@
     
     .form-control:focus {
       box-shadow: none;
+      border-color: var(--toyota-red);
     }
     
     .form-select {
@@ -117,30 +202,37 @@
       height: auto;
     }
     
+    .form-select:focus {
+      border-color: var(--toyota-red);
+      box-shadow: 0 0 0 0.25rem rgba(230, 0, 0, 0.25);
+    }
+    
     .password-toggle {
       cursor: pointer;
-      background: #f5f7fb;
+      background: #f5f5f5;
       transition: all 0.2s;
     }
     
     .password-toggle:hover {
-      background: #e4e9f2;
+      background: #e5e5e5;
     }
     
     .btn-auth {
       border-radius: 10px;
       padding: 0.875rem;
       font-weight: 600;
-      box-shadow: 0 4px 15px rgba(51, 31, 219, 0.3);
+      box-shadow: 0 4px 15px rgba(230, 0, 0, 0.3);
       transition: all 0.3s;
       border: none;
       margin-top: 0.5rem;
       width: 100%;
+      background: var(--toyota-red);
     }
     
     .btn-auth:hover {
       transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(51, 31, 219, 0.4);
+      box-shadow: 0 8px 20px rgba(230, 0, 0, 0.4);
+      background: #c50000;
     }
     
     .btn-auth:active {
@@ -157,7 +249,7 @@
     }
     
     .auth-footer a {
-      color: var(--primary-color);
+      color: var(--toyota-red);
       text-decoration: none;
       font-weight: 600;
       transition: all 0.2s;
@@ -165,7 +257,7 @@
     }
     
     .auth-footer a:hover {
-      color: #1a1470;
+      color: #a00000;
       text-decoration: underline;
     }
     
@@ -198,18 +290,31 @@
     }
     
     .auth-tab.active {
-      color: var(--primary-color);
-      border-bottom: 2px solid var(--primary-color);
+      color: var(--toyota-red);
+      border-bottom: 2px solid var(--toyota-red);
     }
     
     /* CR7 Branding */
     .cr7-brand {
       font-weight: 700;
-      color: #ff6b35;
-      text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+      color: var(--toyota-red);
     }
     
     /* Responsive styles */
+    @media (max-width: 992px) {
+      .auth-illustration {
+        display: none;
+      }
+      
+      .auth-wrapper {
+        border-radius: 16px;
+      }
+      
+      .auth-form-section {
+        padding: 30px 20px;
+      }
+    }
+    
     @media (max-width: 576px) {
       body {
         padding: 15px;
@@ -220,19 +325,13 @@
         max-width: 100%;
       }
       
-      .auth-card {
+      .auth-wrapper {
         box-shadow: none;
         border-radius: 12px;
       }
       
-      .auth-header {
-        padding: 25px 15px 5px;
-        border-radius: 12px 12px 0 0;
-        margin-bottom: 1rem;
-      }
-      
-      .auth-body {
-        padding: 0 20px 25px;
+      .auth-form-section {
+        padding: 20px 15px;
       }
       
       .auth-logo {
@@ -296,124 +395,145 @@
 </head>
 <body>
   <div class="auth-container">
-    <div class="auth-card">
-      <div class="auth-header">
-        <div class="auth-logo">
-          <i class="fa-solid fa-car text-white"></i>
+    <div class="auth-wrapper">
+      <!-- Illustration Section (Desktop only) -->
+      <div class="auth-illustration">
+        <div class="toyota-logo">
+          <i class="fa-solid fa-car"></i>
         </div>
-        <h4>Sistem Estimasi <span class="cr7-brand">CR7</span></h4>
-        <p class="mb-0" id="auth-subtitle">Masuk ke akun Anda</p>
+        <div class="illustration-content">
+          <h3>Sistem Estimasi <span class="cr7-brand">CR7</span></h3>
+          <p>Sistem manajemen terintegrasi untuk bengkel Toyota</p>
+          <p>Kelola pekerjaan teknisi, sparepart, dan service advisor dalam satu platform</p>
+          <p>Dengan teknologi terkini untuk efisiensi maksimal</p>
+          <div class="toyota-slogan">
+            "Always a Better Way untuk pelayanan terbaik"
+          </div>
+        </div>
       </div>
       
-      <div class="auth-body">
-        <div class="auth-tabs">
-          <div class="auth-tab active" id="login-tab">Login</div>
-          <div class="auth-tab" id="register-tab">Daftar</div>
-        </div>
-        
-        <form id="loginForm" class="auth-form active">
-          <div class="form-group">
-            <label for="loginEmail" class="form-label">Alamat Email</label>
-            <div class="input-group">
-              <span class="input-group-text">
-                <i class="fa-solid fa-envelope"></i>
-              </span>
-              <input type="email" class="form-control" id="loginEmail" placeholder="nama@contoh.com" required>
+      <!-- Form Section -->
+      <div class="auth-form-section">
+        <div class="auth-card">
+          <div class="auth-header">
+            <div class="auth-logo">
+              <i class="fa-solid fa-car"></i>
             </div>
-          </div>
-
-          <div class="form-group">
-            <label for="loginPassword" class="form-label">Kata Sandi</label>
-            <div class="input-group">
-              <span class="input-group-text">
-                <i class="fa-solid fa-key"></i>
-              </span>
-              <input type="password" class="form-control" id="loginPassword" placeholder="Masukkan kata sandi" required>
-              <span class="input-group-text password-toggle" id="loginPasswordToggle">
-                <i class="fa-solid fa-eye"></i>
-              </span>
-            </div>
-          </div>
-
-          <div class="form-group d-flex justify-content-between align-items-center">
-            <div class="form-check">
-              <input type="checkbox" class="form-check-input" id="rememberMe">
-              <label class="form-check-label" for="rememberMe">Ingat saya</label>
-            </div>
-            <a href="#" class="text-decoration-none">Lupa kata sandi?</a>
-          </div>
-
-          <button type="submit" class="btn btn-primary btn-auth">
-            <i class="fa-solid fa-right-to-bracket me-2"></i>Masuk
-          </button>
-        </form>
-        
-        <form id="registerForm" class="auth-form">
-          <div class="form-group">
-            <label for="registerName" class="form-label">Nama Lengkap</label>
-            <div class="input-group">
-              <span class="input-group-text">
-                <i class="fa-solid fa-user"></i>
-              </span>
-              <input type="text" class="form-control" id="registerName" placeholder="Nama lengkap" required>
-            </div>
+            <h4>Sistem Estimasi <span class="cr7-brand">CR7</span></h4>
+            <p class="mb-0" id="auth-subtitle">Masuk ke akun Anda</p>
           </div>
           
-          <div class="form-group">
-            <label for="registerEmail" class="form-label">Alamat Email</label>
-            <div class="input-group">
-              <span class="input-group-text">
-                <i class="fa-solid fa-envelope"></i>
-              </span>
-              <input type="email" class="form-control" id="registerEmail" placeholder="nama@contoh.com" required>
+          <div class="auth-body">
+            <div class="auth-tabs">
+              <div class="auth-tab active" id="login-tab">Login</div>
+              <div class="auth-tab" id="register-tab">Daftar</div>
+            </div>
+            
+            <form id="loginForm" class="auth-form active">
+              <div class="form-group">
+                <label for="loginEmail" class="form-label">Alamat Email</label>
+                <div class="input-group">
+                  <span class="input-group-text">
+                    <i class="fa-solid fa-envelope"></i>
+                  </span>
+                  <input type="email" class="form-control" id="loginEmail" placeholder="nama@contoh.com" required>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="loginPassword" class="form-label">Kata Sandi</label>
+                <div class="input-group">
+                  <span class="input-group-text">
+                    <i class="fa-solid fa-key"></i>
+                  </span>
+                  <input type="password" class="form-control" id="loginPassword" placeholder="Masukkan kata sandi" required>
+                  <span class="input-group-text password-toggle" id="loginPasswordToggle">
+                    <i class="fa-solid fa-eye"></i>
+                  </span>
+                </div>
+              </div>
+
+              <div class="form-group d-flex justify-content-between align-items-center">
+                <div class="form-check">
+                  <input type="checkbox" class="form-check-input" id="rememberMe">
+                  <label class="form-check-label" for="rememberMe">Ingat saya</label>
+                </div>
+                <a href="#" class="text-decoration-none">Lupa kata sandi?</a>
+              </div>
+
+              <button type="submit" class="btn btn-auth">
+                <i class="fa-solid fa-right-to-bracket me-2"></i>Masuk
+              </button>
+            </form>
+            
+            <form id="registerForm" class="auth-form">
+              <div class="form-group">
+                <label for="registerName" class="form-label">Nama Lengkap</label>
+                <div class="input-group">
+                  <span class="input-group-text">
+                    <i class="fa-solid fa-user"></i>
+                  </span>
+                  <input type="text" class="form-control" id="registerName" placeholder="Nama lengkap" required>
+                </div>
+              </div>
+              
+              <div class="form-group">
+                <label for="registerEmail" class="form-label">Alamat Email</label>
+                <div class="input-group">
+                  <span class="input-group-text">
+                    <i class="fa-solid fa-envelope"></i>
+                  </span>
+                  <input type="email" class="form-control" id="registerEmail" placeholder="nama@contoh.com" required>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="registerRole" class="form-label">Peran (Role)</label>
+                <select class="form-select" id="registerRole" required>
+                  <option value="" selected disabled>Pilih peran Anda</option>
+                  <option value="teknisi">Teknisi</option>
+                  <option value="sparepart">Sparepart</option>
+                  <option value="service-advisor">Service Advisor</option>
+                  <option value="mra">MRA</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="registerPassword" class="form-label">Kata Sandi</label>
+                <div class="input-group">
+                  <span class="input-group-text">
+                    <i class="fa-solid fa-key"></i>
+                  </span>
+                  <input type="password" class="form-control" id="registerPassword" placeholder="Buat kata sandi (min. 6 karakter)" required>
+                  <span class="input-group-text password-toggle" id="registerPasswordToggle">
+                    <i class="fa-solid fa-eye"></i>
+                  </span>
+                </div>
+              </div>
+              
+              <div class="form-group">
+                <label for="registerPasswordConfirm" class="form-label">Konfirmasi Kata Sandi</label>
+                <div class="input-group">
+                  <span class="input-group-text">
+                    <i class="fa-solid fa-key"></i>
+                  </span>
+                  <input type="password" class="form-control" id="registerPasswordConfirm" placeholder="Konfirmasi kata sandi" required>
+                  <span class="input-group-text password-toggle" id="registerPasswordConfirmToggle">
+                    <i class="fa-solid fa-eye"></i>
+                  </span>
+                </div>
+              </div>
+
+              <button type="submit" class="btn btn-auth">
+                <i class="fa-solid fa-user-plus me-2"></i>Daftar Sekarang
+              </button>
+            </form>
+
+            <div class="auth-footer">
+              <p id="auth-switch-text">Belum punya akun? <a id="auth-switch-link">Daftar di sini</a></p>
+              <p class="mt-2 mb-0">© 2023 Sistem Estimasi <span class="cr7-brand">CR7</span>. All rights reserved.</p>
             </div>
           </div>
-
-          <div class="form-group">
-            <label for="registerRole" class="form-label">Peran (Role)</label>
-            <select class="form-select" id="registerRole" required>
-              <option value="" selected disabled>Pilih peran Anda</option>
-              <option value="teknisi">Teknisi</option>
-              <option value="sparepart">Sparepart</option>
-              <option value="service-advisor">Service Advisor</option>
-              <option value="mra">MRA</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label for="registerPassword" class="form-label">Kata Sandi</label>
-            <div class="input-group">
-              <span class="input-group-text">
-                <i class="fa-solid fa-key"></i>
-              </span>
-              <input type="password" class="form-control" id="registerPassword" placeholder="Buat kata sandi (min. 6 karakter)" required>
-              <span class="input-group-text password-toggle" id="registerPasswordToggle">
-                <i class="fa-solid fa-eye"></i>
-              </span>
-            </div>
-          </div>
-          
-          <div class="form-group">
-            <label for="registerPasswordConfirm" class="form-label">Konfirmasi Kata Sandi</label>
-            <div class="input-group">
-              <span class="input-group-text">
-                <i class="fa-solid fa-key"></i>
-              </span>
-              <input type="password" class="form-control" id="registerPasswordConfirm" placeholder="Konfirmasi kata sandi" required>
-              <span class="input-group-text password-toggle" id="registerPasswordConfirmToggle">
-                <i class="fa-solid fa-eye"></i>
-              </span>
-            </div>
-          </div>
-
-          <button type="submit" class="btn btn-success btn-auth">
-            <i class="fa-solid fa-user-plus me-2"></i>Daftar Sekarang
-          </button>
-        </form>
-
-        <div class="auth-footer">
-          <p id="auth-switch-text">Belum punya akun? <a id="auth-switch-link">Daftar di sini</a></p>
-          <p class="mt-2 mb-0">© 2023 Sistem Estimasi <span class="cr7-brand">CR7</span>. All rights reserved.</p>
         </div>
       </div>
     </div>
@@ -636,4 +756,15 @@
     // Fungsi untuk menampilkan toast notifikasi
     function showToast(type, title, message) {
       if (type === 'success') {
-        toastIcon.className = 'fa-s
+        toastIcon.className = 'fa-solid fa-circle-check text-success me-2';
+      } else {
+        toastIcon.className = 'fa-solid fa-circle-exclamation text-danger me-2';
+      }
+      
+      toastTitle.textContent = title;
+      toastMessage.textContent = message;
+      toast.show();
+    }
+  </script>
+</body>
+</html>
