@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Login System - CoreUI</title>
+  <!-- CoreUI CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/@coreui/coreui@4.2.0/dist/css/coreui.min.css" crossorigin="anonymous">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --cui-primary: #321fdb;
+      --cui-success: #2eb85c;
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      background: linear-gradient(120deg, #f5f7fb 0%, #e4e9f2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+    }
+    
+    .login-container {
+      width: 100%;
+      max-width: 450px;
+      transition: all 0.3s ease;
+    }
+    
+    .login-card {
+      border: none;
+      border-radius: 16px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      background: white;
+    }
+    
+    .login-header {
+      text-align: center;
+      padding: 30px 20px 10px;
+      background: linear-gradient(120deg, var(--cui-primary) 0%, #5533ff 100%);
+      color: white;
+      margin-bottom: 1.5rem;
+    }
+    
+    .login-logo {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 15px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .login-logo i {
+      font-size: 2.5rem;
+    }
+    
+    .login-body {
+      padding: 0 30px 30px;
+    }
+    
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+    
+    .input-group {
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+      border: 1px solid #e1e5eb;
+    }
+    
+    .input-group-text {
+      background: #f5f7fb;
+      border: none;
+      padding: 0.875rem 1rem;
+    }
+    
+    .form-control {
+      border: none;
+      padding: 0.875rem 1rem;
+      height: auto;
+    }
+    
+    .form-control:focus {
+      box-shadow: none;
+    }
+    
+    .password-toggle {
+      cursor: pointer;
+      background: #f5f7fb;
+      transition: all 0.2s;
+    }
+    
+    .password-toggle:hover {
+      background: #e4e9f2;
+    }
+    
+    .btn-login {
+      border-radius: 10px;
+      padding: 0.875rem;
+      font-weight: 600;
+      box-shadow: 0 4px 15px rgba(51, 31, 219, 0.3);
+      transition: all 0.3s;
+      border: none;
+      margin-top: 0.5rem;
+    }
+    
+    .btn-login:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(51, 31, 219, 0.4);
+    }
+    
+    .btn-login:active {
+      transform: translateY(0);
+    }
+    
+    .divider {
+      display: flex;
+      align-items: center;
+      margin: 1.5rem 0;
+    }
+    
+    .divider::before,
+    .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background-color: #e1e5eb;
+    }
+    
+    .divider-text {
+      padding: 0 1rem;
+      color: #768192;
+      font-size: 0.875rem;
+    }
+    
+    .social-login {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 1.5rem;
+    }
+    
+    .btn-social {
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+      transition: all 0.3s;
+    }
+    
+    .btn-social:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .login-footer {
+      text-align: center;
+      padding: 20px 0 0;
+      color: #768192;
+      font-size: 0.875rem;
+      border-top: 1px solid #e1e5eb;
+      margin-top: 1.5rem;
+    }
+    
+    .login-footer a {
+      color: var(--cui-primary);
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+    
+    .login-footer a:hover {
+      color: #1a1470;
+      text-decoration: underline;
+    }
+    
+    /* Toast styling */
+    .toast-container {
+      z-index: 1090;
+    }
+    
+    .toast {
+      border-radius: 10px;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+      overflow: hidden;
+    }
+    
+    /* Responsive styles */
+    @media (max-width: 576px) {
+      body {
+        padding: 15px;
+        background: white;
+      }
+      
+      .login-container {
+        max-width: 100%;
+      }
+      
+      .login-card {
+        box-shadow: none;
+        border-radius: 12px;
+      }
+      
+      .login-header {
+        padding: 25px 15px 5px;
+        border-radius: 12px 12px 0 0;
+        margin-bottom: 1rem;
+      }
+      
+      .login-body {
+        padding: 0 20px 25px;
+      }
+      
+      .login-logo {
+        width: 70px;
+        height: 70px;
+      }
+      
+      .login-logo i {
+        font-size: 2rem;
+      }
+      
+      .form-group {
+        margin-bottom: 1.25rem;
+      }
+      
+      .btn-login {
+        padding: 0.75rem;
+      }
+    }
+    
+    @media (max-width: 360px) {
+      .login-body {
+        padding: 0 15px 20px;
+      }
+      
+      .social-login {
+        flex-wrap: wrap;
+      }
+    }
+    
+    /* Animation for form elements */
+    .form-group {
+      animation: fadeIn 0.5s ease-out forwards;
+      opacity: 0;
+    }
+    
+    .form-group:nth-child(1) {
+      animation-delay: 0.1s;
+    }
+    
+    .form-group:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+    
+    .form-group:nth-child(3) {
+      animation-delay: 0.3s;
+    }
+    
+    .btn-login {
+      animation: fadeIn 0.5s ease-out 0.4s forwards;
+      opacity: 0;
+    }
+    
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    /* Loading animation */
+    .spinner-border {
+      width: 1rem;
+      height: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <div class="login-card">
+      <div class="login-header">
+        <div class="login-logo">
+          <i class="fa-solid fa-lock text-white"></i>
+        </div>
+        <h4>Selamat Datang Kembali</h4>
+        <p class="mb-0">Masuk ke akun Anda</p>
+      </div>
+      
+      <div class="login-body">
+        <form id="loginForm">
+          <div class="form-group">
+            <label for="email" class="form-label">Alamat Email</label>
+            <div class="input-group">
+              <span class="input-group-text">
+                <i class="fa-solid fa-envelope"></i>
+              </span>
+              <input type="email" class="form-control" id="email" placeholder="nama@contoh.com" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="password" class="form-label">Kata Sandi</label>
+            <div class="input-group">
+              <span class="input-group-text">
+                <i class="fa-solid fa-key"></i>
+              </span>
+              <input type="password" class="form-control" id="password" placeholder="Masukkan kata sandi" required>
+              <span class="input-group-text password-toggle" id="passwordToggle">
+                <i class="fa-solid fa-eye"></i>
+              </span>
+            </div>
+          </div>
+
+          <div class="form-group d-flex justify-content-between align-items-center">
+            <div class="form-check">
+              <input type="checkbox" class="form-check-input" id="rememberMe">
+              <label class="form-check-label" for="rememberMe">Ingat saya</label>
+            </div>
+            <a href="#" class="text-decoration-none">Lupa kata sandi?</a>
+          </div>
+
+          <button type="submit" class="btn btn-primary w-100 btn-login">
+            <i class="fa-solid fa-right-to-bracket me-2"></i>Masuk
+          </button>
+
+          <div class="divider">
+            <span class="divider-text">Atau masuk dengan</span>
+          </div>
+
+          <div class="social-login">
+            <button type="button" class="btn btn-outline-primary btn-social">
+              <i class="fa-brands fa-google"></i>
+            </button>
+            <button type="button" class="btn btn-outline-primary btn-social">
+              <i class="fa-brands fa-facebook-f"></i>
+            </button>
+            <button type="button" class="btn btn-outline-primary btn-social">
+              <i class="fa-brands fa-twitter"></i>
+            </button>
+          </div>
+        </form>
+
+        <div class="login-footer">
+          <p>Belum punya akun? <a href="#">Daftar di sini</a></p>
+          <p class="mt-2 mb-0">© 2023 Nama Aplikasi Anda. All rights reserved.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast untuk notifikasi -->
+    <div class="toast-container position-fixed top-0 end-0 p-3">
+      <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+          <i class="fa-solid fa-circle-check text-success me-2" id="toastIcon"></i>
+          <strong class="me-auto">System Notification</strong>
+          <small>Now</small>
+          <button type="button" class="btn-close" data-coreui-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body" id="toastMessage">
+          Login berhasil!
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CoreUI and other JS -->
+  <script src="https://cdn.jsdelivr.net/npm/@coreui/coreui@4.2.0/dist/js/coreui.bundle.min.js" crossorigin="anonymous"></script>
+  <!-- Supabase JS -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  
+  <script>
+    // Inisialisasi Supabase
+    const supabaseUrl = 'https://pjawwektzazcxakgopou.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBqYXd3ZWt0emF6Y3hha2dvcG91Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgyNjQ5MTUsImV4cCI6MjA3Mzg0MDkxNX0.dNEB80t7LcTsvAtHHqgIeJfxcwmmZNsWxPTIAlrj11c';
+    const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+    
+    // Inisialisasi Toast
+    const toastEl = document.getElementById('liveToast');
+    const toastMessage = document.getElementById('toastMessage');
+    const toastIcon = document.getElementById('toastIcon');
+    const toast = new coreui.Toast(toastEl);
+    
+    // Toggle password visibility
+    document.getElementById('passwordToggle').addEventListener('click', function() {
+      const passwordInput = document.getElementById('password');
+      const icon = this.querySelector('i');
+      
+      if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
+      } else {
+        passwordInput.type = 'password';
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
+      }
+    });
+    
+    // Handle form submission
+    document.getElementById('loginForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const submitButton = this.querySelector('button[type="submit"]');
+      
+      // Tampilkan loading state
+      const originalText = submitButton.innerHTML;
+      submitButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Memproses...';
+      submitButton.disabled = true;
+      
+      try {
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email: email,
+          password: password
+        });
+        
+        if (error) {
+          showToast('error', 'Login Gagal: ' + error.message);
+        } else {
+          showToast('success', 'Login berhasil! Mengarahkan ke dashboard...');
+          // Simulasi redirect setelah 2 detik
+          setTimeout(() => {
+            window.location.href = '/dashboard.html';
+          }, 2000);
+        }
+      } catch (error) {
+        showToast('error', 'Terjadi kesalahan: ' + error.message);
+      } finally {
+        // Kembalikan ke state semula
+        submitButton.innerHTML = originalText;
+        submitButton.disabled = false;
+      }
+    });
+    
+    // Fungsi untuk menampilkan toast notifikasi
+    function showToast(type, message) {
+      if (type === 'success') {
+        toastIcon.className = 'fa-solid fa-circle-check text-success me-2';
+      } else {
+        toastIcon.className = 'fa-solid fa-circle-exclamation text-danger me-2';
+      }
+      
+      toastMessage.textContent = message;
+      toast.show();
+    }
+  </script>
+</body>
+</html>
