@@ -1679,7 +1679,8 @@ if (data.sparepart_data) {
                     <p><strong>Foto Kondisi Kendaraan:</strong></p>
                     <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;">
                         ${fotoUrls.map(url => `<img src="${url}" 
-                            style="max-width:100%; height:auto; max-height:150px; object-fit:contain; border-radius:5px; border:1px solid #ddd;">`).join('')}
+     style="max-width:100%; height:auto; max-height:150px; object-fit:contain; border-radius:5px; border:1px solid #ddd;">
+`).join('')}
                     </div>
                 </div>
                 ` : ''}
@@ -1710,7 +1711,11 @@ if (data.sparepart_data) {
                     margin: 10,
                     filename: `estimasi_${data.nopol}_${new Date().getTime()}.pdf`,
                     image: { type: 'jpeg', quality: 0.98 },
-                    html2canvas: { scale: 2 },
+                    html2canvas: { 
+    scale: 2,
+    useCORS: true,          // ✅ izinkan CORS
+    allowTaint: true        // ✅ fallback
+  },
                     jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
                 };
 
