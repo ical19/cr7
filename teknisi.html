@@ -2,1138 +2,1141 @@
 <html lang="id">
 
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Dashboard Teknisi - Sistem Estimasi CR7</title>
-  <!-- Bootstrap CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <!-- Font Awesome -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <!-- Tagify CSS -->
-  <link href="https://unpkg.com/@yaireo/tagify/dist/tagify.css" rel="stylesheet">
-  <style>
-    :root {
-      --primary-color: #2c3e50;
-      --secondary-color: #34495e;
-      --accent-color: #3498db;
-      --success-color: #27ae60;
-      --warning-color: #f39c12;
-      --info-color: #2980b9;
-      --light-color: #ecf0f1;
-      --dark-color: #2c3e50;
-      --teknisi-color: #3498db;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    body {
-      background-color: #f8f9fa;
-      font-family: 'Roboto', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      color: #2c3e50;
-    }
-
-    /* Sidebar Styles */
-    .sidebar {
-      height: 100vh;
-      background: linear-gradient(180deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-      color: white;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 250px;
-      padding-top: 20px;
-      z-index: 1000;
-      box-shadow: 3px 0 15px rgba(0, 0, 0, 0.1);
-      transition: all 0.3s;
-      overflow-y: auto;
-    }
-
-    .sidebar-brand {
-      padding: 0 20px 20px;
-      text-align: center;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-      margin-bottom: 20px;
-    }
-
-    .sidebar-brand h4 {
-      font-weight: 700;
-      margin: 0;
-    }
-
-    .sidebar-menu {
-      list-style: none;
-      padding: 0;
-    }
-
-    .sidebar-menu li {
-      margin-bottom: 5px;
-    }
-
-    .sidebar-menu a {
-      color: rgba(255, 255, 255, 0.8);
-      text-decoration: none;
-      padding: 12px 20px;
-      display: block;
-      transition: all 0.3s;
-      border-left: 4px solid transparent;
-    }
-
-    .sidebar-menu a:hover,
-    .sidebar-menu a.active {
-      background-color: rgba(255, 255, 255, 0.1);
-      border-left: 4px solid var(--accent-color);
-      color: white;
-    }
-
-    .sidebar-menu i {
-      width: 25px;
-      margin-right: 10px;
-    }
-
-    .user-info {
-      position: absolute;
-      bottom: 0;
-      width: 100%;
-      padding: 15px;
-      background-color: rgba(0, 0, 0, 0.2);
-      text-align: center;
-    }
-
-    /* Main Content Styles */
-    .main-content {
-      margin-left: 250px;
-      padding: 20px;
-      transition: all 0.3s;
-    }
-
-    .header {
-      background-color: white;
-      padding: 15px 20px;
-      border-radius: 10px;
-      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
-      margin-bottom: 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .page-title {
-      margin: 0;
-      color: var(--primary-color);
-      font-weight: 600;
-    }
-
-    .card {
-      border: none;
-      border-radius: 10px;
-      box-shadow: 0 3px 15px rgba(0, 0, 0, 0.08);
-      margin-bottom: 20px;
-    }
-
-    .card-header {
-      background-color: white;
-      border-bottom: 1px solid #eee;
-      padding: 15px 20px;
-      font-weight: 600;
-      border-radius: 10px 10px 0 0 !important;
-      color: var(--primary-color);
-    }
-
-    .card-body {
-      padding: 20px;
-    }
-
-    /* Stats Cards */
-    .stats-card {
-      text-align: center;
-      padding: 15px;
-    }
-
-    .stats-icon {
-      font-size: 1.5rem;
-      margin-bottom: 10px;
-      color: var(--accent-color);
-    }
-
-    .stats-number {
-      font-size: 1.5rem;
-      font-weight: 700;
-      margin-bottom: 5px;
-      color: var(--primary-color);
-    }
-
-    .stats-label {
-      color: #6c757d;
-      font-weight: 500;
-      font-size: 0.85rem;
-    }
-
-    /* Form Styles */
-    .form-group {
-      margin-bottom: 1.5rem;
-    }
-
-    .form-label {
-      font-weight: 500;
-      margin-bottom: 0.5rem;
-      color: var(--secondary-color);
-    }
-
-    .form-control,
-    .form-select {
-      border-radius: 8px;
-      padding: 0.75rem 1rem;
-      border: 1px solid #e1e5eb;
-    }
-
-    .form-control:focus,
-    .form-select:focus {
-      border-color: var(--accent-color);
-      box-shadow: 0 0 0 0.25rem rgba(52, 152, 219, 0.25);
-    }
-
-    .btn-primary {
-      background-color: var(--accent-color);
-      color: white;
-      border: none;
-      border-radius: 8px;
-      padding: 0.75rem 1.5rem;
-      font-weight: 500;
-    }
-
-    .btn-primary:hover {
-      background-color: #2980b9;
-      color: white;
-    }
-
-    /* Table Styles */
-    .table th {
-      font-weight: 600;
-      border-top: none;
-      color: var(--primary-color);
-    }
-
-    .status-badge {
-      padding: 0.35rem 0.65rem;
-      border-radius: 20px;
-      font-size: 0.75rem;
-      font-weight: 600;
-    }
-
-    .status-pending {
-      background-color: #fff3cd;
-      color: #856404;
-    }
-
-    .status-progress {
-      background-color: #cce5ff;
-      color: #004085;
-    }
-
-    .status-completed {
-      background-color: #d4edda;
-      color: #155724;
-    }
-
-    /* Image Upload Styles */
-    .image-upload-container {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 10px;
-    }
-
-    .image-preview {
-      width: 100px;
-      height: 100px;
-      object-fit: cover;
-      border-radius: 8px;
-      border: 1px solid #ddd;
-    }
-
-    .add-image-btn {
-      width: 100px;
-      height: 100px;
-      border: 2px dashed #ddd;
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      background-color: #f8f9fa;
-      transition: all 0.3s;
-    }
-
-    .add-image-btn:hover {
-      border-color: var(--accent-color);
-      background-color: #e9ecef;
-    }
-
-    .image-preview-container {
-      position: relative;
-      display: inline-block;
-    }
-
-    .remove-image-btn {
-      position: absolute;
-      top: -8px;
-      right: -8px;
-      width: 24px;
-      height: 24px;
-      border-radius: 50%;
-      background-color: #dc3545;
-      color: white;
-      border: none;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      font-size: 12px;
-    }
-
-    /* Responsive Styles */
-    @media (max-width: 992px) {
-      .sidebar {
-        width: 80px;
-        text-align: center;
-      }
-
-      .sidebar-brand h4,
-      .sidebar-menu span {
-        display: none;
-      }
-
-      .sidebar-menu i {
-        margin-right: 0;
-        font-size: 1.25rem;
-      }
-
-      .user-info {
-        display: none;
-      }
-
-      .main-content {
-        margin-left: 80px;
-      }
-    }
-
-    @media (max-width: 768px) {
-      .main-content {
-        margin-left: 0;
-        padding: 15px;
-      }
-
-      .sidebar {
-        left: -250px;
-        box-shadow: none;
-      }
-
-      .sidebar.show {
-        left: 0;
-        box-shadow: 3px 0 15px rgba(0, 0, 0, 0.1);
-        z-index: 1050;
-      }
-
-      .mobile-header {
-        display: flex !important;
-        background: white;
-        padding: 12px 15px;
-        border-radius: 8px;
-        margin-bottom: 15px;
-        align-items: center;
-        justify-content: space-between;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-      }
-
-      .mobile-menu-btn {
-        display: flex !important;
-        background-color: var(--primary-color);
-        color: white;
-        border: none;
-        border-radius: 6px;
-        padding: 8px;
-        align-items: center;
-        justify-content: center;
-        width: 40px;
-        height: 40px;
-      }
-
-      .mobile-title {
-        font-weight: 600;
-        color: var(--primary-color);
-        margin: 0;
-        font-size: 1.1rem;
-      }
-
-      .stats-card {
-        padding: 12px;
-      }
-
-      .stats-icon {
-        font-size: 1.25rem;
-      }
-
-      .stats-number {
-        font-size: 1.25rem;
-      }
-
-      .stats-label {
-        font-size: 0.75rem;
-      }
-
-      /* Smaller image preview on mobile */
-      .image-preview {
-        width: 80px;
-        height: 80px;
-      }
-
-      .add-image-btn {
-        width: 80px;
-        height: 80px;
-      }
-    }
-
-    .mobile-header {
-      display: none;
-    }
-
-    .mobile-menu-btn {
-      display: none;
-    }
-
-    /* Section Styles */
-    .content-section {
-      display: none;
-    }
-
-    .content-section.active {
-      display: block;
-      animation: fadeIn 0.5s;
-    }
-
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-      }
-
-      to {
-        opacity: 1;
-      }
-    }
-
-    /* Loading Spinner */
-    .loading-spinner {
-      display: inline-block;
-      width: 1rem;
-      height: 1rem;
-      border: 2px solid #f3f3f3;
-      border-top: 2px solid var(--accent-color);
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-    }
-
-    @keyframes spin {
-      0% {
-        transform: rotate(0deg);
-      }
-
-      100% {
-        transform: rotate(360deg);
-      }
-    }
-
-    /* Tagify Customization */
-    .tags-input {
-      padding: 0.5rem;
-    }
-
-    .tagify__tag {
-      background: var(--accent-color);
-      color: white;
-    }
-
-    .tagify__tag:hover {
-      background: #2980b9;
-    }
-
-    /* Modal Styles */
-    .modal-content {
-      border-radius: 10px;
-      border: none;
-    }
-
-    .modal-header {
-      background-color: var(--primary-color);
-      color: white;
-      border-radius: 10px 10px 0 0;
-    }
-
-    /* Fix for modal backdrop */
-    .modal-backdrop {
-      opacity: 0.5 !important;
-    }
-
-    /* Grid view for PDF */
-    .pdf-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-      margin-top: 10px;
-    }
-
-    .pdf-grid img {
-      width: 100%;
-      height: 80px;
-      object-fit: cover;
-      border-radius: 5px;
-      border: 1px solid #ddd;
-    }
-  </style>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Dashboard Teknisi - Sistem Estimasi CR7</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Tagify CSS -->
+    <link href="https://unpkg.com/@yaireo/tagify/dist/tagify.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #34495e;
+            --accent-color: #3498db;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --info-color: #2980b9;
+            --light-color: #ecf0f1;
+            --dark-color: #2c3e50;
+            --teknisi-color: #3498db;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Roboto', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #2c3e50;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            height: 100vh;
+            background: linear-gradient(180deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 250px;
+            padding-top: 20px;
+            z-index: 1000;
+            box-shadow: 3px 0 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+            overflow-y: auto;
+        }
+
+        .sidebar-brand {
+            padding: 0 20px 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .sidebar-brand h4 {
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+        }
+
+        .sidebar-menu li {
+            margin-bottom: 5px;
+        }
+
+        .sidebar-menu a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            padding: 12px 20px;
+            display: block;
+            transition: all 0.3s;
+            border-left: 4px solid transparent;
+        }
+
+        .sidebar-menu a:hover,
+        .sidebar-menu a.active {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-left: 4px solid var(--accent-color);
+            color: white;
+        }
+
+        .sidebar-menu i {
+            width: 25px;
+            margin-right: 10px;
+        }
+
+        .user-info {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            padding: 15px;
+            background-color: rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            margin-left: 250px;
+            padding: 20px;
+            transition: all 0.3s;
+        }
+
+        .header {
+            background-color: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .page-title {
+            margin: 0;
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 3px 15px rgba(0, 0, 0, 0.08);
+            margin-bottom: 20px;
+        }
+
+        .card-header {
+            background-color: white;
+            border-bottom: 1px solid #eee;
+            padding: 15px 20px;
+            font-weight: 600;
+            border-radius: 10px 10px 0 0 !important;
+            color: var(--primary-color);
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        /* Stats Cards */
+        .stats-card {
+            text-align: center;
+            padding: 15px;
+        }
+
+        .stats-icon {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            color: var(--accent-color);
+        }
+
+        .stats-number {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+            color: var(--primary-color);
+        }
+
+        .stats-label {
+            color: #6c757d;
+            font-weight: 500;
+            font-size: 0.85rem;
+        }
+
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: var(--secondary-color);
+        }
+
+        .form-control,
+        .form-select {
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            border: 1px solid #e1e5eb;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 0.25rem rgba(52, 152, 219, 0.25);
+        }
+
+        .btn-primary {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 500;
+        }
+
+        .btn-primary:hover {
+            background-color: #2980b9;
+            color: white;
+        }
+
+        /* Table Styles */
+        .table th {
+            font-weight: 600;
+            border-top: none;
+            color: var(--primary-color);
+        }
+
+        .status-badge {
+            padding: 0.35rem 0.65rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .status-pending {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+
+        .status-progress {
+            background-color: #cce5ff;
+            color: #004085;
+        }
+
+        .status-completed {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        /* Image Upload Styles */
+        .image-upload-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .image-preview {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+        }
+
+        .add-image-btn {
+            width: 100px;
+            height: 100px;
+            border: 2px dashed #ddd;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            background-color: #f8f9fa;
+            transition: all 0.3s;
+        }
+
+        .add-image-btn:hover {
+            border-color: var(--accent-color);
+            background-color: #e9ecef;
+        }
+
+        .image-preview-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        .remove-image-btn {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 992px) {
+            .sidebar {
+                width: 80px;
+                text-align: center;
+            }
+
+            .sidebar-brand h4,
+            .sidebar-menu span {
+                display: none;
+            }
+
+            .sidebar-menu i {
+                margin-right: 0;
+                font-size: 1.25rem;
+            }
+
+            .user-info {
+                display: none;
+            }
+
+            .main-content {
+                margin-left: 80px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                margin-left: 0;
+                padding: 15px;
+            }
+
+            .sidebar {
+                left: -250px;
+                box-shadow: none;
+            }
+
+            .sidebar.show {
+                left: 0;
+                box-shadow: 3px 0 15px rgba(0, 0, 0, 0.1);
+                z-index: 1050;
+            }
+
+            .mobile-header {
+                display: flex !important;
+                background: white;
+                padding: 12px 15px;
+                border-radius: 8px;
+                margin-bottom: 15px;
+                align-items: center;
+                justify-content: space-between;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            }
+
+            .mobile-menu-btn {
+                display: flex !important;
+                background-color: var(--primary-color);
+                color: white;
+                border: none;
+                border-radius: 6px;
+                padding: 8px;
+                align-items: center;
+                justify-content: center;
+                width: 40px;
+                height: 40px;
+            }
+
+            .mobile-title {
+                font-weight: 600;
+                color: var(--primary-color);
+                margin: 0;
+                font-size: 1.1rem;
+            }
+
+            .stats-card {
+                padding: 12px;
+            }
+
+            .stats-icon {
+                font-size: 1.25rem;
+            }
+
+            .stats-number {
+                font-size: 1.25rem;
+            }
+
+            .stats-label {
+                font-size: 0.75rem;
+            }
+
+            /* Smaller image preview on mobile */
+            .image-preview {
+                width: 80px;
+                height: 80px;
+            }
+
+            .add-image-btn {
+                width: 80px;
+                height: 80px;
+            }
+        }
+
+        .mobile-header {
+            display: none;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+        }
+
+        /* Section Styles */
+        .content-section {
+            display: none;
+        }
+
+        .content-section.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Loading Spinner */
+        .loading-spinner {
+            display: inline-block;
+            width: 1rem;
+            height: 1rem;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid var(--accent-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Tagify Customization */
+        .tags-input {
+            padding: 0.5rem;
+        }
+
+        .tagify__tag {
+            background: var(--accent-color);
+            color: white;
+        }
+
+        .tagify__tag:hover {
+            background: #2980b9;
+        }
+
+        /* Modal Styles */
+        .modal-content {
+            border-radius: 10px;
+            border: none;
+        }
+
+        .modal-header {
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 10px 10px 0 0;
+        }
+
+        /* Fix for modal backdrop */
+        .modal-backdrop {
+            opacity: 0.5 !important;
+        }
+
+        /* Grid view for PDF */
+        .pdf-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .pdf-grid img {
+            width: 100%;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+    </style>
 </head>
 
 <body>
-  <!-- Mobile Header -->
-  <div class="mobile-header">
-    <button class="mobile-menu-btn" id="mobileMenuBtn">
-      <i class="fas fa-bars"></i>
-    </button>
-    <h4 class="mobile-title" id="mobileTitle">Dashboard</h4>
-    <button class="btn btn-outline-secondary btn-sm" id="logoutBtn">
-      <i class="fas fa-sign-out-alt"></i>
-    </button>
-  </div>
-
-  <!-- Sidebar -->
-  <div class="sidebar" id="sidebar">
-    <div class="sidebar-brand">
-      <h4>CR7 <span class="d-none d-md-inline">Estimasi</span></h4>
-    </div>
-
-    <ul class="sidebar-menu">
-      <li>
-        <a href="#" class="active" data-section="dashboard">
-          <i class="fas fa-tachometer-alt"></i>
-          <span>Dashboard</span>
-        </a>
-      </li>
-      <li>
-        <a href="#" data-section="input-estimasi">
-          <i class="fas fa-plus-circle"></i>
-          <span>Input Estimasi</span>
-        </a>
-      </li>
-      <li>
-        <a href="#" data-section="estimasi-saya">
-          <i class="fas fa-list-alt"></i>
-          <span>Estimasi Saya</span>
-        </a>
-      </li>
-      <li>
-        <a href="#" data-section="profil">
-          <i class="fas fa-user"></i>
-          <span>Profil</span>
-        </a>
-      </li>
-    </ul>
-
-    <div class="user-info">
-      <p class="mb-0">Halo, <strong id="userName">Teknisi</strong></p>
-      <small>Role: <span class="badge status-badge status-progress">Teknisi</span></small>
-    </div>
-  </div>
-
-  <!-- Main Content -->
-  <div class="main-content">
-    <div class="header d-none d-md-flex">
-      <h2 class="page-title" id="pageTitle">Dashboard</h2>
-      <div>
-        <button class="btn btn-outline-secondary btn-sm" id="logoutBtnDesktop">
-          <i class="fas fa-sign-out-alt me-1"></i> Logout
+    <!-- Mobile Header -->
+    <div class="mobile-header">
+        <button class="mobile-menu-btn" id="mobileMenuBtn">
+            <i class="fas fa-bars"></i>
         </button>
-      </div>
+        <h4 class="mobile-title" id="mobileTitle">Dashboard</h4>
+        <button class="btn btn-outline-secondary btn-sm" id="logoutBtn">
+            <i class="fas fa-sign-out-alt"></i>
+        </button>
     </div>
 
-    <!-- Dashboard Section -->
-    <div class="content-section active" id="dashboard">
-      <div class="row">
-        <div class="col-6 col-md-3 mb-3">
-          <div class="card stats-card">
-            <div class="stats-icon">
-              <i class="fas fa-clipboard-list"></i>
-            </div>
-            <div class="stats-number" id="totalEstimasi">0</div>
-            <div class="stats-label">Total Estimasi</div>
-          </div>
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-brand">
+            <h4>CR7 <span class="d-none d-md-inline">Estimasi</span></h4>
         </div>
-        <div class="col-6 col-md-3 mb-3">
-          <div class="card stats-card">
-            <div class="stats-icon">
-              <i class="fas fa-spinner"></i>
-            </div>
-            <div class="stats-number" id="estimasiProgress">0</div>
-            <div class="stats-label">Dalam Proses</div>
-          </div>
-        </div>
-        <div class="col-6 col-md-3 mb-3">
-          <div class="card stats-card">
-            <div class="stats-icon">
-              <i class="fas fa-check-circle"></i>
-            </div>
-            <div class="stats-number" id="estimasiSelesai">0</div>
-            <div class="stats-label">Selesai</div>
-          </div>
-        </div>
-        <div class="col-6 col-md-3 mb-3">
-          <div class="card stats-card">
-            <div class="stats-icon">
-              <i class="fas fa-car"></i>
-            </div>
-            <div class="stats-number" id="totalMobil">0</div>
-            <div class="stats-label">Jenis Mobil</div>
-          </div>
-        </div>
-      </div>
 
-      <div class="row">
-        <div class="col-12">
-          <div class="card">
-            <div class="card-header d-flex justify-content-between align-items-center">
-              <span>Estimasi Terbaru</span>
-              <a href="#" data-section="estimasi-saya" class="btn btn-sm btn-primary">Lihat Semua</a>
-            </div>
-            <div class="card-body">
-              <div class="table-responsive">
-                <table class="table table-hover">
-                  <thead>
-                    <tr>
-                      <th>No. Polisi</th>
-                      <th>Jenis Mobil</th>
-                      <th>Tanggal</th>
-                      <th>Status</th>
-                      <th>Aksi</th>
-                    </tr>
-                  </thead>
-                  <tbody id="recentEstimasi">
-                    <!-- Data akan diisi dari Supabase -->
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
+        <ul class="sidebar-menu">
+            <li>
+                <a href="#" class="active" data-section="dashboard">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li>
+                <a href="#" data-section="input-estimasi">
+                    <i class="fas fa-plus-circle"></i>
+                    <span>Input Estimasi</span>
+                </a>
+            </li>
+            <li>
+                <a href="#" data-section="estimasi-saya">
+                    <i class="fas fa-list-alt"></i>
+                    <span>Estimasi Saya</span>
+                </a>
+            </li>
+            <li>
+                <a href="#" data-section="profil">
+                    <i class="fas fa-user"></i>
+                    <span>Profil</span>
+                </a>
+            </li>
+        </ul>
+
+        <div class="user-info">
+            <p class="mb-0">Halo, <strong id="userName">Teknisi</strong></p>
+            <small>Role: <span class="badge status-badge status-progress">Teknisi</span></small>
         </div>
-      </div>
     </div>
 
-    <!-- Input Estimasi Section -->
-    <div class="content-section" id="input-estimasi">
-      <div class="card">
-        <div class="card-header">
-          Form Input Estimasi Sparepart
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="header d-none d-md-flex">
+            <h2 class="page-title" id="pageTitle">Dashboard</h2>
+            <div>
+                <button class="btn btn-outline-secondary btn-sm" id="logoutBtnDesktop">
+                    <i class="fas fa-sign-out-alt me-1"></i> Logout
+                </button>
+            </div>
         </div>
-        <div class="card-body">
-          <form id="estimasiForm">
+
+        <!-- Dashboard Section -->
+        <div class="content-section active" id="dashboard">
             <div class="row">
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label for="nopol" class="form-label">Nomor Polisi</label>
-                  <input type="text" class="form-control" id="nopol" placeholder="Contoh: B 1234 ABC" required
-                    oninput="formatNopol(this)">
+                <div class="col-6 col-md-3 mb-3">
+                    <div class="card stats-card">
+                        <div class="stats-icon">
+                            <i class="fas fa-clipboard-list"></i>
+                        </div>
+                        <div class="stats-number" id="totalEstimasi">0</div>
+                        <div class="stats-label">Total Estimasi</div>
+                    </div>
                 </div>
-              </div>
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label for="jenisMobil" class="form-label">Jenis Mobil</label>
-                  <select class="form-select" id="jenisMobil" required>
-                    <option value="" selected disabled>Pilih Jenis Mobil</option>
-                    <option value="Toyota Avanza">Toyota Avanza</option>
-                    <option value="Toyota Veloz">Toyota Veloz</option>
-                    <option value="Toyota Raize">Toyota Raize</option>
-                    <option value="Toyota Rush">Toyota Rush</option>
-                    <option value="Toyota Fortuner">Toyota Fortuner</option>
-                    <option value="Toyota Innova">Toyota Innova</option>
-                    <option value="Toyota Kijang Innova">Toyota Kijang Innova</option>
-                    <option value="Toyota Yaris">Toyota Yaris</option>
-                    <option value="Toyota Agya">Toyota Agya</option>
-                    <option value="Toyota Calya">Toyota Calya</option>
-                  </select>
+                <div class="col-6 col-md-3 mb-3">
+                    <div class="card stats-card">
+                        <div class="stats-icon">
+                            <i class="fas fa-spinner"></i>
+                        </div>
+                        <div class="stats-number" id="estimasiProgress">0</div>
+                        <div class="stats-label">Dalam Proses</div>
+                    </div>
                 </div>
-              </div>
+                <div class="col-6 col-md-3 mb-3">
+                    <div class="card stats-card">
+                        <div class="stats-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="stats-number" id="estimasiSelesai">0</div>
+                        <div class="stats-label">Selesai</div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3 mb-3">
+                    <div class="card stats-card">
+                        <div class="stats-icon">
+                            <i class="fas fa-car"></i>
+                        </div>
+                        <div class="stats-number" id="totalMobil">0</div>
+                        <div class="stats-label">Jenis Mobil</div>
+                    </div>
+                </div>
             </div>
 
             <div class="row">
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label for="telepon" class="form-label">Nomor Telepon Customer</label>
-                  <input type="tel" class="form-control" id="telepon" placeholder="Contoh: 081234567890" required>
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <span>Estimasi Terbaru</span>
+                            <a href="#" data-section="estimasi-saya" class="btn btn-sm btn-primary">Lihat Semua</a>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>No. Polisi</th>
+                                            <th>Jenis Mobil</th>
+                                            <th>Tanggal</th>
+                                            <th>Status</th>
+                                            <th>Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="recentEstimasi">
+                                        <!-- Data akan diisi dari Supabase -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-              </div>
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label for="serviceAdvisor" class="form-label">Service Advisor</label>
-                  <select class="form-select" id="serviceAdvisor" required>
-                    <option value="" selected disabled>Pilih Service Advisor</option>
-                    <option value="Abdul Azis">Abdul Azis</option>
-                    <option value="Muhammad Hakiki">Muhammad Hakiki</option>
-                    <option value="Ahmad Baidowi">Ahmad Baidowi</option>
-                    <option value="Ade Purwanto">Ade Purwanto</option>
-                    <option value="Akbarudin">Akbarudin</option>
-                  </select>
+            </div>
+        </div>
+
+        <!-- Input Estimasi Section -->
+        <div class="content-section" id="input-estimasi">
+            <div class="card">
+                <div class="card-header">
+                    Form Input Estimasi Sparepart
                 </div>
-              </div>
-            </div>
+                <div class="card-body">
+                    <form id="estimasiForm">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="nopol" class="form-label">Nomor Polisi</label>
+                                    <input type="text" class="form-control" id="nopol" placeholder="Contoh: B 1234 ABC"
+                                        required oninput="formatNopol(this)">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="jenisMobil" class="form-label">Jenis Mobil</label>
+                                    <select class="form-select" id="jenisMobil" required>
+                                        <option value="" selected disabled>Pilih Jenis Mobil</option>
+                                        <option value="Toyota Avanza">Toyota Avanza</option>
+                                        <option value="Toyota Veloz">Toyota Veloz</option>
+                                        <option value="Toyota Raize">Toyota Raize</option>
+                                        <option value="Toyota Rush">Toyota Rush</option>
+                                        <option value="Toyota Fortuner">Toyota Fortuner</option>
+                                        <option value="Toyota Innova">Toyota Innova</option>
+                                        <option value="Toyota Kijang Innova">Toyota Kijang Innova</option>
+                                        <option value="Toyota Yaris">Toyota Yaris</option>
+                                        <option value="Toyota Agya">Toyota Agya</option>
+                                        <option value="Toyota Calya">Toyota Calya</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
 
-            <div class="form-group">
-              <label for="komponen" class="form-label">Komponen yang Diestimasi</label>
-              <input name='tags' class="form-control" placeholder="Tambahkan komponen (tekan enter untuk menambah)">
-              <small class="form-text text-muted">Tekan Enter untuk menambah komponen</small>
-            </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="telepon" class="form-label">Nomor Telepon Customer</label>
+                                    <input type="tel" class="form-control" id="telepon"
+                                        placeholder="Contoh: 081234567890" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="serviceAdvisor" class="form-label">Service Advisor</label>
+                                    <select class="form-select" id="serviceAdvisor" required>
+                                        <option value="" selected disabled>Pilih Service Advisor</option>
+                                        <option value="Abdul Azis">Abdul Azis</option>
+                                        <option value="Muhammad Hakiki">Muhammad Hakiki</option>
+                                        <option value="Ahmad Baidowi">Ahmad Baidowi</option>
+                                        <option value="Ade Purwanto">Ade Purwanto</option>
+                                        <option value="Akbarudin">Akbarudin</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
 
-            <div class="form-group">
-              <label for="keterangan" class="form-label">Keterangan Tambahan</label>
-              <textarea class="form-control" id="keterangan" rows="3"
-                placeholder="Tambahkan keterangan jika diperlukan"></textarea>
-            </div>
+                        <div class="form-group">
+                            <label for="komponen" class="form-label">Komponen yang Diestimasi</label>
+                            <input name='tags' class="form-control"
+                                placeholder="Tambahkan komponen (tekan enter untuk menambah)">
+                            <small class="form-text text-muted">Tekan Enter untuk menambah komponen</small>
+                        </div>
 
-            <div class="form-group">
-              <label class="form-label">Foto Estimasi (Opsional, Maks 5 gambar)</label>
-              <div class="image-upload-container" id="imageUploadContainer">
-                <div class="add-image-btn" id="addImageBtn">
-                  <i class="fas fa-plus"></i>
+                        <div class="form-group">
+                            <label for="keterangan" class="form-label">Keterangan Tambahan</label>
+                            <textarea class="form-control" id="keterangan" rows="3"
+                                placeholder="Tambahkan keterangan jika diperlukan"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Foto Estimasi (Opsional, Maks 5 gambar)</label>
+                            <div class="image-upload-container" id="imageUploadContainer">
+                                <div class="add-image-btn" id="addImageBtn">
+                                    <i class="fas fa-plus"></i>
+                                </div>
+                                <input type="file" id="fotoEstimasi" multiple accept="image/*" style="display: none;">
+                            </div>
+                            <small class="form-text text-muted">Klik + untuk menambah gambar. Gambar akan dikompres
+                                otomatis.</small>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary" id="submitBtn">
+                            <i class="fas fa-save me-2"></i> Simpan Estimasi
+                        </button>
+                    </form>
                 </div>
-                <input type="file" id="fotoEstimasi" multiple accept="image/*" style="display: none;">
-              </div>
-              <small class="form-text text-muted">Klik + untuk menambah gambar. Gambar akan dikompres otomatis.</small>
             </div>
+        </div>
 
-            <button type="submit" class="btn btn-primary" id="submitBtn">
-              <i class="fas fa-save me-2"></i> Simpan Estimasi
-            </button>
-          </form>
-        </div>
-      </div>
-    </div>
-
-    <!-- Estimasi Saya Section -->
-    <div class="content-section" id="estimasi-saya">
-      <div class="card">
-        <div class="card-header d-flex justify-content-between align-items-center">
-          <span>Daftar Estimasi Saya</span>
-          <div class="btn-group">
-            <button class="btn btn-outline-secondary btn-sm" id="refreshBtn">
-              <i class="fas fa-sync-alt me-1"></i> Refresh
-            </button>
-          </div>
-        </div>
-        <div class="card-body">
-          <div class="table-responsive">
-            <table class="table table-hover">
-              <thead>
-                <tr>
-                  <th>No. Polisi</th>
-                  <th>Jenis Mobil</th>
-                  <th>Komponen</th>
-                  <th>Tanggal</th>
-                  <th>Status</th>
-                  <th>Aksi</th>
-                </tr>
-              </thead>
-              <tbody id="estimasiList">
-                <!-- Data akan diisi dari Supabase -->
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Profil Section -->
-    <div class="content-section" id="profil">
-      <div class="card">
-        <div class="card-header">
-          Profil Saya
-        </div>
-        <div class="card-body">
-          <div class="row">
-            <div class="col-md-6">
-              <div class="form-group">
-                <label class="form-label">Email</label>
-                <input type="text" class="form-control" id="profileEmail" readonly>
-              </div>
+        <!-- Estimasi Saya Section -->
+        <div class="content-section" id="estimasi-saya">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <span>Daftar Estimasi Saya</span>
+                    <div class="btn-group">
+                        <button class="btn btn-outline-secondary btn-sm" id="refreshBtn">
+                            <i class="fas fa-sync-alt me-1"></i> Refresh
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>No. Polisi</th>
+                                    <th>Jenis Mobil</th>
+                                    <th>Komponen</th>
+                                    <th>Tanggal</th>
+                                    <th>Status</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="estimasiList">
+                                <!-- Data akan diisi dari Supabase -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
-            <div class="col-md-6">
-              <div class="form-group">
-                <label class="form-label">Role</label>
-                <input type="text" class="form-control" id="profileRole" readonly>
-              </div>
+        </div>
+
+        <!-- Profil Section -->
+        <div class="content-section" id="profil">
+            <div class="card">
+                <div class="card-header">
+                    Profil Saya
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label">Email</label>
+                                <input type="text" class="form-control" id="profileEmail" readonly>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label">Role</label>
+                                <input type="text" class="form-control" id="profileRole" readonly>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Bergabung Pada</label>
+                        <input type="text" class="form-control" id="profileCreated" readonly>
+                    </div>
+                </div>
             </div>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Bergabung Pada</label>
-            <input type="text" class="form-control" id="profileCreated" readonly>
-          </div>
         </div>
-      </div>
     </div>
-  </div>
 
-  <!-- Modal untuk Lihat Estimasi -->
-  <div class="modal fade" id="viewEstimasiModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Detail Estimasi</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    <!-- Modal untuk Lihat Estimasi -->
+    <div class="modal fade" id="viewEstimasiModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Detail Estimasi</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="estimasiDetail">
+                    <!-- Detail estimasi akan diisi di sini -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                    <button type="button" class="btn btn-primary" id="printEstimasiBtn">
+                        <i class="fas fa-print me-2"></i> Cetak PDF
+                    </button>
+                </div>
+            </div>
         </div>
-        <div class="modal-body" id="estimasiDetail">
-          <!-- Detail estimasi akan diisi di sini -->
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-          <button type="button" class="btn btn-primary" id="printEstimasiBtn">
-            <i class="fas fa-print me-2"></i> Cetak PDF
-          </button>
-        </div>
-      </div>
     </div>
-  </div>
 
-  <!-- Bootstrap & jQuery JS -->
-  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-  <!-- Tagify JS -->
-  <script src="https://unpkg.com/@yaireo/tagify"></script>
-  <script src="https://unpkg.com/@yaireo/tagify/dist/tagify.polyfills.min.js"></script>
-  <!-- Supabase JS -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <!-- html2pdf -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <!-- Bootstrap & jQuery JS -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Tagify JS -->
+    <script src="https://unpkg.com/@yaireo/tagify"></script>
+    <script src="https://unpkg.com/@yaireo/tagify/dist/tagify.polyfills.min.js"></script>
+    <!-- Supabase JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- html2pdf -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
-  <script>
-    // Inisialisasi Supabase
-    const supabaseUrl = 'https://pjawwektzazcxakgopou.supabase.co';
-    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBqYXd3ZWt0emF6Y3hha2dvcG91Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgyNjQ5MTUsImV4cCI6MjA3Mzg0MDkxNX0.dNEB80t7LcTsvAtHHqgIeJfxcwmmZNsWxPTIAlrj11c';
-    const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+    <script>
+        // Inisialisasi Supabase
+        const supabaseUrl = 'https://pjawwektzazcxakgopou.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBqYXd3ZWt0emF6Y3hha2dvcG91Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgyNjQ5MTUsImV4cCI6MjA3Mzg0MDkxNX0.dNEB80t7LcTsvAtHHqgIeJfxcwmmZNsWxPTIAlrj11c';
+        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-    // Inisialisasi Tagify
-    let tagify;
+        // Inisialisasi Tagify
+        let tagify;
 
-    // Variabel global untuk data user
-    let currentUser = null;
-    let userProfile = null;
-    let currentEstimasiId = null;
-    let selectedImages = [];
+        // Variabel global untuk data user
+        let currentUser = null;
+        let userProfile = null;
+        let currentEstimasiId = null;
+        let selectedImages = [];
 
-    // Cek status autentikasi
-    checkAuthState();
+        // Cek status autentikasi
+        checkAuthState();
 
-    // Fungsi untuk cek status autentikasi// Fungsi untuk cek status autentikasi
-async function checkAuthState() {
-  try {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) {
-      window.location.href = 'login.html';
-      return;
-    }
+        // Fungsi untuk cek status autentikasi// Fungsi untuk cek status autentikasi
+        async function checkAuthState() {
+            try {
+                const { data: { session } } = await supabase.auth.getSession();
+                if (!session) {
+                    window.location.href = 'login.html';
+                    return;
+                }
 
-    const { data: { user } } = await supabase.auth.getUser();
-    if (user) {
-      currentUser = user;
-      document.getElementById('userName').textContent = user.email;
-      document.getElementById('profileEmail').value = user.email;
-      document.getElementById('profileCreated').value = new Date(user.created_at).toLocaleDateString('id-ID');
+                const { data: { user } } = await supabase.auth.getUser();
+                if (user) {
+                    currentUser = user;
+                    document.getElementById('userName').textContent = user.email;
+                    document.getElementById('profileEmail').value = user.email;
+                    document.getElementById('profileCreated').value = new Date(user.created_at).toLocaleDateString('id-ID');
 
-      // Ambil role dari tabel users
-      const { data: userData, error } = await supabase
-        .from('users')
-        .select('*')
-        .eq('id', user.id)
-        .single();
+                    // Ambil role dari tabel users
+                    const { data: userData, error } = await supabase
+                        .from('users')
+                        .select('*')
+                        .eq('id', user.id)
+                        .single();
 
-      if (!error && userData) {
-        userProfile = userData;
-        document.getElementById('profileRole').value = userData.role;
+                    if (!error && userData) {
+                        userProfile = userData;
+                        document.getElementById('profileRole').value = userData.role;
 
-        // 🔑 VALIDASI ROLE
-        if (userData.role !== 'teknisi') {
-          // Kalau bukan teknisi, redirect ke index.html (biar dialihkan sesuai role)
-          window.location.href = 'index.html';
-          return;
-        }
-      } else {
-        console.error('Error fetching user profile:', error);
-        await createUserProfile(user);
-      }
-    }
+                        // 🔑 VALIDASI ROLE
+                        if (userData.role !== 'teknisi') {
+                            // Kalau bukan teknisi, redirect ke index.html (biar dialihkan sesuai role)
+                            window.location.href = 'index.html';
+                            return;
+                        }
+                    } else {
+                        console.error('Error fetching user profile:', error);
+                        await createUserProfile(user);
+                    }
+                }
 
-    // load data dashboard hanya kalau role sesuai
-    await loadDashboardData();
-    setTimeout(initTagify, 100);
-    initImageUpload();
+                // load data dashboard hanya kalau role sesuai
+                await loadDashboardData();
+                setTimeout(initTagify, 100);
+                initImageUpload();
 
-  } catch (error) {
-    console.error('Error checking auth state:', error);
-    alert('Terjadi kesalahan: ' + error.message);
-  }
-}
-
-
-    // Format nomor polisi (uppercase dan hilangkan spasi)
-    function formatNopol(input) {
-      input.value = input.value.toUpperCase().replace(/\s/g, '');
-    }
-
-    // Inisialisasi image upload
-    function initImageUpload() {
-      const addImageBtn = document.getElementById('addImageBtn');
-      const fileInput = document.getElementById('fotoEstimasi');
-      const imageContainer = document.getElementById('imageUploadContainer');
-
-      // Handle click pada tombol tambah gambar
-      addImageBtn.addEventListener('click', () => {
-        fileInput.click();
-      });
-
-      // Handle perubahan file input
-      fileInput.addEventListener('change', async (e) => {
-        const files = e.target.files;
-        if (!files || files.length === 0) return;
-
-        // Batasi maksimal 5 gambar
-        if (selectedImages.length + files.length > 5) {
-          alert('Maksimal 5 gambar yang dapat diupload');
-          return;
-        }
-
-        for (let i = 0; i < files.length; i++) {
-          const file = files[i];
-
-          // Kompres gambar sebelum ditambahkan
-          const compressedFile = await compressImage(file);
-
-          // Tambahkan ke array selectedImages
-          selectedImages.push(compressedFile);
-
-          // Buat preview gambar
-          const reader = new FileReader();
-          reader.onload = (e) => {
-            const imagePreviewContainer = document.createElement('div');
-            imagePreviewContainer.className = 'image-preview-container';
-
-            const imagePreview = document.createElement('img');
-            imagePreview.src = e.target.result;
-            imagePreview.className = 'image-preview';
-
-            const removeBtn = document.createElement('button');
-            removeBtn.className = 'remove-image-btn';
-            removeBtn.innerHTML = '<i class="fas fa-times"></i>';
-            removeBtn.onclick = () => {
-              // Hapus gambar dari array dan DOM
-              const index = selectedImages.findIndex(img => img.name === file.name);
-              if (index !== -1) {
-                selectedImages.splice(index, 1);
-              }
-              imagePreviewContainer.remove();
-            };
-
-            imagePreviewContainer.appendChild(imagePreview);
-            imagePreviewContainer.appendChild(removeBtn);
-            imageContainer.insertBefore(imagePreviewContainer, addImageBtn);
-          };
-          reader.readAsDataURL(compressedFile);
-        }
-
-        // Reset file input
-        fileInput.value = '';
-      });
-    }
-
-    // Kompres gambar
-    function compressImage(file) {
-      return new Promise((resolve) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = (event) => {
-          const img = new Image();
-          img.src = event.target.result;
-          img.onload = () => {
-            const canvas = document.createElement('canvas');
-            const MAX_WIDTH = 800;
-            const MAX_HEIGHT = 600;
-
-            let width = img.width;
-            let height = img.height;
-
-            // Hitung ulang ukuran jika perlu
-            if (width > height) {
-              if (width > MAX_WIDTH) {
-                height *= MAX_WIDTH / width;
-                width = MAX_WIDTH;
-              }
-            } else {
-              if (height > MAX_HEIGHT) {
-                width *= MAX_HEIGHT / height;
-                height = MAX_HEIGHT;
-              }
+            } catch (error) {
+                console.error('Error checking auth state:', error);
+                alert('Terjadi kesalahan: ' + error.message);
             }
+        }
 
-            canvas.width = width;
-            canvas.height = height;
 
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(img, 0, 0, width, height);
+        // Format nomor polisi (uppercase dan hilangkan spasi)
+        function formatNopol(input) {
+            input.value = input.value.toUpperCase().replace(/\s/g, '');
+        }
 
-            // Konversi ke blob dengan kualitas 70%
-            canvas.toBlob(
-              (blob) => {
-                resolve(new File([blob], file.name, {
-                  type: 'image/jpeg',
-                  lastModified: Date.now()
-                }));
-              },
-              'image/jpeg',
-              0.7
-            );
-          };
-        };
-      });
-    }
+        // Inisialisasi image upload
+        function initImageUpload() {
+            const addImageBtn = document.getElementById('addImageBtn');
+            const fileInput = document.getElementById('fotoEstimasi');
+            const imageContainer = document.getElementById('imageUploadContainer');
 
-    // Buat profil user jika belum ada
-    async function createUserProfile(user) {
-      try {
-        const { data, error } = await supabase
-          .from('users')
-          .insert([
-            {
-              id: user.id,
-              email: user.email,
-              role: 'teknisi'
+            // Handle click pada tombol tambah gambar
+            addImageBtn.addEventListener('click', () => {
+                fileInput.click();
+            });
+
+            // Handle perubahan file input
+            fileInput.addEventListener('change', async (e) => {
+                const files = e.target.files;
+                if (!files || files.length === 0) return;
+
+                // Batasi maksimal 5 gambar
+                if (selectedImages.length + files.length > 5) {
+                    alert('Maksimal 5 gambar yang dapat diupload');
+                    return;
+                }
+
+                for (let i = 0; i < files.length; i++) {
+                    const file = files[i];
+
+                    // Kompres gambar sebelum ditambahkan
+                    const compressedFile = await compressImage(file);
+
+                    // Tambahkan ke array selectedImages
+                    selectedImages.push(compressedFile);
+
+                    // Buat preview gambar
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        const imagePreviewContainer = document.createElement('div');
+                        imagePreviewContainer.className = 'image-preview-container';
+
+                        const imagePreview = document.createElement('img');
+                        imagePreview.src = e.target.result;
+                        imagePreview.className = 'image-preview';
+
+                        const removeBtn = document.createElement('button');
+                        removeBtn.className = 'remove-image-btn';
+                        removeBtn.innerHTML = '<i class="fas fa-times"></i>';
+                        removeBtn.onclick = () => {
+                            // Hapus gambar dari array dan DOM
+                            const index = selectedImages.findIndex(img => img.name === file.name);
+                            if (index !== -1) {
+                                selectedImages.splice(index, 1);
+                            }
+                            imagePreviewContainer.remove();
+                        };
+
+                        imagePreviewContainer.appendChild(imagePreview);
+                        imagePreviewContainer.appendChild(removeBtn);
+                        imageContainer.insertBefore(imagePreviewContainer, addImageBtn);
+                    };
+                    reader.readAsDataURL(compressedFile);
+                }
+
+                // Reset file input
+                fileInput.value = '';
+            });
+        }
+
+        // Kompres gambar
+        function compressImage(file) {
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = (event) => {
+                    const img = new Image();
+                    img.src = event.target.result;
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        const MAX_WIDTH = 800;
+                        const MAX_HEIGHT = 600;
+
+                        let width = img.width;
+                        let height = img.height;
+
+                        // Hitung ulang ukuran jika perlu
+                        if (width > height) {
+                            if (width > MAX_WIDTH) {
+                                height *= MAX_WIDTH / width;
+                                width = MAX_WIDTH;
+                            }
+                        } else {
+                            if (height > MAX_HEIGHT) {
+                                width *= MAX_HEIGHT / height;
+                                height = MAX_HEIGHT;
+                            }
+                        }
+
+                        canvas.width = width;
+                        canvas.height = height;
+
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+
+                        // Konversi ke blob dengan kualitas 70%
+                        canvas.toBlob(
+                            (blob) => {
+                                resolve(new File([blob], file.name, {
+                                    type: 'image/jpeg',
+                                    lastModified: Date.now()
+                                }));
+                            },
+                            'image/jpeg',
+                            0.7
+                        );
+                    };
+                };
+            });
+        }
+
+        // Buat profil user jika belum ada
+        async function createUserProfile(user) {
+            try {
+                const { data, error } = await supabase
+                    .from('users')
+                    .insert([
+                        {
+                            id: user.id,
+                            email: user.email,
+                            role: 'teknisi'
+                        }
+                    ])
+                    .select()
+                    .single();
+
+                if (error) throw error;
+
+                userProfile = data;
+                document.getElementById('profileRole').value = data.role;
+
+            } catch (error) {
+                console.error('Error creating user profile:', error);
+                alert('Terjadi kesalahan saat membuat profil: ' + error.message);
             }
-          ])
-          .select()
-          .single();
-
-        if (error) throw error;
-
-        userProfile = data;
-        document.getElementById('profileRole').value = data.role;
-
-      } catch (error) {
-        console.error('Error creating user profile:', error);
-        alert('Terjadi kesalahan saat membuat profil: ' + error.message);
-      }
-    }
-
-    // Inisialisasi Tagify
-    function initTagify() {
-      const input = document.querySelector('input[name=tags]');
-      if (input) {
-        tagify = new Tagify(input, {
-          pattern: /^.{1,50}$/, // Maximum 50 characters per tag
-          maxTags: 10,
-          dropdown: {
-            enabled: 0 // Always show suggestions dropdown
-          }
-        });
-      }
-    }
-
-    // Load data dashboard
-    async function loadDashboardData() {
-      try {
-        if (!currentUser) return;
-
-        // Pastikan user profile sudah ada
-        if (!userProfile) {
-          const { data: userData, error } = await supabase
-            .from('users')
-            .select('*')
-            .eq('id', currentUser.id)
-            .single();
-
-          if (error) throw error;
-          userProfile = userData;
         }
 
-        // Hitung total estimasi
-        const { count: totalCount, error: totalError } = await supabase
-          .from('estimasi')
-          .select('*', { count: 'exact', head: true })
-          .eq('teknisi_id', currentUser.id);
-
-        if (!totalError) {
-          document.getElementById('totalEstimasi').textContent = totalCount || 0;
+        // Inisialisasi Tagify
+        function initTagify() {
+            const input = document.querySelector('input[name=tags]');
+            if (input) {
+                tagify = new Tagify(input, {
+                    pattern: /^.{1,50}$/, // Maximum 50 characters per tag
+                    maxTags: 10,
+                    dropdown: {
+                        enabled: 0 // Always show suggestions dropdown
+                    }
+                });
+            }
         }
 
-        // Hitung estimasi dalam progress
-        const { count: progressCount, error: progressError } = await supabase
-          .from('estimasi')
-          .select('*', { count: 'exact', head: true })
-          .eq('teknisi_id', currentUser.id)
-          .eq('status', 'progress');
+        // Load data dashboard
+        async function loadDashboardData() {
+            try {
+                if (!currentUser) return;
 
-        if (!progressError) {
-          document.getElementById('estimasiProgress').textContent = progressCount || 0;
-        }
+                // Pastikan user profile sudah ada
+                if (!userProfile) {
+                    const { data: userData, error } = await supabase
+                        .from('users')
+                        .select('*')
+                        .eq('id', currentUser.id)
+                        .single();
 
-        // Hitung estimasi selesai
-        const { count: completedCount, error: completedError } = await supabase
-          .from('estimasi')
-          .select('*', { count: 'exact', head: true })
-          .eq('teknisi_id', currentUser.id)
-          .eq('status', 'completed');
+                    if (error) throw error;
+                    userProfile = userData;
+                }
 
-        if (!completedError) {
-          document.getElementById('estimasiSelesai').textContent = completedCount || 0;
-        }
+                // Hitung total estimasi
+                const { count: totalCount, error: totalError } = await supabase
+                    .from('estimasi')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('teknisi_id', currentUser.id);
 
-        // Hitung jenis mobil unik
-        const { data: mobilData, error: mobilError } = await supabase
-          .from('estimasi')
-          .select('jenis_mobil')
-          .eq('teknisi_id', currentUser.id);
+                if (!totalError) {
+                    document.getElementById('totalEstimasi').textContent = totalCount || 0;
+                }
 
-        if (!mobilError && mobilData) {
-          const uniqueMobil = [...new Set(mobilData.map(item => item.jenis_mobil))];
-          document.getElementById('totalMobil').textContent = uniqueMobil.length;
+                // Hitung estimasi dalam progress
+                const { count: progressCount, error: progressError } = await supabase
+                    .from('estimasi')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('teknisi_id', currentUser.id)
+                    .eq('status', 'progress');
+
+                if (!progressError) {
+                    document.getElementById('estimasiProgress').textContent = progressCount || 0;
+                }
+
+                // Hitung estimasi selesai
+                const { count: completedCount, error: completedError } = await supabase
+                    .from('estimasi')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('teknisi_id', currentUser.id)
+                    .eq('status', 'completed');
+
+                if (!completedError) {
+                    document.getElementById('estimasiSelesai').textContent = completedCount || 0;
+                }
+
+                // Hitung jenis mobil unik
+                const { data: mobilData, error: mobilError } = await supabase
+                    .from('estimasi')
+                    .select('jenis_mobil')
+                    .eq('teknisi_id', currentUser.id);
+
+                if (!mobilError && mobilData) {
+                    const uniqueMobil = [...new Set(mobilData.map(item => item.jenis_mobil))];
+                    document.getElementById('totalMobil').textContent = uniqueMobil.length;
+                }
+
+                // Load estimasi terbaru
+                await loadRecentEstimasi();
+
+                // Load semua estimasi
+                await loadAllEstimasi();
+
+            } catch (error) {
+                console.error('Error loading dashboard data:', error);
+            }
         }
 
         // Load estimasi terbaru
-        await loadRecentEstimasi();
+        async function loadRecentEstimasi() {
+            try {
+                if (!currentUser) return;
 
-        // Load semua estimasi
-        await loadAllEstimasi();
+                const { data, error } = await supabase
+                    .from('estimasi')
+                    .select('*')
+                    .eq('teknisi_id', currentUser.id)
+                    .order('created_at', { ascending: false })
+                    .limit(5);
 
-      } catch (error) {
-        console.error('Error loading dashboard data:', error);
-      }
-    }
+                if (error) throw error;
 
-    // Load estimasi terbaru
-    async function loadRecentEstimasi() {
-      try {
-        if (!currentUser) return;
+                const tbody = document.getElementById('recentEstimasi');
+                tbody.innerHTML = '';
 
-        const { data, error } = await supabase
-          .from('estimasi')
-          .select('*')
-          .eq('teknisi_id', currentUser.id)
-          .order('created_at', { ascending: false })
-          .limit(5);
-
-        if (error) throw error;
-
-        const tbody = document.getElementById('recentEstimasi');
-        tbody.innerHTML = '';
-
-        if (data && data.length > 0) {
-          data.forEach(estimasi => {
-            const row = document.createElement('tr');
-            row.innerHTML = `
+                if (data && data.length > 0) {
+                    data.forEach(estimasi => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
               <td>${estimasi.nopol}</td>
               <td>${estimasi.jenis_mobil}</td>
               <td>${new Date(estimasi.created_at).toLocaleDateString('id-ID')}</td>
@@ -1144,45 +1147,45 @@ async function checkAuthState() {
                 </button>
               </td>
             `;
-            tbody.appendChild(row);
-          });
-        } else {
-          tbody.innerHTML = '<tr><td colspan="5" class="text-center">Tidak ada data estimasi</td></tr>';
+                        tbody.appendChild(row);
+                    });
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="5" class="text-center">Tidak ada data estimasi</td></tr>';
+                }
+
+                // Tambahkan event listener untuk tombol view
+                document.querySelectorAll('.view-estimasi').forEach(button => {
+                    button.addEventListener('click', function () {
+                        const estimasiId = this.getAttribute('data-id');
+                        viewEstimasi(estimasiId);
+                    });
+                });
+
+            } catch (error) {
+                console.error('Error loading recent estimasi:', error);
+            }
         }
 
-        // Tambahkan event listener untuk tombol view
-        document.querySelectorAll('.view-estimasi').forEach(button => {
-          button.addEventListener('click', function () {
-            const estimasiId = this.getAttribute('data-id');
-            viewEstimasi(estimasiId);
-          });
-        });
+        // Load semua estimasi
+        async function loadAllEstimasi() {
+            try {
+                if (!currentUser) return;
 
-      } catch (error) {
-        console.error('Error loading recent estimasi:', error);
-      }
-    }
+                const { data, error } = await supabase
+                    .from('estimasi')
+                    .select('*')
+                    .eq('teknisi_id', currentUser.id)
+                    .order('created_at', { ascending: false });
 
-    // Load semua estimasi
-    async function loadAllEstimasi() {
-      try {
-        if (!currentUser) return;
+                if (error) throw error;
 
-        const { data, error } = await supabase
-          .from('estimasi')
-          .select('*')
-          .eq('teknisi_id', currentUser.id)
-          .order('created_at', { ascending: false });
+                const tbody = document.getElementById('estimasiList');
+                tbody.innerHTML = '';
 
-        if (error) throw error;
-
-        const tbody = document.getElementById('estimasiList');
-        tbody.innerHTML = '';
-
-        if (data && data.length > 0) {
-          data.forEach(estimasi => {
-            const row = document.createElement('tr');
-            row.innerHTML = `
+                if (data && data.length > 0) {
+                    data.forEach(estimasi => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
               <td>${estimasi.nopol}</td>
               <td>${estimasi.jenis_mobil}</td>
               <td>${Array.isArray(estimasi.komponen) ? estimasi.komponen.join(', ') : estimasi.komponen}</td>
@@ -1197,77 +1200,77 @@ async function checkAuthState() {
                 </button>
               </td>
             `;
-            tbody.appendChild(row);
-          });
-        } else {
-          tbody.innerHTML = '<tr><td colspan="6" class="text-center">Tidak ada data estimasi</td></tr>';
-        }
+                        tbody.appendChild(row);
+                    });
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="6" class="text-center">Tidak ada data estimasi</td></tr>';
+                }
 
-        // Tambahkan event listener untuk tombol
-        document.querySelectorAll('.view-estimasi').forEach(button => {
-          button.addEventListener('click', function () {
-            const estimasiId = this.getAttribute('data-id');
-            viewEstimasi(estimasiId);
-          });
-        });
+                // Tambahkan event listener untuk tombol
+                document.querySelectorAll('.view-estimasi').forEach(button => {
+                    button.addEventListener('click', function () {
+                        const estimasiId = this.getAttribute('data-id');
+                        viewEstimasi(estimasiId);
+                    });
+                });
 
-        document.querySelectorAll('.delete-estimasi').forEach(button => {
-          button.addEventListener('click', function () {
-            const estimasiId = this.getAttribute('data-id');
-            deleteEstimasi(estimasiId);
-          });
-        });
+                document.querySelectorAll('.delete-estimasi').forEach(button => {
+                    button.addEventListener('click', function () {
+                        const estimasiId = this.getAttribute('data-id');
+                        deleteEstimasi(estimasiId);
+                    });
+                });
 
-      } catch (error) {
-        console.error('Error loading all estimasi:', error);
-      }
-    }
-
-    // Fungsi untuk mendapatkan teks status
-    function getStatusText(status) {
-      switch (status) {
-        case 'pending': return 'Pending';
-        case 'progress': return 'Proses';
-        case 'completed': return 'Selesai';
-        default: return status;
-      }
-    }
-
-    // View estimasi detail
-    async function viewEstimasi(id) {
-      try {
-        const { data, error } = await supabase
-          .from('estimasi')
-          .select('*')
-          .eq('id', id)
-          .single();
-
-        if (error) throw error;
-
-        currentEstimasiId = id;
-
-        // Handle foto_url yang bisa berupa string atau array
-        let fotoUrls = [];
-        if (data.foto_url) {
-          if (Array.isArray(data.foto_url)) {
-            fotoUrls = data.foto_url;
-          } else if (typeof data.foto_url === 'string') {
-            // Jika foto_url adalah string, coba parse sebagai JSON
-            try {
-              fotoUrls = JSON.parse(data.foto_url);
-              // Jika parsing gagal, anggap sebagai string tunggal
-              if (!Array.isArray(fotoUrls)) {
-                fotoUrls = [data.foto_url];
-              }
-            } catch (e) {
-              // Jika parsing gagal, anggap sebagai string tunggal
-              fotoUrls = [data.foto_url];
+            } catch (error) {
+                console.error('Error loading all estimasi:', error);
             }
-          }
         }
 
-        // Format data untuk ditampilkan
-        const estimasiDetail = `
+        // Fungsi untuk mendapatkan teks status
+        function getStatusText(status) {
+            switch (status) {
+                case 'pending': return 'Pending';
+                case 'progress': return 'Proses';
+                case 'completed': return 'Selesai';
+                default: return status;
+            }
+        }
+
+        // View estimasi detail
+        async function viewEstimasi(id) {
+            try {
+                const { data, error } = await supabase
+                    .from('estimasi')
+                    .select('*')
+                    .eq('id', id)
+                    .single();
+
+                if (error) throw error;
+
+                currentEstimasiId = id;
+
+                // Handle foto_url yang bisa berupa string atau array
+                let fotoUrls = [];
+                if (data.foto_url) {
+                    if (Array.isArray(data.foto_url)) {
+                        fotoUrls = data.foto_url;
+                    } else if (typeof data.foto_url === 'string') {
+                        // Jika foto_url adalah string, coba parse sebagai JSON
+                        try {
+                            fotoUrls = JSON.parse(data.foto_url);
+                            // Jika parsing gagal, anggap sebagai string tunggal
+                            if (!Array.isArray(fotoUrls)) {
+                                fotoUrls = [data.foto_url];
+                            }
+                        } catch (e) {
+                            // Jika parsing gagal, anggap sebagai string tunggal
+                            fotoUrls = [data.foto_url];
+                        }
+                    }
+                }
+
+                // Format data untuk ditampilkan
+                const estimasiDetail = `
           <div class="row">
             <div class="col-md-6">
               <p><strong>Nomor Polisi:</strong> ${data.nopol}</p>
@@ -1285,8 +1288,8 @@ async function checkAuthState() {
               <p><strong>Komponen:</strong></p>
               <ul>
                 ${Array.isArray(data.komponen) ?
-            data.komponen.map(k => `<li>${k}</li>`).join('') :
-            `<li>${data.komponen}</li>`}
+                        data.komponen.map(k => `<li>${k}</li>`).join('') :
+                        `<li>${data.komponen}</li>`}
               </ul>
             </div>
           </div>
@@ -1307,437 +1310,480 @@ async function checkAuthState() {
           ` : ''}
         `;
 
-        document.getElementById('estimasiDetail').innerHTML = estimasiDetail;
+                document.getElementById('estimasiDetail').innerHTML = estimasiDetail;
 
-        // Tampilkan modal
-        const modal = new bootstrap.Modal(document.getElementById('viewEstimasiModal'));
-        modal.show();
+                // Tampilkan modal
+                const modal = new bootstrap.Modal(document.getElementById('viewEstimasiModal'));
+                modal.show();
 
-      } catch (error) {
-        console.error('Error viewing estimasi:', error);
-        alert('Terjadi kesalahan saat memuat detail estimasi: ' + error.message);
-      }
-    }
+            } catch (error) {
+                console.error('Error viewing estimasi:', error);
+                alert('Terjadi kesalahan saat memuat detail estimasi: ' + error.message);
+            }
+        }
 
-    // Hapus estimasi
-    async function deleteEstimasi(id) {
-      if (!confirm('Apakah Anda yakin ingin menghapus estimasi ini?')) return;
+        // Hapus estimasi
+        async function deleteEstimasi(id) {
+            if (!confirm('Apakah Anda yakin ingin menghapus estimasi ini?')) return;
 
-      try {
-        const { error } = await supabase
-          .from('estimasi')
-          .delete()
-          .eq('id', id);
-
-        if (error) throw error;
-
-        alert('Estimasi berhasil dihapus');
-        await loadDashboardData();
-
-      } catch (error) {
-        console.error('Error deleting estimasi:', error);
-        alert('Terjadi kesalahan saat menghapus estimasi: ' + error.message);
-      }
-    }
-
-    // Cetak PDF
-    document.getElementById('printEstimasiBtn').addEventListener('click', function () {
-      // Dapatkan data estimasi untuk PDF
-      generatePdf();
-    });
-
-    // Generate PDF dengan desain yang lebih baik
-    async function generatePdf() {
-      try {
-        const { data, error } = await supabase
-          .from('estimasi')
-          .select('*')
-          .eq('id', currentEstimasiId)
-          .single();
-
-        if (error) throw error;
-
-        // Handle foto_url yang bisa berupa string atau array
-        let fotoUrls = [];
-        if (data.foto_url) {
-          if (Array.isArray(data.foto_url)) {
-            fotoUrls = data.foto_url;
-          } else if (typeof data.foto_url === 'string') {
             try {
-              fotoUrls = JSON.parse(data.foto_url);
-              if (!Array.isArray(fotoUrls)) {
-                fotoUrls = [data.foto_url];
-              }
-            } catch (e) {
-              fotoUrls = [data.foto_url];
+                const { error } = await supabase
+                    .from('estimasi')
+                    .delete()
+                    .eq('id', id);
+
+                if (error) throw error;
+
+                alert('Estimasi berhasil dihapus');
+                await loadDashboardData();
+
+            } catch (error) {
+                console.error('Error deleting estimasi:', error);
+                alert('Terjadi kesalahan saat menghapus estimasi: ' + error.message);
             }
-          }
         }
 
-        // Buat konten PDF
-        const pdfContent = `
-          <div style="font-family: Arial, sans-serif; padding: 20px;">
-            <div style="text-align: center; margin-bottom: 20px;">
-              <h2 style="color: #e60000; margin-bottom: 5px;">Tunas Toyota Batutulis</h2>
-              <p style="margin: 0; font-size: 14px;">Jl. Batutulis No. 42,RT.7/RW.2 Jakarta Pusat</p>
-              <p style="margin: 0; font-size: 14px;">Telp: (021) 3454465</p>
-              <hr style="border-top: 2px solid #e60000; margin: 15px 0;">
-              <h3 style="margin-bottom: 20px;">Estimasi Perbaikan Kendaraan</h3>
-            </div>
-            
-            <div style="display: flex; margin-bottom: 20px;">
-              <div style="flex: 1;">
-                <p><strong>Nomor Polisi:</strong> ${data.nopol}</p>
-                <p><strong>Jenis Mobil:</strong> ${data.jenis_mobil}</p>
-                <p><strong>Telepon Customer:</strong> ${data.telepon_customer || '-'}</p>
-              </div>
-              <div style="flex: 1;">
-                <p><strong>Service Advisor:</strong> ${data.service_advisor || '-'}</p>
-                <p><strong>Tanggal Estimasi:</strong> ${new Date(data.created_at).toLocaleDateString('id-ID')}</p>
-                <p><strong>Status:</strong> ${getStatusText(data.status)}</p>
-              </div>
-            </div>
-            
-            <div style="margin-bottom: 20px;">
-              <p><strong>Komponen yang Perlu Diperbaiki/Diganti:</strong></p>
-              <ul>
-                ${Array.isArray(data.komponen) ?
-            data.komponen.map(k => `<li>${k}</li>`).join('') :
-            `<li>${data.komponen}</li>`}
-              </ul>
-            </div>
-            
-            <div style="margin-bottom: 20px;">
-              <p><strong>Keterangan:</strong> ${data.keterangan || 'Tidak ada keterangan tambahan'}</p>
-            </div>
-            
-            ${fotoUrls.length > 0 ? `
-            <div style="margin-bottom: 20px;">
-              <p><strong>Foto Kondisi Kendaraan:</strong></p>
-              <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;">
-                ${fotoUrls.map(url => `<img src="${url}" 
-     style="max-width:100%; height:auto; max-height:150px; object-fit:contain; border-radius:5px; border:1px solid #ddd;">
-`).join('')}
-              </div>
-            </div>
-            ` : ''}
-            
-            <div style="background-color: #f8f9fa; padding: 15px; border-radius: 8px; margin-top: 30px;">
-              <p style="margin: 0; font-weight: bold;">Untuk melakukan perbaikan komponen tersebut, hubungi:</p>
-              <p style="margin: 5px 0 0 0;">
-                <strong>Admin Tunas Toyota Batutulis</strong><br>
-                <a href="https://wa.me/6281315389866?text=Halo%20Tunas%20Toyota%20Batutulis,%20saya%20ingin%20melakukan%20penggantian%20part%20berikut:%20${encodeURIComponent(Array.isArray(data.komponen) ? data.komponen.join(', ') : data.komponen)}" 
-                   style="color: #25D366; text-decoration: none;">
-                  <i class="fab fa-whatsapp"></i> 081315389866
-                </a>
-              </p>
-            </div>
-            
-            <div style="margin-top: 30px; text-align: center; font-size: 12px; color: #6c757d;">
-              <p>Dicetak pada: ${new Date().toLocaleDateString('id-ID')} ${new Date().toLocaleTimeString('id-ID')}</p>
-            </div>
-          </div>
-        `;
+        // Cetak PDF
+        document.getElementById('printEstimasiBtn').addEventListener('click', function () {
+            // Dapatkan data estimasi untuk PDF
+            generatePdf();
+        });
 
-        // Buat elemen sementara untuk konten PDF
-        const tempDiv = document.createElement('div');
-        tempDiv.innerHTML = pdfContent;
+        // Generate PDF dengan desain yang lebih baik
+        async function generatePdf() {
+            try {
+                const { data, error } = await supabase
+                    .from('estimasi')
+                    .select('*')
+                    .eq('id', currentEstimasiId)
+                    .single();
 
-        // Opsi untuk html2pdf
-        const opt = {
-  margin: 10,
-  filename: `estimasi_${data.nopol}_${new Date().getTime()}.pdf`,
-  image: { type: 'jpeg', quality: 0.98 },
-  html2canvas: { 
-    scale: 2,
-    useCORS: true,          // ✅ izinkan CORS
-    allowTaint: true        // ✅ fallback
-  },
-  jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-};
+                if (error) throw error;
+
+                // Handle foto_url yang bisa berupa string atau array
+                let fotoUrls = [];
+                if (data.foto_url) {
+                    if (Array.isArray(data.foto_url)) {
+                        fotoUrls = data.foto_url;
+                    } else if (typeof data.foto_url === 'string') {
+                        try {
+                            fotoUrls = JSON.parse(data.foto_url);
+                            if (!Array.isArray(fotoUrls)) {
+                                fotoUrls = [data.foto_url];
+                            }
+                        } catch (e) {
+                            fotoUrls = [data.foto_url];
+                        }
+                    }
+                }
+
+                // Buat konten PDF
+                const pdfContent = `
+  <div style="font-family: Arial, sans-serif; margin: 0; padding: 20px; color: #333; line-height: 1.6;">
+    <div style="max-width: 800px; margin: 0 auto; background: white; padding: 25px; box-shadow: 0 0 10px rgba(0,0,0,0.1);">
+      
+      <div style="position: relative; border-bottom: 2px solid #e60000; padding-bottom: 15px; margin-bottom: 20px;">
+        <img src="https://toyotatunasjakarta.co.id/wp-content/uploads/2022/03/LOGO-TUNAS-TOYOTA.png" alt="Logo Tunas Toyota" style="position:absolute; top:0; left:0; width:150px;">
+        <div style="text-align:center; margin-left:160px;">
+          <h2 style="color:#e60000; margin-bottom:5px;">Tunas Toyota Batutulis</h2>
+          <p style="margin:2px 0; font-size:14px;">Jl. Batutulis No. 42, RT.7/RW.2 Jakarta Pusat</p>
+          <p style="margin:2px 0; font-size:14px;">Telp: (021) 3454465</p>
+          <h3>Estimasi Perbaikan Kendaraan</h3>
+        </div>
+      </div>
+
+      <div style="display:flex; flex-wrap:wrap; margin-bottom:20px;">
+        <div style="flex:1; min-width:300px; margin-bottom:15px;">
+          <p><strong>Nomor Polisi:</strong> ${data.nopol}</p>
+          <p><strong>Jenis Mobil:</strong> ${data.jenis_mobil}</p>
+          <p><strong>Nomor Rangka:</strong> ${data.no_rangka || '-'}</p>
+          <p><strong>Telepon Customer:</strong> ${data.telepon_customer || '-'}</p>
+        </div>
+        <div style="flex:1; min-width:300px; margin-bottom:15px;">
+          <p><strong>Service Advisor:</strong> ${data.service_advisor || '-'}</p>
+          <p><strong>Tanggal Estimasi:</strong> ${new Date(data.created_at).toLocaleDateString('id-ID')}</p>
+          <p><strong>Status:</strong> <span style="
+            display:inline-block; padding:3px 8px; border-radius:4px; font-size:12px; font-weight:bold;
+            ${data.status === 'completed' ? 'background:#d4edda; color:#155724;' : 'background:#f8d7da; color:#721c24;'}
+          ">${getStatusText(data.status)}</span></p>
+        </div>
+      </div>
+
+      <div>
+        <p><strong>Komponen yang Perlu Diperbaiki/Diganti:</strong></p>
+        <ul>
+          ${Array.isArray(data.komponen) ? data.komponen.map(k => `<li>${k}</li>`).join('') : `<li>${data.komponen}</li>`}
+        </ul>
+      </div>
+
+      <div>
+        <p><strong>Keterangan:</strong> ${data.keterangan || 'Tidak ada keterangan tambahan'}</p>
+      </div>
+
+      ${data.spareparts && data.spareparts.length > 0 ? `
+      <div>
+        <p><strong>Detail Sparepart:</strong></p>
+        <table style="width:100%; border-collapse:collapse; margin:20px 0;">
+          <thead>
+            <tr>
+              <th style="background:#e60000; color:white; padding:10px; text-align:left;">Kode</th>
+              <th style="background:#e60000; color:white; padding:10px; text-align:left;">Nama Sparepart</th>
+              <th style="background:#e60000; color:white; padding:10px; text-align:left;">Jumlah</th>
+              <th style="background:#e60000; color:white; padding:10px; text-align:left;">Ketersediaan</th>
+              <th style="background:#e60000; color:white; padding:10px; text-align:left;">Harga</th>
+              <th style="background:#e60000; color:white; padding:10px; text-align:left;">Subtotal</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${data.spareparts.map(sp => `
+              <tr>
+                <td style="padding:10px; border-bottom:1px solid #ddd;">${sp.kode}</td>
+                <td style="padding:10px; border-bottom:1px solid #ddd;">${sp.nama}</td>
+                <td style="padding:10px; border-bottom:1px solid #ddd;">${sp.jumlah}</td>
+                <td style="padding:10px; border-bottom:1px solid #ddd;">${sp.ketersediaan}</td>
+                <td style="padding:10px; border-bottom:1px solid #ddd;">${sp.harga}</td>
+                <td style="padding:10px; border-bottom:1px solid #ddd;">${sp.subtotal}</td>
+              </tr>`).join('')}
+            <tr style="font-weight:bold; background:#f2f2f2;">
+              <td colspan="5" style="text-align:right; padding:10px;">Total Harga:</td>
+              <td style="padding:10px;">${data.total_harga || '-'}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>` : ''}
+
+      ${data.catatan_sparepart ? `<div><p><strong>Catatan Sparepart:</strong> ${data.catatan_sparepart}</p></div>` : ''}
+
+      ${fotoUrls.length > 0 ? `
+      <div style="margin:20px 0;">
+        <p><strong>Foto Kondisi Kendaraan:</strong></p>
+        <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:10px; margin-top:10px;">
+          ${fotoUrls.map(url => `
+            <div style="border:1px solid #ddd; border-radius:5px; overflow:hidden;">
+              <img src="${url}" style="width:100%; height:150px; object-fit:cover; display:block;">
+            </div>`).join('')}
+        </div>
+      </div>` : ''}
+
+      <div style="background:#f8f9fa; padding:15px; border-radius:8px; margin-top:30px; border-left:4px solid #e60000;">
+        <p style="margin:0; font-weight:bold;">Untuk melakukan perbaikan komponen tersebut, hubungi:</p>
+        <p style="margin:5px 0 0 0;">
+          <strong>Admin Tunas Toyota Batutulis</strong><br>
+          <a href="https://wa.me/6281315389866?text=Halo%20Tunas%20Toyota%20Batutulis,%20saya%20ingin%20melakukan%20penggantian%20part%20berikut:%20${encodeURIComponent(Array.isArray(data.komponen) ? data.komponen.join(', ') : data.komponen)}" 
+             style="color:#25D366; text-decoration:none; font-weight:bold;">
+             📱 081315389866 (WhatsApp)
+          </a>
+        </p>
+      </div>
+
+      <div style="text-align:center; font-size:12px; color:#6c757d; margin-top:30px; padding-top:10px; border-top:1px solid #ddd;">
+        <p>Dicetak pada: ${new Date().toLocaleDateString('id-ID')} ${new Date().toLocaleTimeString('id-ID')}</p>
+      </div>
+
+    </div>
+  </div>
+`;
+
+                // Buat elemen sementara untuk konten PDF
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = pdfContent;
+
+                // Opsi untuk html2pdf
+                const opt = {
+                    margin: 10,
+                    filename: `estimasi_${data.nopol}_${new Date().getTime()}.pdf`,
+                    image: { type: 'jpeg', quality: 0.98 },
+                    html2canvas: {
+                        scale: 2,
+                        useCORS: true,          // ✅ izinkan CORS
+                        allowTaint: true        // ✅ fallback
+                    },
+                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                };
 
 
-        // Generate PDF
-        html2pdf().set(opt).from(tempDiv).save().then(() => {
-  // ✅ gunakan toast dari login.html
-  showToast('success', 'PDF Berhasil', 'File estimasi berhasil diunduh!');
-});
+                // Generate PDF
+                html2pdf().set(opt).from(tempDiv).save().then(() => {
+                    // ✅ gunakan toast dari login.html
+                    showToast('success', 'PDF Berhasil', 'File estimasi berhasil diunduh!');
+                });
 
 
-      } catch (error) {
-        console.error('Error generating PDF:', error);
-        alert('Terjadi kesalahan saat membuat PDF: ' + error.message);
-      }
-    }
-
-    // Upload foto ke Supabase Storage
-    async function uploadFoto(file) {
-      try {
-        // Generate nama file unik
-        const fileName = `${currentUser.id}/${Date.now()}_${file.name}`;
-
-        // Upload file ke Supabase Storage
-        const { data, error } = await supabase.storage
-          .from('estimasi-fotos')
-          .upload(fileName, file);
-
-        if (error) {
-          // Jika error karena storage penuh, hapus file lama
-          if (error.message.includes('quota')) {
-            await handleStorageFull(file);
-            return null;
-          }
-          throw error;
-        }
-
-        // Dapatkan URL publik
-        const { data: { publicUrl } } = supabase.storage
-          .from('estimasi-fotos')
-          .getPublicUrl(fileName);
-
-        return publicUrl;
-
-      } catch (error) {
-        console.error('Error uploading foto:', error);
-        return null;
-      }
-    }
-
-    // Handle storage penuh dengan menghapus file lama
-    async function handleStorageFull(newFile) {
-      try {
-        // Dapatkan daftar file user
-        const { data: files, error } = await supabase.storage
-          .from('estimasi-fotos')
-          .list(`${currentUser.id}`);
-
-        if (error) throw error;
-
-        if (files && files.length > 0) {
-          // Urutkan berdasarkan created_at (yang paling lama pertama)
-          files.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
-
-          // Hapus file paling lama
-          const { error: deleteError } = await supabase.storage
-            .from('estimasi-fotos')
-            .remove([`${currentUser.id}/${files[0].name}`]);
-
-          if (deleteError) throw deleteError;
-
-          // Coba upload lagi
-          return await uploadFoto(newFile);
-        }
-
-        return null;
-
-      } catch (error) {
-        console.error('Error handling storage full:', error);
-        return null;
-      }
-    }
-
-    // Sidebar navigation
-    $(document).ready(function () {
-      // Mobile menu toggle
-      $('#mobileMenuBtn').click(function () {
-        $('#sidebar').toggleClass('show');
-      });
-
-      // Menu item click
-      $('.sidebar-menu a').click(function (e) {
-        e.preventDefault();
-
-        // Update active menu item
-        $('.sidebar-menu a').removeClass('active');
-        $(this).addClass('active');
-
-        // Show corresponding section
-        const sectionId = $(this).data('section');
-        $('.content-section').removeClass('active');
-        $('#' + sectionId).addClass('active');
-
-        // Update page title
-        const sectionTitle = $(this).find('span').text();
-        $('#pageTitle').text(sectionTitle);
-        $('#mobileTitle').text(sectionTitle);
-
-        // Hide sidebar on mobile after selection
-        if ($(window).width() < 768) {
-          $('#sidebar').removeClass('show');
-        }
-      });
-
-      // Refresh button
-      $('#refreshBtn').click(async function (e) {
-        e.preventDefault();
-        $(this).html('<span class="loading-spinner"></span>');
-        await loadAllEstimasi();
-        $(this).html('<i class="fas fa-sync-alt me-1"></i> Refresh');
-      });
-
-      // Logout handler
-      $('#logoutBtn, #logoutBtnDesktop').click(async function () {
-        try {
-          const { error } = await supabase.auth.signOut();
-          if (error) throw error;
-          window.location.href = 'login.html';
-        } catch (error) {
-          console.error('Error signing out:', error);
-          alert('Terjadi kesalahan saat logout: ' + error.message);
-        }
-      });
-
-      // Form submission
-      $('#estimasiForm').submit(async function (e) {
-        e.preventDefault();
-
-        const nopol = $('#nopol').val();
-        const jenisMobil = $('#jenisMobil').val();
-        const telepon = $('#telepon').val();
-        const serviceAdvisor = $('#serviceAdvisor').val();
-        const keterangan = $('#keterangan').val();
-
-        // Dapatkan tag dari Tagify
-        const tags = tagify.value.map(tag => tag.value);
-
-        if (!nopol || !jenisMobil || !telepon || !serviceAdvisor || tags.length === 0) {
-          alert('Harap isi semua field yang diperlukan!');
-          return;
-        }
-
-        try {
-          // Tampilkan loading
-          const submitBtn = $('#submitBtn');
-          submitBtn.html('<span class="loading-spinner"></span> Menyimpan...');
-          submitBtn.prop('disabled', true);
-
-          // Pastikan user profile sudah ada sebelum menyimpan
-          if (!userProfile) {
-            await createUserProfile(currentUser);
-          }
-
-          // Upload semua foto jika ada
-          let fotoUrls = [];
-          if (selectedImages.length > 0) {
-            for (const image of selectedImages) {
-              const url = await uploadFoto(image);
-              if (url) {
-                fotoUrls.push(url);
-              }
+            } catch (error) {
+                console.error('Error generating PDF:', error);
+                alert('Terjadi kesalahan saat membuat PDF: ' + error.message);
             }
-          }
+        }
 
-          // Simpan data ke Supabase
-          const { data, error } = await supabase
-            .from('estimasi')
-            .insert([
-              {
-                nopol: nopol,
-                jenis_mobil: jenisMobil,
-                telepon_customer: telepon,
-                service_advisor: serviceAdvisor,
-                komponen: tags,
-                keterangan: keterangan,
-                foto_url: fotoUrls,
-                teknisi_id: currentUser.id,
-                status: 'pending'
-              }
-            ])
-            .select();
+        // Upload foto ke Supabase Storage
+        async function uploadFoto(file) {
+            try {
+                // Generate nama file unik
+                const fileName = `${currentUser.id}/${Date.now()}_${file.name}`;
 
-          if (error) throw error;
+                // Upload file ke Supabase Storage
+                const { data, error } = await supabase.storage
+                    .from('estimasi-fotos')
+                    .upload(fileName, file);
 
-          // Tampilkan pesan sukses
-          alert('Estimasi berhasil disimpan!');
+                if (error) {
+                    // Jika error karena storage penuh, hapus file lama
+                    if (error.message.includes('quota')) {
+                        await handleStorageFull(file);
+                        return null;
+                    }
+                    throw error;
+                }
 
-          // Reset form
-          $('#estimasiForm')[0].reset();
-          tagify.removeAllTags();
-          selectedImages = [];
-          document.getElementById('imageUploadContainer').innerHTML = `
+                // Dapatkan URL publik
+                const { data: { publicUrl } } = supabase.storage
+                    .from('estimasi-fotos')
+                    .getPublicUrl(fileName);
+
+                return publicUrl;
+
+            } catch (error) {
+                console.error('Error uploading foto:', error);
+                return null;
+            }
+        }
+
+        // Handle storage penuh dengan menghapus file lama
+        async function handleStorageFull(newFile) {
+            try {
+                // Dapatkan daftar file user
+                const { data: files, error } = await supabase.storage
+                    .from('estimasi-fotos')
+                    .list(`${currentUser.id}`);
+
+                if (error) throw error;
+
+                if (files && files.length > 0) {
+                    // Urutkan berdasarkan created_at (yang paling lama pertama)
+                    files.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+
+                    // Hapus file paling lama
+                    const { error: deleteError } = await supabase.storage
+                        .from('estimasi-fotos')
+                        .remove([`${currentUser.id}/${files[0].name}`]);
+
+                    if (deleteError) throw deleteError;
+
+                    // Coba upload lagi
+                    return await uploadFoto(newFile);
+                }
+
+                return null;
+
+            } catch (error) {
+                console.error('Error handling storage full:', error);
+                return null;
+            }
+        }
+
+        // Sidebar navigation
+        $(document).ready(function () {
+            // Mobile menu toggle
+            $('#mobileMenuBtn').click(function () {
+                $('#sidebar').toggleClass('show');
+            });
+
+            // Menu item click
+            $('.sidebar-menu a').click(function (e) {
+                e.preventDefault();
+
+                // Update active menu item
+                $('.sidebar-menu a').removeClass('active');
+                $(this).addClass('active');
+
+                // Show corresponding section
+                const sectionId = $(this).data('section');
+                $('.content-section').removeClass('active');
+                $('#' + sectionId).addClass('active');
+
+                // Update page title
+                const sectionTitle = $(this).find('span').text();
+                $('#pageTitle').text(sectionTitle);
+                $('#mobileTitle').text(sectionTitle);
+
+                // Hide sidebar on mobile after selection
+                if ($(window).width() < 768) {
+                    $('#sidebar').removeClass('show');
+                }
+            });
+
+            // Refresh button
+            $('#refreshBtn').click(async function (e) {
+                e.preventDefault();
+                $(this).html('<span class="loading-spinner"></span>');
+                await loadAllEstimasi();
+                $(this).html('<i class="fas fa-sync-alt me-1"></i> Refresh');
+            });
+
+            // Logout handler
+            $('#logoutBtn, #logoutBtnDesktop').click(async function () {
+                try {
+                    const { error } = await supabase.auth.signOut();
+                    if (error) throw error;
+                    window.location.href = 'login.html';
+                } catch (error) {
+                    console.error('Error signing out:', error);
+                    alert('Terjadi kesalahan saat logout: ' + error.message);
+                }
+            });
+
+            // Form submission
+            $('#estimasiForm').submit(async function (e) {
+                e.preventDefault();
+
+                const nopol = $('#nopol').val();
+                const jenisMobil = $('#jenisMobil').val();
+                const telepon = $('#telepon').val();
+                const serviceAdvisor = $('#serviceAdvisor').val();
+                const keterangan = $('#keterangan').val();
+
+                // Dapatkan tag dari Tagify
+                const tags = tagify.value.map(tag => tag.value);
+
+                if (!nopol || !jenisMobil || !telepon || !serviceAdvisor || tags.length === 0) {
+                    alert('Harap isi semua field yang diperlukan!');
+                    return;
+                }
+
+                try {
+                    // Tampilkan loading
+                    const submitBtn = $('#submitBtn');
+                    submitBtn.html('<span class="loading-spinner"></span> Menyimpan...');
+                    submitBtn.prop('disabled', true);
+
+                    // Pastikan user profile sudah ada sebelum menyimpan
+                    if (!userProfile) {
+                        await createUserProfile(currentUser);
+                    }
+
+                    // Upload semua foto jika ada
+                    let fotoUrls = [];
+                    if (selectedImages.length > 0) {
+                        for (const image of selectedImages) {
+                            const url = await uploadFoto(image);
+                            if (url) {
+                                fotoUrls.push(url);
+                            }
+                        }
+                    }
+
+                    // Simpan data ke Supabase
+                    const { data, error } = await supabase
+                        .from('estimasi')
+                        .insert([
+                            {
+                                nopol: nopol,
+                                jenis_mobil: jenisMobil,
+                                telepon_customer: telepon,
+                                service_advisor: serviceAdvisor,
+                                komponen: tags,
+                                keterangan: keterangan,
+                                foto_url: fotoUrls,
+                                teknisi_id: currentUser.id,
+                                status: 'pending'
+                            }
+                        ])
+                        .select();
+
+                    if (error) throw error;
+
+                    // Tampilkan pesan sukses
+                    alert('Estimasi berhasil disimpan!');
+
+                    // Reset form
+                    $('#estimasiForm')[0].reset();
+                    tagify.removeAllTags();
+                    selectedImages = [];
+                    document.getElementById('imageUploadContainer').innerHTML = `
             <div class="add-image-btn" id="addImageBtn">
               <i class="fas fa-plus"></i>
             </div>
             <input type="file" id="fotoEstimasi" multiple accept="image/*" style="display: none;">
           `;
-          initImageUpload();
+                    initImageUpload();
 
-          // Reload data
-          await loadDashboardData();
+                    // Reload data
+                    await loadDashboardData();
 
-          // Redirect ke halaman estimasi
-          $('.sidebar-menu a').removeClass('active');
-          $('[data-section="estimasi-saya"]').addClass('active');
-          $('.content-section').removeClass('active');
-          $('#estimasi-saya').addClass('active');
-          $('#pageTitle').text('Estimasi Saya');
-          $('#mobileTitle').text('Estimasi Saya');
+                    // Redirect ke halaman estimasi
+                    $('.sidebar-menu a').removeClass('active');
+                    $('[data-section="estimasi-saya"]').addClass('active');
+                    $('.content-section').removeClass('active');
+                    $('#estimasi-saya').addClass('active');
+                    $('#pageTitle').text('Estimasi Saya');
+                    $('#mobileTitle').text('Estimasi Saya');
 
-        } catch (error) {
-          console.error('Error saving estimation:', error);
-          alert('Terjadi kesalahan saat menyimpan estimasi: ' + error.message);
-        } finally {
-          // Reset button
-          $('#submitBtn').html('<i class="fas fa-save me-2"></i> Simpan Estimasi');
-          $('#submitBtn').prop('disabled', false);
+                } catch (error) {
+                    console.error('Error saving estimation:', error);
+                    alert('Terjadi kesalahan saat menyimpan estimasi: ' + error.message);
+                } finally {
+                    // Reset button
+                    $('#submitBtn').html('<i class="fas fa-save me-2"></i> Simpan Estimasi');
+                    $('#submitBtn').prop('disabled', false);
+                }
+            });
+            // Pastikan backdrop hilang saat modal ditutup
+            $('#viewEstimasiModal').on('hidden.bs.modal', function () {
+                $('.modal-backdrop').remove();
+                $('body').removeClass('modal-open'); // hilangkan scroll lock
+            });
+
+            // Tutup sidebar jika klik di luar saat di mobile
+            $(document).on('click', function (e) {
+                if ($(window).width() < 768) { // hanya berlaku di mobile
+                    if (
+                        $('#sidebar').hasClass('show') &&               // sidebar sedang terbuka
+                        !$(e.target).closest('#sidebar, #mobileMenuBtn').length // klik bukan di sidebar atau tombol menu
+                    ) {
+                        $('#sidebar').removeClass('show');
+                    }
+                }
+            });
+
+        });
+
+        function showToast(type, title, message) {
+            const toastEl = document.getElementById('liveToast');
+            const toast = new bootstrap.Toast(toastEl);
+
+            // reset class
+            toastEl.classList.remove('text-bg-success', 'text-bg-danger', 'text-bg-warning');
+
+            // warna sesuai type
+            if (type === 'success') {
+                toastEl.classList.add('text-bg-success');
+            } else if (type === 'error') {
+                toastEl.classList.add('text-bg-danger');
+            } else if (type === 'warning') {
+                toastEl.classList.add('text-bg-warning');
+            }
+
+            // isi toast
+            toastEl.querySelector('.toast-body').innerHTML = `<strong>${title}</strong><br>${message}`;
+
+            // tampilkan toast
+            toast.show();
         }
-      });
-      // Pastikan backdrop hilang saat modal ditutup
-$('#viewEstimasiModal').on('hidden.bs.modal', function () {
-  $('.modal-backdrop').remove();
-  $('body').removeClass('modal-open'); // hilangkan scroll lock
-});
 
-      // Tutup sidebar jika klik di luar saat di mobile
-$(document).on('click', function (e) {
-  if ($(window).width() < 768) { // hanya berlaku di mobile
-    if (
-      $('#sidebar').hasClass('show') &&               // sidebar sedang terbuka
-      !$(e.target).closest('#sidebar, #mobileMenuBtn').length // klik bukan di sidebar atau tombol menu
-    ) {
-      $('#sidebar').removeClass('show');
-    }
-  }
-});
+    </script>
 
-    });
-
-    function showToast(type, title, message) {
-  const toastEl = document.getElementById('liveToast');
-  const toast = new bootstrap.Toast(toastEl);
-
-  // reset class
-  toastEl.classList.remove('text-bg-success', 'text-bg-danger', 'text-bg-warning');
-
-  // warna sesuai type
-  if (type === 'success') {
-    toastEl.classList.add('text-bg-success');
-  } else if (type === 'error') {
-    toastEl.classList.add('text-bg-danger');
-  } else if (type === 'warning') {
-    toastEl.classList.add('text-bg-warning');
-  }
-
-  // isi toast
-  toastEl.querySelector('.toast-body').innerHTML = `<strong>${title}</strong><br>${message}`;
-
-  // tampilkan toast
-  toast.show();
-}
-
-  </script>
-  
-  <!-- Toast container -->
-<div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1055">
-  <div id="liveToast" class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
-    <div class="d-flex">
-      <div class="toast-body">
-        ✅ Berhasil
-      </div>
-      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+    <!-- Toast container -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1055">
+        <div id="liveToast" class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive"
+            aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body">
+                    ✅ Berhasil
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                    aria-label="Close"></button>
+            </div>
+        </div>
     </div>
-  </div>
-</div>
 </body>
-
 </html>
