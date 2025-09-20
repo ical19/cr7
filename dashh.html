@@ -954,24 +954,24 @@
         function initSparepartTable() {
             const addBtn = document.getElementById('addSparepartBtn');
             const tableBody = document.getElementById('sparepartBody');
-            
+
             // Tambah baris sparepart pertama
             addSparepartRow();
-            
+
             // Event listener untuk tombol tambah
             addBtn.addEventListener('click', addSparepartRow);
-            
+
             // Event delegation untuk input changes
-            tableBody.addEventListener('input', function(e) {
+            tableBody.addEventListener('input', function (e) {
                 const target = e.target;
                 if (target.classList.contains('harga-input') || target.classList.contains('jumlah-input')) {
                     calculateSubtotal(target);
                 }
                 updateTotal();
             });
-            
+
             // Event delegation untuk delete buttons
-            tableBody.addEventListener('click', function(e) {
+            tableBody.addEventListener('click', function (e) {
                 if (e.target.classList.contains('delete-sparepart')) {
                     const row = e.target.closest('tr');
                     if (document.querySelectorAll('#sparepartBody tr').length > 1) {
@@ -989,7 +989,7 @@
             const tableBody = document.getElementById('sparepartBody');
             const rowCount = tableBody.querySelectorAll('tr').length;
             const rowId = `sparepart-${rowCount + 1}`;
-            
+
             const row = document.createElement('tr');
             row.id = rowId;
             row.innerHTML = `
@@ -1018,7 +1018,7 @@
                     </button>
                 </td>
             `;
-            
+
             tableBody.appendChild(row);
         }
 
@@ -1028,7 +1028,7 @@
             const harga = parseFloat(row.querySelector('.harga-input').value) || 0;
             const jumlah = parseInt(row.querySelector('.jumlah-input').value) || 0;
             const subtotal = harga * jumlah;
-            
+
             row.querySelector('.subtotal-input').value = formatRupiah(subtotal);
         }
 
@@ -1039,7 +1039,7 @@
                 const value = input.value.replace('Rp ', '').replace(/\./g, '');
                 total += parseFloat(value) || 0;
             });
-            
+
             document.getElementById('totalHarga').textContent = formatRupiah(total);
         }
 
@@ -1429,17 +1429,17 @@
                 }
 
                 // Handle sparepart_data
-let sparepartTable = '';
-if (data.sparepart_data) {
-    // Pastikan sparepart_data adalah array
-    const sparepartArray = Array.isArray(data.sparepart_data) ? 
-        data.sparepart_data : 
-        (typeof data.sparepart_data === 'string' ? 
-            JSON.parse(data.sparepart_data) : 
-            []);
-    
-    if (sparepartArray.length > 0) {
-        sparepartTable = `
+                let sparepartTable = '';
+                if (data.sparepart_data) {
+                    // Pastikan sparepart_data adalah array
+                    const sparepartArray = Array.isArray(data.sparepart_data) ?
+                        data.sparepart_data :
+                        (typeof data.sparepart_data === 'string' ?
+                            JSON.parse(data.sparepart_data) :
+                            []);
+
+                    if (sparepartArray.length > 0) {
+                        sparepartTable = `
             <div class="row mt-3">
                 <div class="col-12">
                     <p><strong>Detail Sparepart:</strong></p>
@@ -1476,8 +1476,8 @@ if (data.sparepart_data) {
                 </div>
             </div>
         `;
-    }
-}
+                    }
+                }
 
                 // Format data untuk ditampilkan
                 const estimasiDetail = `
@@ -1589,20 +1589,20 @@ if (data.sparepart_data) {
                 }
 
                 let sparepartData = [];
-if (data.sparepart_data) {
-    if (Array.isArray(data.sparepart_data)) {
-        sparepartData = data.sparepart_data;
-    } else if (typeof data.sparepart_data === 'string') {
-        try {
-            sparepartData = JSON.parse(data.sparepart_data);
-            if (!Array.isArray(sparepartData)) {
-                sparepartData = [];
-            }
-        } catch (e) {
-            sparepartData = [];
-        }
-    }
-}
+                if (data.sparepart_data) {
+                    if (Array.isArray(data.sparepart_data)) {
+                        sparepartData = data.sparepart_data;
+                    } else if (typeof data.sparepart_data === 'string') {
+                        try {
+                            sparepartData = JSON.parse(data.sparepart_data);
+                            if (!Array.isArray(sparepartData)) {
+                                sparepartData = [];
+                            }
+                        } catch (e) {
+                            sparepartData = [];
+                        }
+                    }
+                }
 
                 // Buat konten PDF
                 const pdfContent = `
@@ -1654,10 +1654,10 @@ if (data.sparepart_data) {
                         <tbody>
                             ${sparepartData.map(item => `
                                 <tr>
-                                    <td style="padding: 10px; border-bottom: 1px solid #ddd;">${item.nama || '-'}</td>
-                                    <td style="padding: 10px; border-bottom: 1px solid #ddd;">${formatRupiah(item.harga || 0)}</td>
-                                    <td style="padding: 10px; border-bottom: 1px solid #ddd;">${item.jumlah || 1}</td>
-                                    <td style="padding: 10px; border-bottom: 1px solid #ddd;">${item.ketersediaan || 'Tersedia'}</td>
+                                    <td style="padding: 10px; border-bottom: 1px solid #ddd;">${item.name || '-'}</td>
+                                    <td style="padding: 10px; border-bottom: 1px solid #ddd;">${formatRupiah(item.price || 0)}</td>
+                                    <td style="padding: 10px; border-bottom: 1px solid #ddd;">${item.quantity || 1}</td>
+                                    <td style="padding: 10px; border-bottom: 1px solid #ddd;">${item.availability || '-'}</td>
                                     <td style="padding: 10px; border-bottom: 1px solid #ddd;">${formatRupiah(item.subtotal || 0)}</td>
                                 </tr>
                             `).join('')}
@@ -1711,11 +1711,11 @@ if (data.sparepart_data) {
                     margin: 10,
                     filename: `estimasi_${data.nopol}_${new Date().getTime()}.pdf`,
                     image: { type: 'jpeg', quality: 0.98 },
-                    html2canvas: { 
-    scale: 2,
-    useCORS: true,          // ✅ izinkan CORS
-    allowTaint: true        // ✅ fallback
-  },
+                    html2canvas: {
+                        scale: 2,
+                        useCORS: true,          // ✅ izinkan CORS
+                        allowTaint: true        // ✅ fallback
+                    },
                     jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
                 };
 
@@ -1861,14 +1861,14 @@ if (data.sparepart_data) {
                 // Dapatkan data sparepart
                 const sparepartData = [];
                 let totalHarga = 0;
-                
-                $('#sparepartBody tr').each(function() {
+
+                $('#sparepartBody tr').each(function () {
                     const nama = $(this).find('.nama-input').val();
                     const harga = parseFloat($(this).find('.harga-input').val()) || 0;
                     const jumlah = parseInt($(this).find('.jumlah-input').val()) || 1;
                     const ketersediaan = $(this).find('.ketersediaan-input').val();
                     const subtotal = harga * jumlah;
-                    
+
                     sparepartData.push({
                         nama: nama,
                         harga: harga,
@@ -1876,7 +1876,7 @@ if (data.sparepart_data) {
                         ketersediaan: ketersediaan,
                         subtotal: subtotal
                     });
-                    
+
                     totalHarga += subtotal;
                 });
 
@@ -1942,12 +1942,12 @@ if (data.sparepart_data) {
             </div>
             <input type="file" id="fotoEstimasi" multiple accept="image/*" style="display: none;">
           `;
-                    
+
                     // Reset tabel sparepart
                     $('#sparepartBody').empty();
                     addSparepartRow();
                     updateTotal();
-                    
+
                     initImageUpload();
 
                     // Reload data
@@ -1973,4 +1973,5 @@ if (data.sparepart_data) {
         });
     </script>
 </body>
+
 </html>
