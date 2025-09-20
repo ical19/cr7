@@ -65,7 +65,7 @@
   <script>
     // Konfigurasi Supabase
     const supabaseUrl = "https://pjawwektzazcxakgopou.supabase.co";
-    const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBqYXd3ZWt0emF6Y3hha2dvcG91Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgyNjQ5MTUsImV4cCI6MjA3Mzg0MDkxNX0.dNEB80t7LcTsvAtHHqgIeJfxcwmmZNsWxPTIAlrj11c"; // jangan pakai service key
+    const supabaseKey = "YOUR_PUBLIC_ANON_KEY"; // ganti dengan anon key, jangan service key
     const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
     document.addEventListener("DOMContentLoaded", checkAuth);
@@ -110,11 +110,14 @@
           case "sparepart":
             window.location.href = "sparepart.html";
             break;
-          case "sa":
+          case "service-advisor":
             window.location.href = "sa.html";
             break;
           case "mra":
             window.location.href = "mra.html";
+            break;
+          case "administrator":
+            window.location.href = "admin.html";
             break;
           default:
             window.location.href = "login.html";
