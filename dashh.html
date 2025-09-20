@@ -722,6 +722,38 @@
                             <small class="form-text text-muted">Tekan Enter untuk menambah komponen</small>
                         </div>
 
+                        <!-- Tabel Detail Sparepart -->
+                        <div class="form-group">
+                            <label class="form-label">Detail Sparepart</label>
+                            <div class="table-responsive sparepart-table">
+                                <table class="table table-bordered" id="sparepartTable">
+                                    <thead>
+                                        <tr>
+                                            <th width="30%">Nama Komponen</th>
+                                            <th width="15%">Harga Satuan</th>
+                                            <th width="10%">Jumlah</th>
+                                            <th width="15%">Ketersediaan</th>
+                                            <th width="20%">Subtotal</th>
+                                            <th width="10%">Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="sparepartBody">
+                                        <!-- Baris akan ditambahkan secara dinamis -->
+                                    </tbody>
+                                    <tfoot>
+                                        <tr class="total-row">
+                                            <td colspan="4" class="text-end"><strong>Total Harga:</strong></td>
+                                            <td id="totalHarga">Rp 0</td>
+                                            <td></td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                            <button type="button" class="btn btn-sm btn-outline-primary mt-2" id="addSparepartBtn">
+                                <i class="fas fa-plus me-1"></i> Tambah Sparepart
+                            </button>
+                        </div>
+
                         <div class="form-group">
                             <label for="keterangan" class="form-label">Keterangan Tambahan</label>
                             <textarea class="form-control" id="keterangan" rows="3"
@@ -747,7 +779,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Estimasi Saya Section -->
         <div class="content-section" id="estimasi-saya">
             <div class="card">
@@ -917,6 +949,26 @@
         function formatNopol(input) {
             input.value = input.value.toUpperCase().replace(/\s/g, '');
         }
+
+        // Inisialisasi tabel sparepart
+        function initSparepartTable() {
+            const addBtn = document.getElementById('addSparepartBtn');
+            const tableBody = document.getElementById('sparepartBody');
+
+            // Tambah baris sparepart pertama
+            addSparepartRow();
+
+            // Event listener untuk tombol tambah
+            addBtn.addEventListener('click', addSparepartRow);
+
+            // Event delegation untuk input changes
+            tableBody.addEventListener('input', function (e) {
+                const target = e.target;
+                if (target.classList.contains('harga-input') || target.classList.contains('jumlah-input')) {
+                    calculateSubtotal(target);
+                }
+                updateTotal();
+            });
 
             // Event delegation untuk delete buttons
             tableBody.addEventListener('click', function (e) {
