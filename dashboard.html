@@ -1247,6 +1247,12 @@
 
     // Sidebar navigation
     $(document).ready(function () {
+      // Pastikan backdrop hilang saat modal ditutup
+$('#viewEstimasiModal').on('hidden.bs.modal', function () {
+  $('.modal-backdrop').remove();
+  $('body').removeClass('modal-open').css('overflow', 'auto');
+});
+
       // Mobile menu toggle
       $('#mobileMenuBtn').click(function () {
         $('#sidebar').toggleClass('show');
