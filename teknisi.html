@@ -830,54 +830,56 @@
     // Cek status autentikasi
     checkAuthState();
 
-    // Fungsi untuk cek status autentikasi
-    async function checkAuthState() {
-      try {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (!session) {
-          window.location.href = 'login.html';
+    // Fungsi untuk cek status autentikasi// Fungsi untuk cek status autentikasi
+async function checkAuthState() {
+  try {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      window.location.href = 'login.html';
+      return;
+    }
+
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+      currentUser = user;
+      document.getElementById('userName').textContent = user.email;
+      document.getElementById('profileEmail').value = user.email;
+      document.getElementById('profileCreated').value = new Date(user.created_at).toLocaleDateString('id-ID');
+
+      // Ambil role dari tabel users
+      const { data: userData, error } = await supabase
+        .from('users')
+        .select('*')
+        .eq('id', user.id)
+        .single();
+
+      if (!error && userData) {
+        userProfile = userData;
+        document.getElementById('profileRole').value = userData.role;
+
+        // 🔑 VALIDASI ROLE
+        if (userData.role !== 'teknisi') {
+          // Kalau bukan teknisi, redirect ke index.html (biar dialihkan sesuai role)
+          window.location.href = 'index.html';
           return;
         }
-
-        // Dapatkan info user
-        const { data: { user } } = await supabase.auth.getUser();
-        if (user) {
-          currentUser = user;
-          document.getElementById('userName').textContent = user.email;
-          document.getElementById('profileEmail').value = user.email;
-          document.getElementById('profileCreated').value = new Date(user.created_at).toLocaleDateString('id-ID');
-
-          // Dapatkan role user dari tabel public.users
-          const { data: userData, error } = await supabase
-            .from('users')
-            .select('*')
-            .eq('id', user.id)
-            .single();
-
-          if (!error && userData) {
-            userProfile = userData;
-            document.getElementById('profileRole').value = userData.role;
-          } else {
-            console.error('Error fetching user profile:', error);
-            // Jika user tidak ada di tabel users, buat profil baru
-            await createUserProfile(user);
-          }
-        }
-
-        // Load data dashboard
-        await loadDashboardData();
-
-        // Inisialisasi Tagify setelah form tersedia
-        setTimeout(initTagify, 100);
-
-        // Inisialisasi image upload
-        initImageUpload();
-
-      } catch (error) {
-        console.error('Error checking auth state:', error);
-        alert('Terjadi kesalahan: ' + error.message);
+      } else {
+        console.error('Error fetching user profile:', error);
+        await createUserProfile(user);
       }
     }
+
+    // load data dashboard hanya kalau role sesuai
+    await loadDashboardData();
+    setTimeout(initTagify, 100);
+    initImageUpload();
+
+  } catch (error) {
+    console.error('Error checking auth state:', error);
+    alert('Terjadi kesalahan: ' + error.message);
+  }
+}
+
 
     // Format nomor polisi (uppercase dan hilangkan spasi)
     function formatNopol(input) {
