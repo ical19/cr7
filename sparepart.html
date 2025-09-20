@@ -945,7 +945,7 @@
         // Hitung total estimasi
         const { count: totalCount, error: totalError } = await supabase
           .from('estimasi')
-          .select('*', { count: 'exact', head: true });
+          .select('*', { count: 'exact' });
 
         if (!totalError) {
           document.getElementById('totalEstimasi').textContent = totalCount || 0;
@@ -954,7 +954,7 @@
         // Hitung estimasi masuk (pending)
         const { count: masukCount, error: masukError } = await supabase
           .from('estimasi')
-          .select('*', { count: 'exact', head: true })
+          .select('*', { count: 'exact' })
           .eq('status', 'pending');
 
         if (!masukError) {
@@ -964,7 +964,7 @@
         // Hitung estimasi diproses
         const { count: diprosesCount, error: diprosesError } = await supabase
           .from('estimasi')
-          .select('*', { count: 'exact', head: true })
+          .select('*', { count: 'exact' })
           .eq('status', 'progress');
 
         if (!diprosesError) {
@@ -974,7 +974,7 @@
         // Hitung estimasi selesai
         const { count: selesaiCount, error: selesaiError } = await supabase
           .from('estimasi')
-          .select('*', { count: 'exact', head: true })
+          .select('*', { count: 'exact' })
           .eq('status', 'completed');
 
         if (!selesaiError) {
