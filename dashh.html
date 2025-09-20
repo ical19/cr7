@@ -723,6 +723,7 @@
                         </div>
 
                         <!-- Tabel Detail Sparepart -->
+                        <div class="form-group" id="sparepartSection" style="display: none;">
                         <div class="form-group">
                             <label class="form-label">Detail Sparepart</label>
                             <div class="table-responsive sparepart-table">
@@ -752,7 +753,7 @@
                             <button type="button" class="btn btn-sm btn-outline-primary mt-2" id="addSparepartBtn">
                                 <i class="fas fa-plus me-1"></i> Tambah Sparepart
                             </button>
-                        </div>
+                        </div></div>
 
                         <div class="form-group">
                             <label for="keterangan" class="form-label">Keterangan Tambahan</label>
@@ -952,14 +953,16 @@
 
         // Inisialisasi tabel sparepart
         function initSparepartTable() {
+            const section = document.getElementById('sparepartSection');
+    section.style.display = 'none';
             const addBtn = document.getElementById('addSparepartBtn');
             const tableBody = document.getElementById('sparepartBody');
 
             // Tambah baris sparepart pertama
-            addSparepartRow();
+            //addSparepartRow();
 
             // Event listener untuk tombol tambah
-            addBtn.addEventListener('click', addSparepartRow);
+            //addBtn.addEventListener('click', addSparepartRow);
 
             // Event delegation untuk input changes
             tableBody.addEventListener('input', function (e) {
@@ -994,13 +997,13 @@
             row.id = rowId;
             row.innerHTML = `
                 <td>
-                    <input type="text" class="form-control nama-input" placeholder="Nama komponen" required>
+                    <input type="text" class="form-control nama-input" placeholder="Nama komponen">
                 </td>
                 <td>
-                    <input type="number" class="form-control harga-input" placeholder="0" min="0" required>
+                    <input type="number" class="form-control harga-input" placeholder="0" min="0">
                 </td>
                 <td>
-                    <input type="number" class="form-control jumlah-input" placeholder="1" min="1" value="1" required>
+                    <input type="number" class="form-control jumlah-input" placeholder="1" min="1" value="1">
                 </td>
                 <td>
                     <select class="form-select ketersediaan-input">
