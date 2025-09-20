@@ -1675,6 +1675,18 @@ $('#viewEstimasiModal').on('hidden.bs.modal', function () {
   $('body').removeClass('modal-open'); // hilangkan scroll lock
 });
 
+      // Tutup sidebar jika klik di luar saat di mobile
+$(document).on('click', function (e) {
+  if ($(window).width() < 768) { // hanya berlaku di mobile
+    if (
+      $('#sidebar').hasClass('show') &&               // sidebar sedang terbuka
+      !$(e.target).closest('#sidebar, #mobileMenuBtn').length // klik bukan di sidebar atau tombol menu
+    ) {
+      $('#sidebar').removeClass('show');
+    }
+  }
+});
+
     });
   </script>
 </body>
