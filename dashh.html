@@ -1588,7 +1588,21 @@ if (data.sparepart_data) {
                     }
                 }
 
-                const sparepartData = data.sparepart_data || [];
+                let sparepartData = [];
+if (data.sparepart_data) {
+    if (Array.isArray(data.sparepart_data)) {
+        sparepartData = data.sparepart_data;
+    } else if (typeof data.sparepart_data === 'string') {
+        try {
+            sparepartData = JSON.parse(data.sparepart_data);
+            if (!Array.isArray(sparepartData)) {
+                sparepartData = [];
+            }
+        } catch (e) {
+            sparepartData = [];
+        }
+    }
+}
 
                 // Buat konten PDF
                 const pdfContent = `
