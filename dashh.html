@@ -1457,10 +1457,10 @@ if (data.sparepart_data) {
                             <tbody>
                                 ${sparepartArray.map(item => `
                                     <tr>
-                                        <td>${item.nama || '-'}</td>
-                                        <td>${formatRupiah(item.harga || 0)}</td>
-                                        <td>${item.jumlah || 1}</td>
-                                        <td>${item.ketersediaan || 'Tersedia'}</td>
+                                        <td>${item.name || '-'}</td>
+                                        <td>${formatRupiah(item.price || 0)}</td>
+                                        <td>${item.quantity || 1}</td>
+                                        <td>${item.availability || '-'}</td>
                                         <td>${formatRupiah(item.subtotal || 0)}</td>
                                     </tr>
                                 `).join('')}
