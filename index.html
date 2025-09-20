@@ -1,1 +1,130 @@
-window.location.href = "login.html";
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Redirect CR7</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      background: linear-gradient(135deg, #0069d9, #28a745);
+      font-family: Arial, sans-serif;
+      color: #fff;
+    }
+
+    .loader {
+      position: relative;
+      width: 80px;
+      height: 80px;
+    }
+
+    .dot {
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.9);
+      animation: move 1.2s linear infinite;
+    }
+
+    .dot:nth-child(1) { top: 0; left: 50%; transform: translateX(-50%); animation-delay: 0s; }
+    .dot:nth-child(2) { right: 0; top: 50%; transform: translateY(-50%); animation-delay: 0.3s; }
+    .dot:nth-child(3) { bottom: 0; left: 50%; transform: translateX(-50%); animation-delay: 0.6s; }
+    .dot:nth-child(4) { left: 0; top: 50%; transform: translateY(-50%); animation-delay: 0.9s; }
+
+    @keyframes move {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(0.5); opacity: 0.5; }
+    }
+
+    .loading-text {
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      margin-top: 15px;
+      font-size: 14px;
+      letter-spacing: 1px;
+    }
+  </style>
+</head>
+<body>
+  <div class="loader">
+    <div class="dot"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+    <div class="loading-text">Memuat...</div>
+  </div>
+
+  <script>
+    // Konfigurasi Supabase
+    const supabaseUrl = "https://pjawwektzazcxakgopou.supabase.co";
+    const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBqYXd3ZWt0emF6Y3hha2dvcG91Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgyNjQ5MTUsImV4cCI6MjA3Mzg0MDkxNX0.dNEB80t7LcTsvAtHHqgIeJfxcwmmZNsWxPTIAlrj11c"; // jangan pakai service key
+    const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
+    document.addEventListener("DOMContentLoaded", checkAuth);
+
+    async function checkAuth() {
+      try {
+        // 1. cek session
+        const { data: { session }, error } = await supabase.auth.getSession();
+
+        if (error || !session) {
+          window.location.href = "login.html";
+          return;
+        }
+
+        // 2. ambil user
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) {
+          window.location.href = "login.html";
+          return;
+        }
+
+        // 3. ambil role dari tabel users
+        const { data: userData, error: roleError } = await supabase
+          .from("users")
+          .select("role")
+          .eq("id", user.id)
+          .single();
+
+        if (roleError || !userData) {
+          console.error("Gagal ambil role:", roleError);
+          window.location.href = "login.html";
+          return;
+        }
+
+        const role = userData.role;
+
+        // 4. redirect sesuai role
+        switch (role) {
+          case "teknisi":
+            window.location.href = "teknisi.html";
+            break;
+          case "sparepart":
+            window.location.href = "sparepart.html";
+            break;
+          case "sa":
+            window.location.href = "sa.html";
+            break;
+          case "mra":
+            window.location.href = "mra.html";
+            break;
+          default:
+            window.location.href = "login.html";
+        }
+
+      } catch (err) {
+        console.error("Error check auth:", err);
+        window.location.href = "login.html";
+      }
+    }
+  </script>
+</body>
+</html>
