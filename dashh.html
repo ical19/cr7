@@ -724,36 +724,37 @@
 
                         <!-- Tabel Detail Sparepart -->
                         <div class="form-group" id="sparepartSection" style="display: none;">
-                        <div class="form-group">
-                            <label class="form-label">Detail Sparepart</label>
-                            <div class="table-responsive sparepart-table">
-                                <table class="table table-bordered" id="sparepartTable">
-                                    <thead>
-                                        <tr>
-                                            <th width="30%">Nama Komponen</th>
-                                            <th width="15%">Harga Satuan</th>
-                                            <th width="10%">Jumlah</th>
-                                            <th width="15%">Ketersediaan</th>
-                                            <th width="20%">Subtotal</th>
-                                            <th width="10%">Aksi</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="sparepartBody">
-                                        <!-- Baris akan ditambahkan secara dinamis -->
-                                    </tbody>
-                                    <tfoot>
-                                        <tr class="total-row">
-                                            <td colspan="4" class="text-end"><strong>Total Harga:</strong></td>
-                                            <td id="totalHarga">Rp 0</td>
-                                            <td></td>
-                                        </tr>
-                                    </tfoot>
-                                </table>
+                            <div class="form-group">
+                                <label class="form-label">Detail Sparepart</label>
+                                <div class="table-responsive sparepart-table">
+                                    <table class="table table-bordered" id="sparepartTable">
+                                        <thead>
+                                            <tr>
+                                                <th width="30%">Nama Komponen</th>
+                                                <th width="15%">Harga Satuan</th>
+                                                <th width="10%">Jumlah</th>
+                                                <th width="15%">Ketersediaan</th>
+                                                <th width="20%">Subtotal</th>
+                                                <th width="10%">Aksi</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="sparepartBody">
+                                            <!-- Baris akan ditambahkan secara dinamis -->
+                                        </tbody>
+                                        <tfoot>
+                                            <tr class="total-row">
+                                                <td colspan="4" class="text-end"><strong>Total Harga:</strong></td>
+                                                <td id="totalHarga">Rp 0</td>
+                                                <td></td>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                                <button type="button" class="btn btn-sm btn-outline-primary mt-2" id="addSparepartBtn">
+                                    <i class="fas fa-plus me-1"></i> Tambah Sparepart
+                                </button>
                             </div>
-                            <button type="button" class="btn btn-sm btn-outline-primary mt-2" id="addSparepartBtn">
-                                <i class="fas fa-plus me-1"></i> Tambah Sparepart
-                            </button>
-                        </div></div>
+                        </div>
 
                         <div class="form-group">
                             <label for="keterangan" class="form-label">Keterangan Tambahan</label>
@@ -954,7 +955,7 @@
         // Inisialisasi tabel sparepart
         function initSparepartTable() {
             const section = document.getElementById('sparepartSection');
-    section.style.display = 'none';
+            section.style.display = 'none';
             const addBtn = document.getElementById('addSparepartBtn');
             const tableBody = document.getElementById('sparepartBody');
 
@@ -1976,7 +1977,7 @@
                     $('#submitBtn').prop('disabled', false);
                 }
             });
-             // Pastikan backdrop hilang saat modal ditutup
+            // Pastikan backdrop hilang saat modal ditutup
             $('#viewEstimasiModal').on('hidden.bs.modal', function () {
                 $('.modal-backdrop').remove();
                 $('body').removeClass('modal-open'); // hilangkan scroll lock
@@ -1994,7 +1995,7 @@
                 }
             });
         });
-         function showToast(type, title, message) {
+        function showToast(type, title, message) {
             const toastEl = document.getElementById('liveToast');
             const toast = new bootstrap.Toast(toastEl);
 
@@ -2017,7 +2018,7 @@
             toast.show();
         }
     </script>
-        <!-- Toast container -->
+    <!-- Toast container -->
     <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1055">
         <div id="liveToast" class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive"
             aria-atomic="true">
