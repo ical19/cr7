@@ -4,61 +4,69 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CR7 Redirect</title>
-  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
-    // Konfigurasi Supabase (ganti sesuai project kamu)
-    const supabaseUrl = "https://YOUR_PROJECT.supabase.co";
-    const supabaseKey = "YOUR_PUBLIC_ANON_KEY";
-    const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+    // Ganti sesuai project
+    const supabaseUrl = 'https://pjawwektzazcxakgopou.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBqYXd3ZWt0emF6Y3hha2dvcG91Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgyNjQ5MTUsImV4cCI6MjA3Mzg0MDkxNX0.dNEB80t7LcTsvAtHHqgIeJfxcwmmZNsWxPTIAlrj11c';
+    const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+    document.addEventListener("DOMContentLoaded", checkAuthState);
 
     async function checkAuthState() {
       try {
-        const { data: { session }, error } = await supabase.auth.getSession();
-
-        if (error) {
-          console.error("Error checking session:", error.message);
-          window.location.href = "login.html";
-          return;
-        }
-
+        // cek session
+        const { data: { session } } = await supabase.auth.getSession();
         if (!session) {
-          // Belum login
-          window.location.href = "login.html";
+          window.location.href = 'login.html';
           return;
         }
 
-        // Jika sudah login → ambil user dan role
-        const user = session.user;
+        // ambil user
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) {
+          window.location.href = 'login.html';
+          return;
+        }
 
-        // Misalnya role disimpan di user metadata (auth.users -> raw_user_meta_data)
-        const role = user.user_metadata?.role || null;
+        // ambil role dari tabel users
+        const { data: userData, error } = await supabase
+          .from('users')
+          .select('role')
+          .eq('id', user.id)
+          .single();
 
-        // Arahkan sesuai role
+        if (error || !userData) {
+          console.error("Error ambil role:", error);
+          window.location.href = 'login.html';
+          return;
+        }
+
+        const role = userData.role;
+
+        // redirect sesuai role
         switch (role) {
-          case "teknisi":
-            window.location.href = "teknisi.html";
+          case 'teknisi':
+            window.location.href = 'teknisi.html';
             break;
-          case "sparepart":
-            window.location.href = "sparepart.html";
+          case 'sparepart':
+            window.location.href = 'sparepart.html';
             break;
-          case "sa":
-            window.location.href = "sa.html";
+          case 'sa':
+            window.location.href = 'sa.html';
             break;
-          case "mra":
-            window.location.href = "mra.html";
+          case 'mra':
+            window.location.href = 'mra.html';
             break;
           default:
-            // role tidak ada → fallback ke login
-            window.location.href = "login.html";
+            window.location.href = 'login.html';
         }
 
       } catch (err) {
-        console.error("Error checking auth state:", err);
-        window.location.href = "login.html";
+        console.error('Error checking auth state:', err);
+        window.location.href = 'login.html';
       }
     }
-
-    document.addEventListener("DOMContentLoaded", checkAuthState);
   </script>
 </head>
 <body>
