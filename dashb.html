@@ -2,125 +2,177 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <title>Debug Estimasi</title>
-  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Estimasi Perbaikan Kendaraan</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      margin: 40px;
+      background: #fff;
+      color: #333;
+    }
+    .header {
+      text-align: center;
+      border-bottom: 3px solid #000;
+      padding-bottom: 15px;
+      margin-bottom: 20px;
+    }
+    .header img {
+      max-height: 70px;
+      margin-bottom: 10px;
+    }
+    .header h1 {
+      margin: 5px 0;
+      font-size: 22px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+    .header p {
+      margin: 2px 0;
+      font-size: 13px;
+      color: #555;
+    }
+    .info {
+      margin-bottom: 25px;
+    }
+    .info p {
+      margin: 4px 0;
+      font-size: 14px;
+    }
+    .info strong {
+      display: inline-block;
+      width: 160px;
+    }
+    h3 {
+      margin-top: 30px;
+      font-size: 18px;
+      border-bottom: 2px solid #444;
+      padding-bottom: 5px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      font-size: 14px;
+    }
+    table, th, td {
+      border: 1px solid #ccc;
+    }
+    th, td {
+      padding: 8px;
+      text-align: left;
+    }
+    th {
+      background: #f5f5f5;
+    }
+    .total {
+      text-align: right;
+      margin-top: 20px;
+      font-size: 16px;
+      font-weight: bold;
+    }
+    .footer {
+      margin-top: 40px;
+      font-size: 13px;
+      text-align: center;
+      border-top: 2px solid #000;
+      padding-top: 10px;
+      color: #666;
+    }
+    img.preview {
+      max-width: 220px;
+      display: block;
+      margin-top: 15px;
+    }
+  </style>
 </head>
 <body>
-  <h1>Debug Estimasi</h1>
-  <div id="estimasi-container">Loading...</div>
+  <div class="header">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/7/73/Toyota_carlogo.png" alt="Logo">
+    <h1>Estimasi Perbaikan Kendaraan</h1>
+    <p>PT Bengkel Resmi Sejahtera</p>
+    <p>Jl. Contoh Alamat No.123, Jakarta</p>
+    <p>Telp. (021) 1234567 | Email: info@bengkelresmi.co.id</p>
+  </div>
 
+  <div id="estimasi"></div>
+
+  <!-- Supabase client -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
-    // 🔑 Supabase Credentials
-    const supabaseUrl = 'https://pjawwektzazcxakgopou.supabase.co';
-    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBqYXd3ZWt0emF6Y3hha2dvcG91Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgyNjQ5MTUsImV4cCI6MjA3Mzg0MDkxNX0.dNEB80t7LcTsvAtHHqgIeJfxcwmmZNsWxPTIAlrj11c';
-    const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+    const supabaseUrl = "https://pjawwektzazcxakgopou.supabase.co"; 
+    const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."; 
+    const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
-    // 🔎 Ganti dengan ID estimasi yang mau ditest
-    const currentEstimasiId = "b4049fbe-d22b-4a45-890e-ec771c200688";
+    const estimasiId = "b4049fbe-d22b-4a45-890e-ec771c200688";
 
-    async function debugEstimasiHtml() {
-      try {
-        const { data, error } = await supabase
-          .from('estimasi')
-          .select('*')
-          .eq('id', currentEstimasiId)
-          .single();
+    async function loadEstimasi() {
+      const { data, error } = await supabase
+        .from("estimasi")
+        .select("*")
+        .eq("id", estimasiId)
+        .single();
 
-        if (error) throw error;
-
-        console.log("Raw data dari Supabase:", data);
-
-        // 🔎 Parsing sparepart_data
-        let sparepartData = [];
-        if (data.sparepart_dat) {
-          if (Array.isArray(data.sparepart_dat)) {
-            sparepartData = data.sparepart_dat;
-          } else if (typeof data.sparepart_dat === 'string') {
-            try {
-              const parsed = JSON.parse(data.sparepart_dat);
-              sparepartData = Array.isArray(parsed)
-                ? parsed
-                : (parsed && typeof parsed === 'object')
-                  ? Object.values(parsed)
-                  : [parsed];
-            } catch {
-              sparepartData = [data.sparepart_dat];
-            }
-          } else if (typeof data.sparepart_dat === 'object') {
-            sparepartData = Object.values(data.sparepart_dat);
-          }
-        }
-
-        // 🔎 Parsing foto_url
-        let fotoUrls = [];
-        if (data.foto_url) {
-          if (Array.isArray(data.foto_url)) {
-            fotoUrls = data.foto_url;
-          } else if (typeof data.foto_url === 'string') {
-            try {
-              const parsed = JSON.parse(data.foto_url);
-              fotoUrls = Array.isArray(parsed) ? parsed : [data.foto_url];
-            } catch {
-              fotoUrls = [data.foto_url];
-            }
-          }
-        }
-
-        // 🔎 Bangun HTML
-        const html = `
-          <div style="font-family: Arial, sans-serif; padding: 20px;">
-            <h2>Estimasi Perbaikan Kendaraan</h2>
-            <p><strong>Nomor Polisi:</strong> ${data.nopol}</p>
-            <p><strong>Jenis Mobil:</strong> ${data.jenis_mobil}</p>
-            <p><strong>Nomor Rangka:</strong> ${data.nomor_rangk || '-'}</p>
-            <p><strong>Telepon Customer:</strong> ${data.telepon_custc || '-'}</p>
-            <p><strong>Service Advisor:</strong> ${data.service_advisc || '-'}</p>
-            <p><strong>Tanggal Estimasi:</strong> ${new Date(data.created_at).toLocaleDateString('id-ID')}</p>
-            <hr>
-            <h3>Komponen</h3>
-            <ul>
-              ${Array.isArray(data.komponen)
-                ? data.komponen.map(k => `<li>${k}</li>`).join('')
-                : `<li>${data.komponen}</li>`}
-            </ul>
-            <h3>Keterangan</h3>
-            <p>${data.keterangan || '-'}</p>
-            <h3>Sparepart</h3>
-            ${sparepartData.length > 0 ? `
-              <table border="1" cellspacing="0" cellpadding="4">
-                <tr>
-                  <th>Kode</th><th>Nama</th><th>Jumlah</th><th>Ketersediaan</th><th>Harga</th><th>Subtotal</th>
-                </tr>
-                ${sparepartData.map(item => {
-                  const it = (typeof item === 'string') ? { name: item } : (item || {});
-                  return `
-                    <tr>
-                      <td>${it.number || '-'}</td>
-                      <td>${it.name || '-'}</td>
-                      <td>${it.quantity || '-'}</td>
-                      <td>${it.availability || '-'}</td>
-                      <td>${it.price || '-'}</td>
-                      <td>${it.subtotal || '-'}</td>
-                    </tr>
-                  `;
-                }).join('')}
-              </table>
-            ` : '<p>Tidak ada sparepart</p>'}
-            <h3>Foto</h3>
-            ${fotoUrls.map(url => `<img src="${url}" style="max-width:150px; margin:5px;">`).join('')}
-          </div>
-        `;
-
-        document.getElementById("estimasi-container").innerHTML = html;
-
-      } catch (err) {
-        console.error("Error debugEstimasiHtml:", err);
-        document.getElementById("estimasi-container").innerHTML =
-          `<pre>${err.message}</pre>`;
+      if (error) {
+        console.error(error);
+        document.getElementById("estimasi").innerText = "Gagal memuat data estimasi";
+        return;
       }
+
+      let sparepartData = [];
+      try {
+        sparepartData = data.sparepart_data ? JSON.parse(data.sparepart_data) : [];
+      } catch (e) {
+        console.warn("sparepart_data bukan JSON valid:", e);
+      }
+
+      document.getElementById("estimasi").innerHTML = `
+        <div class="info">
+          <p><strong>No. Polisi:</strong> ${data.nopol}</p>
+          <p><strong>Jenis Mobil:</strong> ${data.jenis_mobil}</p>
+          <p><strong>Nomor Rangka:</strong> ${data.nomor_rangka || "-"}</p>
+          <p><strong>Telepon Customer:</strong> ${data.telepon_customer || "-"}</p>
+          <p><strong>Service Advisor:</strong> ${data.service_advisor || "-"}</p>
+          <p><strong>Status Estimasi:</strong> ${data.status}</p>
+          <p><strong>Catatan Sparepart:</strong> ${data.catatan_sparepart || "-"}</p>
+          ${data.foto_url ? `<img src="${data.foto_url}" class="preview" alt="Foto kendaraan">` : ""}
+        </div>
+        <h3>Daftar Sparepart</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>No.</th>
+              <th>Kode</th>
+              <th>Nama</th>
+              <th>Harga</th>
+              <th>Qty</th>
+              <th>Ketersediaan</th>
+              <th>Subtotal</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${sparepartData.map((s, i) => `
+              <tr>
+                <td>${i+1}</td>
+                <td>${s.number}</td>
+                <td>${s.name}</td>
+                <td>Rp ${s.price.toLocaleString()}</td>
+                <td>${s.quantity}</td>
+                <td>${s.availability}</td>
+                <td>Rp ${s.subtotal.toLocaleString()}</td>
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
+        <div class="total">Total Estimasi: Rp ${(data.total_harga || "0").toLocaleString()}</div>
+      `;
     }
 
-    debugEstimasiHtml();
+    loadEstimasi();
   </script>
+
+  <div class="footer">
+    <p>Dokumen ini dicetak otomatis oleh sistem estimasi bengkel resmi.</p>
+  </div>
 </body>
 </html>
