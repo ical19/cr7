@@ -1456,7 +1456,11 @@
 
 
         // Generate PDF
-        html2pdf().set(opt).from(tempDiv).save();
+        html2pdf().set(opt).from(tempDiv).save().then(() => {
+  // ✅ gunakan toast dari login.html
+  showToast('success', 'PDF Berhasil', 'File estimasi berhasil diunduh!');
+});
+
 
       } catch (error) {
         console.error('Error generating PDF:', error);
