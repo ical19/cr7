@@ -811,7 +811,7 @@
             document.getElementById('profileRole').value = userData.role;
             
             // Pastikan user adalah service advisor
-            if (userData.role !== 'service_advisor') {
+            if (userData.role !== 'service-advisor') {
               alert('Anda tidak memiliki akses ke dashboard service advisor');
               await supabase.auth.signOut();
               window.location.href = 'login.html';
