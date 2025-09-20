@@ -1,1 +1,47 @@
-Welcome Guys!!
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CR7 Redirect</title>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      // --- simulasi ambil autentikasi & role dari localStorage/session ---
+      // Misalnya saat login berhasil, kamu simpan:
+      // localStorage.setItem("auth", "true");
+      // localStorage.setItem("role", "teknisi");
+
+      const isAuth = localStorage.getItem("auth"); // "true" jika sudah login
+      const role   = localStorage.getItem("role"); // teknisi | sparepart | sa | mra
+
+      if (!isAuth) {
+        // belum login → ke login.html
+        window.location.href = "login.html";
+        return;
+      }
+
+      // Sudah login → arahkan sesuai role
+      switch (role) {
+        case "teknisi":
+          window.location.href = "teknisi.html";
+          break;
+        case "sparepart":
+          window.location.href = "sparepart.html";
+          break;
+        case "sa":
+          window.location.href = "sa.html";
+          break;
+        case "mra":
+          window.location.href = "mra.html";
+          break;
+        default:
+          // role tidak dikenal → fallback ke login
+          window.location.href = "login.html";
+      }
+    });
+  </script>
+</head>
+<body>
+  <p>Sedang mengarahkan...</p>
+</body>
+</html>
