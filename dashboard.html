@@ -1669,6 +1669,12 @@
           $('#submitBtn').prop('disabled', false);
         }
       });
+      // Pastikan backdrop hilang saat modal ditutup
+$('#viewEstimasiModal').on('hidden.bs.modal', function () {
+  $('.modal-backdrop').remove();
+  $('body').removeClass('modal-open'); // hilangkan scroll lock
+});
+
     });
   </script>
 </body>
