@@ -1429,46 +1429,55 @@
                 }
 
                 // Handle sparepart_data
-                let sparepartTable = '';
-                if (data.sparepart_data && data.sparepart_data.length > 0) {
-                    sparepartTable = `
+let sparepartTable = '';
+if (data.sparepart_data) {
+    // Pastikan sparepart_data adalah array
+    const sparepartArray = Array.isArray(data.sparepart_data) ? 
+        data.sparepart_data : 
+        (typeof data.sparepart_data === 'string' ? 
+            JSON.parse(data.sparepart_data) : 
+            []);
+    
+    if (sparepartArray.length > 0) {
+        sparepartTable = `
             <div class="row mt-3">
-              <div class="col-12">
-                <p><strong>Detail Sparepart:</strong></p>
-                <div class="table-responsive">
-                  <table class="table table-bordered">
-                    <thead>
-                      <tr>
-                        <th>Nama Komponen</th>
-                        <th>Harga Satuan</th>
-                        <th>Jumlah</th>
-                        <th>Ketersediaan</th>
-                        <th>Subtotal</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      ${data.sparepart_data.map(item => `
-                        <tr>
-                          <td>${item.nama || '-'}</td>
-                          <td>${formatRupiah(item.harga || 0)}</td>
-                          <td>${item.jumlah || 1}</td>
-                          <td>${item.ketersediaan || 'Tersedia'}</td>
-                          <td>${formatRupiah(item.subtotal || 0)}</td>
-                        </tr>
-                      `).join('')}
-                    </tbody>
-                    <tfoot>
-                      <tr class="total-row">
-                        <td colspan="4" class="text-end"><strong>Total Harga:</strong></td>
-                        <td><strong>${formatRupiah(data.total_harga || 0)}</strong></td>
-                      </tr>
-                    </tfoot>
-                  </table>
+                <div class="col-12">
+                    <p><strong>Detail Sparepart:</strong></p>
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Nama Komponen</th>
+                                    <th>Harga Satuan</th>
+                                    <th>Jumlah</th>
+                                    <th>Ketersediaan</th>
+                                    <th>Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${sparepartArray.map(item => `
+                                    <tr>
+                                        <td>${item.nama || '-'}</td>
+                                        <td>${formatRupiah(item.harga || 0)}</td>
+                                        <td>${item.jumlah || 1}</td>
+                                        <td>${item.ketersediaan || 'Tersedia'}</td>
+                                        <td>${formatRupiah(item.subtotal || 0)}</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                            <tfoot>
+                                <tr class="total-row">
+                                    <td colspan="4" class="text-end"><strong>Total Harga:</strong></td>
+                                    <td><strong>${formatRupiah(data.total_harga || 0)}</strong></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
                 </div>
-              </div>
             </div>
-          `;
-                }
+        `;
+    }
+}
 
                 // Format data untuk ditampilkan
                 const estimasiDetail = `
