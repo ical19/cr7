@@ -1152,21 +1152,29 @@
       const element = document.getElementById('estimasiDetail');
 
       const pdfContent = `
-    <div style="text-align: center; margin-bottom: 20px;">
-      <h2 style="color: #e60000;">Tunas Toyota Batutulis</h2>
-      <p>Jl. Batutulis No. 42, Jakarta Pusat</p>
-      <hr>
-      <h3>Estimasi Perbaikan Kendaraan</h3>
+  <div style="text-align: center; margin-bottom: 20px;">
+    <h2 style="color: #e60000;">Tunas Toyota Batutulis</h2>
+    <hr>
+    <h3>Estimasi Perbaikan Kendaraan</h3>
+  </div>
+  ${element.innerHTML}
+  ${Array.isArray(currentData.foto_url) && currentData.foto_url.length > 0 ? `
+    <div style="margin-top:20px;">
+      <p><strong>Foto Estimasi:</strong></p>
+      ${currentData.foto_url.map(url =>
+        `<img src="${url}" style="max-width:200px; margin:5px; border-radius:6px;">`
+      ).join('')}
     </div>
-    ${element.innerHTML}
-    <div style="margin-top:20px; text-align:center;">
-      <p>Untuk perbaikan komponen ini silakan hubungi 
+  ` : ''}
+  <div style="margin-top:20px; text-align:center;">
+    <p>Untuk perbaikan komponen ini silakan hubungi 
       <a href="https://wa.me/6281315389866?text=Halo%20tunas%20toyota%20saya%20ingin%20melakukan%20penggantian%20part%20berikut%20(sebutkan%20part)%20sesuai%20pada%20komponen%20estimasi%20di%20pdf" target="_blank">
         Admin Tunas Toyota Batutulis di 081315389866
-      </a></p>
-      <p>Dicetak pada: ${new Date().toLocaleDateString('id-ID')}</p>
-    </div>
-  `;
+      </a>
+    </p>
+    <p>Dicetak pada: ${new Date().toLocaleDateString('id-ID')}</p>
+  </div>
+`;
 
       const opt = {
         margin: 10,
