@@ -1413,7 +1413,9 @@
             <div style="margin-bottom: 20px;">
               <p><strong>Foto Kondisi Kendaraan:</strong></p>
               <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;">
-                ${fotoUrls.map(url => `<img src="${url}" style="width: 100%; height: 80px; object-fit: cover; border-radius: 5px; border: 1px solid #ddd;">`).join('')}
+                ${fotoUrls.map(url => `<img src="${url}" 
+     style="max-width:100%; height:auto; max-height:150px; object-fit:contain; border-radius:5px; border:1px solid #ddd;">
+`).join('')}
               </div>
             </div>
             ` : ''}
