@@ -3,26 +3,157 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Redirect CR7</title>
+  <title>Sistem Autentikasi - CR7</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    body { display: flex; align-items: center; justify-content: center;
-      height: 100vh; margin: 0; background: linear-gradient(135deg,#0069d9,#28a745);
-      font-family: Arial, sans-serif; color:#fff; }
-    .loader { position: relative; width: 80px; height: 80px; }
-    .dot { position:absolute;width:16px;height:16px;border-radius:50%;background:rgba(255,255,255,0.9);animation:move 1.2s linear infinite; }
-    .dot:nth-child(1){top:0;left:50%;transform:translateX(-50%);animation-delay:0s;}
-    .dot:nth-child(2){right:0;top:50%;transform:translateY(-50%);animation-delay:0.3s;}
-    .dot:nth-child(3){bottom:0;left:50%;transform:translateX(-50%);animation-delay:0.6s;}
-    .dot:nth-child(4){left:0;top:50%;transform:translateY(-50%);animation-delay:0.9s;}
-    @keyframes move{0%,100%{transform:scale(1);opacity:1;}50%{transform:scale(0.5);opacity:0.5;}}
-    .loading-text{position:absolute;top:100%;left:50%;transform:translateX(-50%);margin-top:15px;font-size:14px;text-align:center;white-space:pre-line;}
+    :root {
+      --primary-color: #0069d9;
+      --secondary-color: #28a745;
+      --accent-color: #0056b3;
+      --text-color: #333;
+      --light-text: #fff;
+      --card-bg: rgba(255, 255, 255, 0.95);
+      --shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: var(--light-text);
+      padding: 20px;
+    }
+    
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      max-width: 480px;
+    }
+    
+    .card {
+      background: var(--card-bg);
+      border-radius: 16px;
+      padding: 40px 30px;
+      box-shadow: var(--shadow);
+      width: 100%;
+      text-align: center;
+      color: var(--text-color);
+    }
+    
+    .logo {
+      margin-bottom: 30px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .logo-icon {
+      font-size: 42px;
+      color: var(--primary-color);
+      margin-right: 12px;
+    }
+    
+    .logo-text {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--primary-color);
+    }
+    
+    .loader {
+      position: relative;
+      width: 100px;
+      height: 100px;
+      margin: 0 auto 30px;
+    }
+    
+    .spinner {
+      width: 100%;
+      height: 100%;
+      border: 4px solid rgba(0, 105, 217, 0.1);
+      border-radius: 50%;
+      border-top: 4px solid var(--primary-color);
+      animation: spin 1.2s linear infinite;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    .loading-text {
+      margin-top: 20px;
+      font-size: 16px;
+      text-align: center;
+      font-weight: 500;
+      line-height: 1.6;
+    }
+    
+    .status-dots {
+      display: flex;
+      justify-content: center;
+      margin-top: 25px;
+      gap: 8px;
+    }
+    
+    .status-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: rgba(0, 105, 217, 0.3);
+      transition: background 0.3s ease;
+    }
+    
+    .status-dot.active {
+      background: var(--primary-color);
+    }
+    
+    .footer {
+      margin-top: 30px;
+      text-align: center;
+      font-size: 14px;
+      opacity: 0.8;
+    }
   </style>
 </head>
 <body>
-  <div class="loader">
-    <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
-    <div class="loading-text" id="loadingText">Menghubungkan ke database...</div>
+  <div class="container">
+    <div class="card">
+      <div class="logo">
+        <i class="fas fa-cogs logo-icon"></i>
+        <div class="logo-text">CR7 System</div>
+      </div>
+      
+      <div class="loader">
+        <div class="spinner"></div>
+      </div>
+      
+      <div class="loading-text" id="loadingText">Memulai sistem autentikasi...</div>
+      
+      <div class="status-dots">
+        <div class="status-dot" id="step1"></div>
+        <div class="status-dot" id="step2"></div>
+        <div class="status-dot" id="step3"></div>
+        <div class="status-dot" id="step4"></div>
+      </div>
+    </div>
+    
+    <div class="footer">
+      &copy; 2023 CR7 System - All rights reserved
+    </div>
   </div>
 
   <script>
@@ -34,37 +165,54 @@
     const supabase = createClient(supabaseUrl, supabaseKey);
 
     const loadingText = document.getElementById("loadingText");
+    const step1 = document.getElementById("step1");
+    const step2 = document.getElementById("step2");
+    const step3 = document.getElementById("step3");
+    const step4 = document.getElementById("step4");
 
     document.addEventListener("DOMContentLoaded", checkAuth);
 
+    function updateStep(stepElement) {
+      stepElement.classList.add('active');
+    }
+
     async function checkAuth() {
       try {
-        // 1. cek session
+        // 1. Cek session
         loadingText.textContent = "Menghubungkan ke database...";
+        updateStep(step1);
+        
         const { data, error } = await supabase.auth.getSession();
         console.log("DEBUG getSession:", data, error);
 
         if (error) {
-          loadingText.textContent = "Error session, redirect login...";
+          loadingText.textContent = "Error koneksi database, mengarahkan ke halaman login...";
           return setTimeout(() => window.location.href="login.html",1500);
         }
+        
         if (!data.session) {
-          loadingText.textContent = "Belum login, ke login...";
+          loadingText.textContent = "Sesi tidak ditemukan, mengarahkan ke halaman login...";
           return setTimeout(() => window.location.href="login.html",1500);
         }
 
-        // 2. ambil user
-        loadingText.textContent = "Mengecek autentikasi...";
+        // 2. Ambil data user
+        loadingText.textContent = "Memverifikasi autentikasi pengguna...";
+        updateStep(step2);
+        
         const { data: userRes, error: userError } = await supabase.auth.getUser();
         console.log("DEBUG getUser:", userRes, userError);
+        
         if (userError || !userRes.user) {
-          loadingText.textContent = "User tidak valid, ke login...";
+          loadingText.textContent = "Autentikasi pengguna tidak valid, mengarahkan ke halaman login...";
           return setTimeout(() => window.location.href="login.html",1500);
         }
+        
         const user = userRes.user;
 
-        // 3. ambil role
-        loadingText.textContent = "Mengecek role pengguna...";
+        // 3. Ambil role pengguna
+        loadingText.textContent = "Mendeteksi level akses pengguna...";
+        updateStep(step3);
+        
         const { data: userData, error: roleError } = await supabase
           .from("users")
           .select("role")
@@ -73,14 +221,15 @@
         console.log("DEBUG role:", userData, roleError);
 
         if (roleError || !userData) {
-          loadingText.textContent = "Tidak ada role, kembali login...";
+          loadingText.textContent = "Level akses tidak ditemukan, mengarahkan ke halaman login...";
           return setTimeout(() => window.location.href="login.html",1500);
         }
 
         const role = userData.role;
-        loadingText.textContent = "Role terdeteksi: " + role;
+        loadingText.textContent = `Akses terdeteksi: ${role.toUpperCase()}, mengarahkan...`;
+        updateStep(step4);
 
-        // 4. redirect sesuai role
+        // 4. Redirect sesuai role
         setTimeout(() => {
           switch(role){
             case "teknisi": window.location.href="teknisi.html"; break;
@@ -90,12 +239,12 @@
             case "administrator": window.location.href="admin.html"; break;
             default: window.location.href="login.html";
           }
-        },1500);
+        }, 1500);
 
-      } catch(err){
+      } catch(err) {
         console.error("Error check auth:", err);
-        loadingText.textContent = "Terjadi error, ke login...";
-        setTimeout(()=>window.location.href="login.html",1500);
+        loadingText.textContent = "Terjadi kesalahan sistem, mengarahkan ke halaman login...";
+        setTimeout(() => window.location.href="login.html", 1500);
       }
     }
   </script>
