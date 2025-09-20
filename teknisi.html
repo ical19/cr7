@@ -1379,110 +1379,104 @@
 
                 // Buat konten PDF
                 const pdfContent = `
-  <div style="font-family: Arial, sans-serif; margin: 0; padding: 20px; color: #333; line-height: 1.6;">
-    <div style="max-width: 800px; margin: 0 auto; background: white; padding: 25px; box-shadow: 0 0 10px rgba(0,0,0,0.1);">
-      
-      <div style="position: relative; border-bottom: 2px solid #e60000; padding-bottom: 15px; margin-bottom: 20px;">
-        <img src="https://toyotatunasjakarta.co.id/wp-content/uploads/2022/03/LOGO-TUNAS-TOYOTA.png" alt="Logo Tunas Toyota" style="position:absolute; top:0; left:0; width:150px;">
-        <div style="text-align:center; margin-left:160px;">
-          <h2 style="color:#e60000; margin-bottom:5px;">Tunas Toyota Batutulis</h2>
-          <p style="margin:2px 0; font-size:14px;">Jl. Batutulis No. 42, RT.7/RW.2 Jakarta Pusat</p>
-          <p style="margin:2px 0; font-size:14px;">Telp: (021) 3454465</p>
-          <h3>Estimasi Perbaikan Kendaraan</h3>
-        </div>
-      </div>
+            <div style="font-family: Arial, sans-serif; padding: 20px;">
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <h2 style="color: #e60000; margin-bottom: 5px;">Tunas Toyota Batutulis</h2>
+                    <p style="margin: 0; font-size: 14px;">Jl. Batutulis No. 42,RT.7/RW.2 Jakarta Pusat</p>
+                    <p style="margin: 0; font-size: 14px;">Telp: (021) 3454465</p>
+                    <hr style="border-top: 2px solid #e60000; margin: 15px 0;">
+                    <h3 style="margin-bottom: 20px;">Estimasi Perbaikan Kendaraan</h3>
+                </div>
+                
+                <div style="display: flex; margin-bottom: 20px;">
+                    <div style="flex: 1;">
+                        <p><strong>Nomor Polisi:</strong> ${data.nopol}</p>
+                        <p><strong>Jenis Mobil:</strong> ${data.jenis_mobil}</p>
+                        <p><strong>Nomor Rangka:</strong> ${data.nomor_rangka || '-'}</p>
+                        <p><strong>Telepon Customer:</strong> ${data.telepon_customer || '-'}</p>
+                    </div>
+                    <div style="flex: 1;">
+                        <p><strong>Service Advisor:</strong> ${data.service_advisor || '-'}</p>
+                        <p><strong>Tanggal Estimasi:</strong> ${new Date(data.created_at).toLocaleDateString('id-ID')}</p>
+                        <p><strong>Status:</strong> ${getStatusText(data.status)}</p>
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 20px;">
+                    <p><strong>Komponen yang Perlu Diperbaiki/Diganti:</strong></p>
+                    <ul>
+                        ${Array.isArray(data.komponen) ?
+                        data.komponen.map(k => `<li>${k}</li>`).join('') :
+                        `<li>${data.komponen}</li>`}
+                    </ul>
+                </div>
+                
+                <div style="margin-bottom: 20px;">
+                    <p><strong>Keterangan:</strong> ${data.keterangan || 'Tidak ada keterangan tambahan'}</p>
+                </div>
+                
+                ${sparepartData.length > 0 ? `
+                <div style="margin-bottom: 20px;">
+                    <p><strong>Detail Sparepart:</strong></p>
+                    <table style="width: 100%; border-collapse: collapse; margin: 10px 0;">
+                        <thead>
+                            <tr>
+                                <th style="background-color: #e60000; color: white; padding: 10px; text-align: left;">Kode</th>
+                                <th style="background-color: #e60000; color: white; padding: 10px; text-align: left;">Nama Sparepart</th>
+                                <th style="background-color: #e60000; color: white; padding: 10px; text-align: left;">Jumlah</th>
+                                <th style="background-color: #e60000; color: white; padding: 10px; text-align: left;">Ketersediaan</th>
+                                <th style="background-color: #e60000; color: white; padding: 10px; text-align: left;">Harga</th>
+                                <th style="background-color: #e60000; color: white; padding: 10px; text-align: left;">Subtotal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${sparepartData.map(item => `
+                                <tr>
+                                    <td style="padding: 10px; border-bottom: 1px solid #ddd;">${item.number || '-'}</td>
+                                    <td style="padding: 10px; border-bottom: 1px solid #ddd;">${item.name || '-'}</td>
+                                    <td style="padding: 10px; border-bottom: 1px solid #ddd;">${item.quantity || '-'}</td>
+                                    <td style="padding: 10px; border-bottom: 1px solid #ddd;">${item.availability || '-'}</td>
+                                    <td style="padding: 10px; border-bottom: 1px solid #ddd;">${formatRupiah(item.price)}</td>
+                                    <td style="padding: 10px; border-bottom: 1px solid #ddd;">${formatRupiah(item.subtotal)}</td>
+                                </tr>
+                            `).join('')}
+                            <tr style="font-weight: bold; background-color: #f2f2f2;">
+                                <td colspan="5" style="padding: 10px; text-align: right;">Total Harga:</td>
+                                <td style="padding: 10px;">${formatRupiah(data.total_harga)}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p><strong>Catatan Sparepart:</strong> ${data.catatan_sparepart || '-'}</p>
+                </div>
+                ` : ''}
+                
+                ${fotoUrls.length > 0 ? `
+                <div style="margin-bottom: 20px;">
+                    <p><strong>Foto Kondisi Kendaraan:</strong></p>
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;">
+                        ${fotoUrls.map(url => `<img src="${url}" 
+                            style="max-width:100%; height:auto; max-height:150px; object-fit:contain; border-radius:5px; border:1px solid #ddd;">`).join('')}
+                    </div>
+                </div>
+                ` : ''}
+                
+                <div style="background-color: #f8f9fa; padding: 15px; border-radius: 8px; margin-top: 30px;">
+                    <p style="margin: 0; font-weight: bold;">Untuk melakukan perbaikan komponen tersebut, hubungi:</p>
+                    <p style="margin: 5px 0 0 0;">
+                        <strong>Admin Tunas Toyota Batutulis</strong><br>
+                        <a href="https://wa.me/6281315389866?text=Halo%20Tunas%20Toyota%20Batutulis,%20saya%20ingin%20melakukan%20penggantian%20part%20berikut:%20${encodeURIComponent(Array.isArray(data.komponen) ? data.komponen.join(', ') : data.komponen)}" 
+                            style="color: #25D366; text-decoration: none;">
+                            <i class="fab fa-whatsapp"></i> 081315389866
+                        </a>
+                    </p>
+                </div>
+                
+                <div style="margin-top: 30px; text-align: center; font-size: 12px; color: #6c757d;">
+                    <p>Dicetak pada: ${new Date().toLocaleDateString('id-ID')} ${new Date().toLocaleTimeString('id-ID')}</p>
+                </div>
+            </div>
+            `;
 
-      <div style="display:flex; flex-wrap:wrap; margin-bottom:20px;">
-        <div style="flex:1; min-width:300px; margin-bottom:15px;">
-          <p><strong>Nomor Polisi:</strong> ${data.nopol}</p>
-          <p><strong>Jenis Mobil:</strong> ${data.jenis_mobil}</p>
-          <p><strong>Nomor Rangka:</strong> ${data.no_rangka || '-'}</p>
-          <p><strong>Telepon Customer:</strong> ${data.telepon_customer || '-'}</p>
-        </div>
-        <div style="flex:1; min-width:300px; margin-bottom:15px;">
-          <p><strong>Service Advisor:</strong> ${data.service_advisor || '-'}</p>
-          <p><strong>Tanggal Estimasi:</strong> ${new Date(data.created_at).toLocaleDateString('id-ID')}</p>
-          <p><strong>Status:</strong> <span style="
-            display:inline-block; padding:3px 8px; border-radius:4px; font-size:12px; font-weight:bold;
-            ${data.status === 'completed' ? 'background:#d4edda; color:#155724;' : 'background:#f8d7da; color:#721c24;'}
-          ">${getStatusText(data.status)}</span></p>
-        </div>
-      </div>
-
-      <div>
-        <p><strong>Komponen yang Perlu Diperbaiki/Diganti:</strong></p>
-        <ul>
-          ${Array.isArray(data.komponen) ? data.komponen.map(k => `<li>${k}</li>`).join('') : `<li>${data.komponen}</li>`}
-        </ul>
-      </div>
-
-      <div>
-        <p><strong>Keterangan:</strong> ${data.keterangan || 'Tidak ada keterangan tambahan'}</p>
-      </div>
-
-      ${data.spareparts && data.spareparts.length > 0 ? `
-      <div>
-        <p><strong>Detail Sparepart:</strong></p>
-        <table style="width:100%; border-collapse:collapse; margin:20px 0;">
-          <thead>
-            <tr>
-              <th style="background:#e60000; color:white; padding:10px; text-align:left;">Kode</th>
-              <th style="background:#e60000; color:white; padding:10px; text-align:left;">Nama Sparepart</th>
-              <th style="background:#e60000; color:white; padding:10px; text-align:left;">Jumlah</th>
-              <th style="background:#e60000; color:white; padding:10px; text-align:left;">Ketersediaan</th>
-              <th style="background:#e60000; color:white; padding:10px; text-align:left;">Harga</th>
-              <th style="background:#e60000; color:white; padding:10px; text-align:left;">Subtotal</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${data.spareparts.map(sp => `
-              <tr>
-                <td style="padding:10px; border-bottom:1px solid #ddd;">${sp.kode}</td>
-                <td style="padding:10px; border-bottom:1px solid #ddd;">${sp.nama}</td>
-                <td style="padding:10px; border-bottom:1px solid #ddd;">${sp.jumlah}</td>
-                <td style="padding:10px; border-bottom:1px solid #ddd;">${sp.ketersediaan}</td>
-                <td style="padding:10px; border-bottom:1px solid #ddd;">${sp.harga}</td>
-                <td style="padding:10px; border-bottom:1px solid #ddd;">${sp.subtotal}</td>
-              </tr>`).join('')}
-            <tr style="font-weight:bold; background:#f2f2f2;">
-              <td colspan="5" style="text-align:right; padding:10px;">Total Harga:</td>
-              <td style="padding:10px;">${data.total_harga || '-'}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>` : ''}
-
-      ${data.catatan_sparepart ? `<div><p><strong>Catatan Sparepart:</strong> ${data.catatan_sparepart}</p></div>` : ''}
-
-      ${fotoUrls.length > 0 ? `
-      <div style="margin:20px 0;">
-        <p><strong>Foto Kondisi Kendaraan:</strong></p>
-        <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:10px; margin-top:10px;">
-          ${fotoUrls.map(url => `
-            <div style="border:1px solid #ddd; border-radius:5px; overflow:hidden;">
-              <img src="${url}" style="width:100%; height:150px; object-fit:cover; display:block;">
-            </div>`).join('')}
-        </div>
-      </div>` : ''}
-
-      <div style="background:#f8f9fa; padding:15px; border-radius:8px; margin-top:30px; border-left:4px solid #e60000;">
-        <p style="margin:0; font-weight:bold;">Untuk melakukan perbaikan komponen tersebut, hubungi:</p>
-        <p style="margin:5px 0 0 0;">
-          <strong>Admin Tunas Toyota Batutulis</strong><br>
-          <a href="https://wa.me/6281315389866?text=Halo%20Tunas%20Toyota%20Batutulis,%20saya%20ingin%20melakukan%20penggantian%20part%20berikut:%20${encodeURIComponent(Array.isArray(data.komponen) ? data.komponen.join(', ') : data.komponen)}" 
-             style="color:#25D366; text-decoration:none; font-weight:bold;">
-             📱 081315389866 (WhatsApp)
-          </a>
-        </p>
-      </div>
-
-      <div style="text-align:center; font-size:12px; color:#6c757d; margin-top:30px; padding-top:10px; border-top:1px solid #ddd;">
-        <p>Dicetak pada: ${new Date().toLocaleDateString('id-ID')} ${new Date().toLocaleTimeString('id-ID')}</p>
-      </div>
-
-    </div>
-  </div>
-`;
 
                 // Buat elemen sementara untuk konten PDF
                 const tempDiv = document.createElement('div');
@@ -1778,7 +1772,7 @@
             aria-atomic="true">
             <div class="d-flex">
                 <div class="toast-body">
-                    ✅ Berhasil
+                    ✅ Berhasil gan
                 </div>
                 <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
                     aria-label="Close"></button>
