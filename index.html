@@ -6,144 +6,98 @@
   <title>Redirect CR7</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
-    body {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      margin: 0;
-      background: linear-gradient(135deg, #0069d9, #28a745);
-      font-family: Arial, sans-serif;
-      color: #fff;
-    }
-
-    .loader {
-      position: relative;
-      width: 80px;
-      height: 80px;
-    }
-
-    .dot {
-      position: absolute;
-      width: 16px;
-      height: 16px;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.9);
-      animation: move 1.2s linear infinite;
-    }
-
-    .dot:nth-child(1) { top: 0; left: 50%; transform: translateX(-50%); animation-delay: 0s; }
-    .dot:nth-child(2) { right: 0; top: 50%; transform: translateY(-50%); animation-delay: 0.3s; }
-    .dot:nth-child(3) { bottom: 0; left: 50%; transform: translateX(-50%); animation-delay: 0.6s; }
-    .dot:nth-child(4) { left: 0; top: 50%; transform: translateY(-50%); animation-delay: 0.9s; }
-
-    @keyframes move {
-      0%, 100% { transform: scale(1); opacity: 1; }
-      50% { transform: scale(0.5); opacity: 0.5; }
-    }
-
-    .loading-text {
-      position: absolute;
-      top: 100%;
-      left: 50%;
-      transform: translateX(-50%);
-      margin-top: 15px;
-      font-size: 14px;
-      letter-spacing: 1px;
-      text-align: center;
-      white-space: pre-line;
-    }
+    body { display: flex; align-items: center; justify-content: center;
+      height: 100vh; margin: 0; background: linear-gradient(135deg,#0069d9,#28a745);
+      font-family: Arial, sans-serif; color:#fff; }
+    .loader { position: relative; width: 80px; height: 80px; }
+    .dot { position:absolute;width:16px;height:16px;border-radius:50%;background:rgba(255,255,255,0.9);animation:move 1.2s linear infinite; }
+    .dot:nth-child(1){top:0;left:50%;transform:translateX(-50%);animation-delay:0s;}
+    .dot:nth-child(2){right:0;top:50%;transform:translateY(-50%);animation-delay:0.3s;}
+    .dot:nth-child(3){bottom:0;left:50%;transform:translateX(-50%);animation-delay:0.6s;}
+    .dot:nth-child(4){left:0;top:50%;transform:translateY(-50%);animation-delay:0.9s;}
+    @keyframes move{0%,100%{transform:scale(1);opacity:1;}50%{transform:scale(0.5);opacity:0.5;}}
+    .loading-text{position:absolute;top:100%;left:50%;transform:translateX(-50%);margin-top:15px;font-size:14px;text-align:center;white-space:pre-line;}
   </style>
 </head>
 <body>
   <div class="loader">
-    <div class="dot"></div>
-    <div class="dot"></div>
-    <div class="dot"></div>
-    <div class="dot"></div>
+    <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
     <div class="loading-text" id="loadingText">Menghubungkan ke database...</div>
   </div>
 
   <script>
-    // Konfigurasi Supabase
+    // --- Konfigurasi Supabase ---
     const supabaseUrl = "https://pjawwektzazcxakgopou.supabase.co";
     const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBqYXd3ZWt0emF6Y3hha2dvcG91Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgyNjQ5MTUsImV4cCI6MjA3Mzg0MDkxNX0.dNEB80t7LcTsvAtHHqgIeJfxcwmmZNsWxPTIAlrj11c";
-    const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
+    const { createClient } = window.supabase;
+    const supabase = createClient(supabaseUrl, supabaseKey);
 
     const loadingText = document.getElementById("loadingText");
 
     document.addEventListener("DOMContentLoaded", checkAuth);
 
-async function checkAuth() {
-  try {
-    // 1. cek session
-    loadingText.textContent = "Menghubungkan ke database...";
-    const { data, error } = await supabase.auth.getSession();
+    async function checkAuth() {
+      try {
+        // 1. cek session
+        loadingText.textContent = "Menghubungkan ke database...";
+        const { data, error } = await supabase.auth.getSession();
+        console.log("DEBUG getSession:", data, error);
 
-    console.log("DEBUG getSession:", data, error);
+        if (error) {
+          loadingText.textContent = "Error session, redirect login...";
+          return setTimeout(() => window.location.href="login.html",1500);
+        }
+        if (!data.session) {
+          loadingText.textContent = "Belum login, ke login...";
+          return setTimeout(() => window.location.href="login.html",1500);
+        }
 
-    if (error) {
-      loadingText.textContent = "Error saat cek session, redirect ke login...";
-      setTimeout(() => window.location.href = "login.html", 1500);
-      return;
-    }
+        // 2. ambil user
+        loadingText.textContent = "Mengecek autentikasi...";
+        const { data: userRes, error: userError } = await supabase.auth.getUser();
+        console.log("DEBUG getUser:", userRes, userError);
+        if (userError || !userRes.user) {
+          loadingText.textContent = "User tidak valid, ke login...";
+          return setTimeout(() => window.location.href="login.html",1500);
+        }
+        const user = userRes.user;
 
-    if (!data.session) {
-      loadingText.textContent = "Belum login, mengarahkan ke login...";
-      setTimeout(() => window.location.href = "login.html", 1500);
-      return;
-    }
+        // 3. ambil role
+        loadingText.textContent = "Mengecek role pengguna...";
+        const { data: userData, error: roleError } = await supabase
+          .from("users")
+          .select("role")
+          .eq("id", user.id)
+          .single();
+        console.log("DEBUG role:", userData, roleError);
 
-    // 2. ambil user
-    loadingText.textContent = "Mengecek autentikasi...";
-    const { data: userRes, error: userError } = await supabase.auth.getUser();
-    console.log("DEBUG getUser:", userRes, userError);
+        if (roleError || !userData) {
+          loadingText.textContent = "Tidak ada role, kembali login...";
+          return setTimeout(() => window.location.href="login.html",1500);
+        }
 
-    if (userError || !userRes.user) {
-      loadingText.textContent = "User tidak valid, kembali ke login...";
-      setTimeout(() => window.location.href = "login.html", 1500);
-      return;
-    }
+        const role = userData.role;
+        loadingText.textContent = "Role terdeteksi: " + role;
 
-    const user = userRes.user;
+        // 4. redirect sesuai role
+        setTimeout(() => {
+          switch(role){
+            case "teknisi": window.location.href="teknisi.html"; break;
+            case "sparepart": window.location.href="sparepart.html"; break;
+            case "service-advisor": window.location.href="sa.html"; break;
+            case "mra": window.location.href="mra.html"; break;
+            case "administrator": window.location.href="admin.html"; break;
+            default: window.location.href="login.html";
+          }
+        },1500);
 
-    // 3. ambil role dari tabel users
-    loadingText.textContent = "Mengecek role pengguna...";
-    const { data: userData, error: roleError } = await supabase
-      .from("users")
-      .select("role")
-      .eq("id", user.id)
-      .single();
-
-    console.log("DEBUG role:", userData, roleError);
-
-    if (roleError || !userData) {
-      loadingText.textContent = "Gagal ambil role, kembali ke login...";
-      setTimeout(() => window.location.href = "login.html", 1500);
-      return;
-    }
-
-    const role = userData.role;
-    loadingText.textContent = "Role terdeteksi: " + role;
-
-    // 4. redirect sesuai role
-    setTimeout(() => {
-      switch (role) {
-        case "teknisi": window.location.href = "teknisi.html"; break;
-        case "sparepart": window.location.href = "sparepart.html"; break;
-        case "service-advisor": window.location.href = "sa.html"; break;
-        case "mra": window.location.href = "mra.html"; break;
-        case "administrator": window.location.href = "admin.html"; break;
-        default: window.location.href = "login.html";
+      } catch(err){
+        console.error("Error check auth:", err);
+        loadingText.textContent = "Terjadi error, ke login...";
+        setTimeout(()=>window.location.href="login.html",1500);
       }
-    }, 1500);
-
-  } catch (err) {
-    loadingText.textContent = "Terjadi error, kembali ke login...";
-    console.error("Error check auth:", err);
-    setTimeout(() => window.location.href = "login.html", 1500);
-  }
-}
+    }
   </script>
 </body>
 </html>
