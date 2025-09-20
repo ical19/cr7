@@ -1,0 +1,1489 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dashboard Service Advisor - Sistem Estimasi CR7</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary-color: #2c3e50;
+      --secondary-color: #34495e;
+      --accent-color: #3498db;
+      --success-color: #27ae60;
+      --warning-color: #f39c12;
+      --danger-color: #e74c3c;
+      --info-color: #2980b9;
+      --light-color: #ecf0f1;
+      --dark-color: #2c3e50;
+      --advisor-color: #9b59b6;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: #f8f9fa;
+      font-family: 'Roboto', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: #2c3e50;
+    }
+
+    /* Sidebar Styles */
+    .sidebar {
+      height: 100vh;
+      background: linear-gradient(180deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+      color: white;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 250px;
+      padding-top: 20px;
+      z-index: 1000;
+      box-shadow: 3px 0 15px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s;
+      overflow-y: auto;
+    }
+
+    .sidebar-brand {
+      padding: 0 20px 20px;
+      text-align: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      margin-bottom: 20px;
+    }
+
+    .sidebar-brand h4 {
+      font-weight: 700;
+      margin: 0;
+    }
+
+    .sidebar-menu {
+      list-style: none;
+      padding: 0;
+    }
+
+    .sidebar-menu li {
+      margin-bottom: 5px;
+    }
+
+    .sidebar-menu a {
+      color: rgba(255, 255, 255, 0.8);
+      text-decoration: none;
+      padding: 12px 20px;
+      display: block;
+      transition: all 0.3s;
+      border-left: 4px solid transparent;
+    }
+
+    .sidebar-menu a:hover,
+    .sidebar-menu a.active {
+      background-color: rgba(255, 255, 255, 0.1);
+      border-left: 4px solid var(--advisor-color);
+      color: white;
+    }
+
+    .sidebar-menu i {
+      width: 25px;
+      margin-right: 10px;
+    }
+
+    .user-info {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      padding: 15px;
+      background-color: rgba(0, 0, 0, 0.2);
+      text-align: center;
+    }
+
+    /* Main Content Styles */
+    .main-content {
+      margin-left: 250px;
+      padding: 20px;
+      transition: all 0.3s;
+    }
+
+    .header {
+      background-color: white;
+      padding: 15px 20px;
+      border-radius: 10px;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .page-title {
+      margin: 0;
+      color: var(--primary-color);
+      font-weight: 600;
+    }
+
+    .card {
+      border: none;
+      border-radius: 10px;
+      box-shadow: 0 3px 15px rgba(0, 0, 0, 0.08);
+      margin-bottom: 20px;
+    }
+
+    .card-header {
+      background-color: white;
+      border-bottom: 1px solid #eee;
+      padding: 15px 20px;
+      font-weight: 600;
+      border-radius: 10px 10px 0 0 !important;
+      color: var(--primary-color);
+    }
+
+    .card-body {
+      padding: 20px;
+    }
+
+    /* Stats Cards */
+    .stats-card {
+      text-align: center;
+      padding: 15px;
+    }
+
+    .stats-icon {
+      font-size: 1.5rem;
+      margin-bottom: 10px;
+    }
+
+    .stats-number {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 5px;
+      color: var(--primary-color);
+    }
+
+    .stats-label {
+      color: #6c757d;
+      font-weight: 500;
+      font-size: 0.85rem;
+    }
+
+    /* Table Styles */
+    .table th {
+      font-weight: 600;
+      border-top: none;
+      color: var(--primary-color);
+    }
+
+    .status-badge {
+      padding: 0.35rem 0.65rem;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .status-pending {
+      background-color: #fff3cd;
+      color: #856404;
+    }
+
+    .status-progress {
+      background-color: #cce5ff;
+      color: #004085;
+    }
+
+    .status-completed {
+      background-color: #d4edda;
+      color: #155724;
+    }
+
+    /* Button Styles */
+    .btn-advisor {
+      background-color: var(--advisor-color);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 0.5rem 1rem;
+      font-weight: 500;
+    }
+
+    .btn-advisor:hover {
+      background-color: #8e44ad;
+      color: white;
+    }
+
+    /* Responsive Styles */
+    @media (max-width: 992px) {
+      .sidebar {
+        width: 80px;
+        text-align: center;
+      }
+
+      .sidebar-brand h4,
+      .sidebar-menu span {
+        display: none;
+      }
+
+      .sidebar-menu i {
+        margin-right: 0;
+        font-size: 1.25rem;
+      }
+
+      .user-info {
+        display: none;
+      }
+
+      .main-content {
+        margin-left: 80px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .main-content {
+        margin-left: 0;
+        padding: 15px;
+      }
+
+      .sidebar {
+        left: -250px;
+        box-shadow: none;
+      }
+
+      .sidebar.show {
+        left: 0;
+        box-shadow: 3px 0 15px rgba(0, 0, 0, 0.1);
+        z-index: 1050;
+      }
+
+      .mobile-header {
+        display: flex !important;
+        background: white;
+        padding: 12px 15px;
+        border-radius: 8px;
+        margin-bottom: 15px;
+        align-items: center;
+        justify-content: space-between;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      }
+
+      .mobile-menu-btn {
+        display: flex !important;
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        border-radius: 6px;
+        padding: 8px;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+      }
+
+      .mobile-title {
+        font-weight: 600;
+        color: var(--primary-color);
+        margin: 0;
+        font-size: 1.1rem;
+      }
+
+      .stats-card {
+        padding: 12px;
+      }
+
+      .stats-icon {
+        font-size: 1.25rem;
+      }
+
+      .stats-number {
+        font-size: 1.25rem;
+      }
+
+      .stats-label {
+        font-size: 0.75rem;
+      }
+    }
+
+    .mobile-header {
+      display: none;
+    }
+
+    .mobile-menu-btn {
+      display: none;
+    }
+
+    /* Section Styles */
+    .content-section {
+      display: none;
+    }
+
+    .content-section.active {
+      display: block;
+      animation: fadeIn 0.5s;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+    }
+
+    /* Loading Spinner */
+    .loading-spinner {
+      display: inline-block;
+      width: 1rem;
+      height: 1rem;
+      border: 2px solid #f3f3f3;
+      border-top: 2px solid var(--advisor-color);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* Modal Styles */
+    .modal-content {
+      border-radius: 10px;
+      border: none;
+    }
+
+    .modal-header {
+      background-color: var(--primary-color);
+      color: white;
+      border-radius: 10px 10px 0 0;
+    }
+
+    /* Fix for modal backdrop */
+    .modal-backdrop {
+      opacity: 0.5 !important;
+    }
+
+    /* Search Box */
+    .search-box {
+      position: relative;
+      margin-bottom: 20px;
+    }
+
+    .search-box input {
+      padding-left: 40px;
+      border-radius: 20px;
+    }
+
+    .search-box i {
+      position: absolute;
+      left: 15px;
+      top: 12px;
+      color: #6c757d;
+    }
+
+    /* Filter Buttons */
+    .filter-buttons {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .filter-btn {
+      border-radius: 20px;
+      padding: 5px 15px;
+      font-size: 0.9rem;
+    }
+
+    /* Form styles for jasa input */
+    .jasa-form-row {
+      display: flex;
+      flex-wrap: wrap;
+      margin-bottom: 15px;
+    }
+
+    .jasa-form-col {
+      flex: 1;
+      min-width: 120px;
+      padding: 0 5px;
+    }
+
+    .jasa-form-col:last-child {
+      min-width: 80px;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Mobile Header -->
+  <div class="mobile-header">
+    <button class="mobile-menu-btn" id="mobileMenuBtn">
+      <i class="fas fa-bars"></i>
+    </button>
+    <h4 class="mobile-title" id="mobileTitle">Dashboard</h4>
+    <button class="btn btn-outline-secondary btn-sm" id="logoutBtn">
+      <i class="fas fa-sign-out-alt"></i>
+    </button>
+  </div>
+
+  <!-- Sidebar -->
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <h4>CR7 <span class="d-none d-md-inline">Service Advisor</span></h4>
+    </div>
+
+    <ul class="sidebar-menu">
+      <li>
+        <a href="#" class="active" data-section="dashboard">
+          <i class="fas fa-tachometer-alt"></i>
+          <span>Dashboard</span>
+        </a>
+      </li>
+      <li>
+        <a href="#" data-section="estimasi-masuk">
+          <i class="fas fa-inbox"></i>
+          <span>Estimasi Masuk</span>
+        </a>
+      </li>
+      <li>
+        <a href="#" data-section="estimasi-diproses">
+          <i class="fas fa-cogs"></i>
+          <span>Sedang Diproses</span>
+        </a>
+      </li>
+      <li>
+        <a href="#" data-section="estimasi-selesai">
+          <i class="fas fa-check-circle"></i>
+          <span>Selesai</span>
+        </a>
+      </li>
+      <li>
+        <a href="#" data-section="profil">
+          <i class="fas fa-user"></i>
+          <span>Profil</span>
+        </a>
+      </li>
+    </ul>
+
+    <div class="user-info">
+      <p class="mb-0">Halo, <strong id="userName">Service Advisor</strong></p>
+      <small>Role: <span class="badge status-badge status-progress">Service Advisor</span></small>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <div class="header d-none d-md-flex">
+      <h2 class="page-title" id="pageTitle">Dashboard</h2>
+      <div>
+        <button class="btn btn-outline-secondary btn-sm" id="logoutBtnDesktop">
+          <i class="fas fa-sign-out-alt me-1"></i> Logout
+        </button>
+      </div>
+    </div>
+
+    <!-- Dashboard Section -->
+    <div class="content-section active" id="dashboard">
+      <div class="row">
+        <div class="col-6 col-md-3 mb-3">
+          <div class="card stats-card">
+            <div class="stats-icon" style="color: var(--warning-color);">
+              <i class="fas fa-clipboard-list"></i>
+            </div>
+            <div class="stats-number" id="totalEstimasi">0</div>
+            <div class="stats-label">Total Estimasi</div>
+          </div>
+        </div>
+        <div class="col-6 col-md-3 mb-3">
+          <div class="card stats-card">
+            <div class="stats-icon" style="color: var(--info-color);">
+              <i class="fas fa-inbox"></i>
+            </div>
+            <div class="stats-number" id="estimasiMasuk">0</div>
+            <div class="stats-label">Estimasi Masuk</div>
+          </div>
+        </div>
+        <div class="col-6 col-md-3 mb-3">
+          <div class="card stats-card">
+            <div class="stats-icon" style="color: var(--advisor-color);">
+              <i class="fas fa-cogs"></i>
+            </div>
+            <div class="stats-number" id="estimasiDiproses">0</div>
+            <div class="stats-label">Sedang Diproses</div>
+          </div>
+        </div>
+        <div class="col-6 col-md-3 mb-3">
+          <div class="card stats-card">
+            <div class="stats-icon" style="color: var(--success-color);">
+              <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="stats-number" id="estimasiSelesai">0</div>
+            <div class="stats-label">Selesai</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+              <span>Estimasi Terbaru</span>
+              <a href="#" data-section="estimasi-masuk" class="btn btn-sm btn-advisor">Lihat Semua</a>
+            </div>
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table table-hover">
+                  <thead>
+                    <tr>
+                      <th>No. Polisi</th>
+                      <th>Jenis Mobil</th>
+                      <th>Teknisi</th>
+                      <th>Tanggal</th>
+                      <th>Status</th>
+                      <th>Aksi</th>
+                    </tr>
+                  </thead>
+                  <tbody id="recentEstimasi">
+                    <!-- Data akan diisi dari Supabase -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Estimasi Masuk Section -->
+    <div class="content-section" id="estimasi-masuk">
+      <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <span>Daftar Estimasi Masuk</span>
+          <div class="d-flex gap-2">
+            <div class="search-box">
+              <i class="fas fa-search"></i>
+              <input type="text" class="form-control" id="searchEstimasi" placeholder="Cari estimasi...">
+            </div>
+            <div class="btn-group">
+              <button class="btn btn-outline-secondary btn-sm" id="refreshBtn">
+                <i class="fas fa-sync-alt me-1"></i> Refresh
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="filter-buttons">
+            <button class="btn btn-outline-primary filter-btn active" data-status="all">Semua</button>
+            <button class="btn btn-outline-warning filter-btn" data-status="pending">Pending</button>
+            <button class="btn btn-outline-info filter-btn" data-status="progress">Diproses</button>
+          </div>
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>No. Polisi</th>
+                  <th>Jenis Mobil</th>
+                  <th>Komponen</th>
+                  <th>Teknisi</th>
+                  <th>Tanggal</th>
+                  <th>Status</th>
+                  <th>Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="estimasiMasukList">
+                <!-- Data akan diisi dari Supabase -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Estimasi Diproses Section -->
+    <div class="content-section" id="estimasi-diproses">
+      <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <span>Estimasi Sedang Diproses</span>
+          <div class="d-flex gap-2">
+            <div class="search-box">
+              <i class="fas fa-search"></i>
+              <input type="text" class="form-control" id="searchDiproses" placeholder="Cari estimasi...">
+            </div>
+            <div class="btn-group">
+              <button class="btn btn-outline-secondary btn-sm" id="refreshDiprosesBtn">
+                <i class="fas fa-sync-alt me-1"></i> Refresh
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>No. Polisi</th>
+                  <th>Jenis Mobil</th>
+                  <th>Komponen</th>
+                  <th>Teknisi</th>
+                  <th>Tanggal</th>
+                  <th>Status</th>
+                  <th>Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="estimasiDiprosesList">
+                <!-- Data akan diisi dari Supabase -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Estimasi Selesai Section -->
+    <div class="content-section" id="estimasi-selesai">
+      <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <span>Estimasi Selesai</span>
+          <div class="d-flex gap-2">
+            <div class="search-box">
+              <i class="fas fa-search"></i>
+              <input type="text" class="form-control" id="searchSelesai" placeholder="Cari estimasi...">
+            </div>
+            <div class="btn-group">
+              <button class="btn btn-outline-secondary btn-sm" id="refreshSelesaiBtn">
+                <i class="fas fa-sync-alt me-1"></i> Refresh
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>No. Polisi</th>
+                  <th>Jenis Mobil</th>
+                  <th>Komponen</th>
+                  <th>Teknisi</th>
+                  <th>Tanggal Selesai</th>
+                  <th>Total Harga</th>
+                  <th>Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="estimasiSelesaiList">
+                <!-- Data akan diisi dari Supabase -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Profil Section -->
+    <div class="content-section" id="profil">
+      <div class="card">
+        <div class="card-header">
+          Profil Saya
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label class="form-label">Email</label>
+                <input type="text" class="form-control" id="profileEmail" readonly>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label class="form-label">Role</label>
+                <input type="text" class="form-control" id="profileRole" readonly>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Bergabung Pada</label>
+            <input type="text" class="form-control" id="profileCreated" readonly>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal untuk Lihat Estimasi -->
+  <div class="modal fade" id="viewEstimasiModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Detail Estimasi</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id="estimasiDetail">
+          <!-- Detail estimasi akan diisi di sini -->
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+          <button type="button" class="btn btn-advisor" id="inputJasaBtn" style="display: none;">
+            <i class="fas fa-tools me-2"></i> Input Harga Jasa
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal untuk Input Jasa -->
+  <div class="modal fade" id="inputJasaModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Input Harga Jasa</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div id="jasaFormContent">
+            <!-- Form input jasa akan diisi di sini -->
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+          <button type="button" class="btn btn-advisor" id="simpanJasaBtn">
+            <i class="fas fa-save me-2"></i> Simpan Harga Jasa
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap & jQuery JS -->
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Supabase JS -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <script>
+    // Inisialisasi Supabase
+    const supabaseUrl = 'https://pjawwektzazcxakgopou.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBqYXd3ZWt0emF6Y3hha2dvcG91Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgyNjQ5MTUsImV4cCI6MjA3Mzg0MDkxNX0.dNEB80t7LcTsvAtHHqgIeJfxcwmmZNsWxPTIAlrj11c';
+    const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+    // Variabel global untuk data user
+    let currentUser = null;
+    let userProfile = null;
+    let currentEstimasiId = null;
+    let jasaData = [];
+
+    // Cek status autentikasi
+    checkAuthState();
+
+    // Fungsi untuk cek status autentikasi
+    async function checkAuthState() {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session) {
+          window.location.href = 'login.html';
+          return;
+        }
+
+        // Dapatkan info user
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          currentUser = user;
+          document.getElementById('userName').textContent = user.email;
+          document.getElementById('profileEmail').value = user.email;
+          document.getElementById('profileCreated').value = new Date(user.created_at).toLocaleDateString('id-ID');
+
+          // Dapatkan role user dari tabel public.users
+          const { data: userData, error } = await supabase
+            .from('users')
+            .select('*')
+            .eq('id', user.id)
+            .single();
+
+          if (!error && userData) {
+            userProfile = userData;
+            document.getElementById('profileRole').value = userData.role;
+            
+            // Pastikan user adalah service advisor
+            if (userData.role !== 'service_advisor') {
+              alert('Anda tidak memiliki akses ke dashboard service advisor');
+              await supabase.auth.signOut();
+              window.location.href = 'login.html';
+              return;
+            }
+          } else {
+            console.error('Error fetching user profile:', error);
+            // Jika user tidak ada di tabel users, redirect ke login
+            await supabase.auth.signOut();
+            window.location.href = 'login.html';
+            return;
+          }
+        }
+
+        // Load data dashboard
+        await loadDashboardData();
+
+      } catch (error) {
+        console.error('Error checking auth state:', error);
+        alert('Terjadi kesalahan: ' + error.message);
+      }
+    }
+
+    // Load data dashboard
+    async function loadDashboardData() {
+      try {
+        if (!currentUser) return;
+
+        // Hitung total estimasi
+        const { count: totalCount, error: totalError } = await supabase
+          .from('estimasi')
+          .select('*', { count: 'exact', head: true });
+
+        if (!totalError) {
+          document.getElementById('totalEstimasi').textContent = totalCount || 0;
+        }
+
+        // Hitung estimasi masuk (pending)
+        const { count: masukCount, error: masukError } = await supabase
+          .from('estimasi')
+          .select('*', { count: 'exact', head: true })
+          .eq('status', 'pending');
+
+        if (!masukError) {
+          document.getElementById('estimasiMasuk').textContent = masukCount || 0;
+        }
+
+        // Hitung estimasi diproses
+        const { count: diprosesCount, error: diprosesError } = await supabase
+          .from('estimasi')
+          .select('*', { count: 'exact', head: true })
+          .eq('status', 'progress');
+
+        if (!diprosesError) {
+          document.getElementById('estimasiDiproses').textContent = diprosesCount || 0;
+        }
+
+        // Hitung estimasi selesai
+        const { count: selesaiCount, error: selesaiError } = await supabase
+          .from('estimasi')
+          .select('*', { count: 'exact', head: true })
+          .eq('status', 'completed');
+
+        if (!selesaiError) {
+          document.getElementById('estimasiSelesai').textContent = selesaiCount || 0;
+        }
+
+        // Load estimasi terbaru
+        await loadRecentEstimasi();
+
+        // Load semua estimasi masuk
+        await loadEstimasiMasuk();
+
+        // Load estimasi diproses
+        await loadEstimasiDiproses();
+
+        // Load estimasi selesai
+        await loadEstimasiSelesai();
+
+      } catch (error) {
+        console.error('Error loading dashboard data:', error);
+      }
+    }
+
+    // Load estimasi terbaru
+    async function loadRecentEstimasi() {
+      try {
+        const { data, error } = await supabase
+          .from('estimasi')
+          .select(`
+            *,
+            teknisi:teknisi_id (full_name, email)
+          `)
+          .order('created_at', { ascending: false })
+          .limit(5);
+
+        if (error) throw error;
+
+        const tbody = document.getElementById('recentEstimasi');
+        tbody.innerHTML = '';
+
+        if (data && data.length > 0) {
+          data.forEach(estimasi => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+              <td>${estimasi.nopol}</td>
+              <td>${estimasi.jenis_mobil}</td>
+              <td>${estimasi.teknisi?.full_name || estimasi.teknisi?.email || 'Unknown'}</td>
+              <td>${new Date(estimasi.created_at).toLocaleDateString('id-ID')}</td>
+              <td><span class="status-badge status-${estimasi.status}">${getStatusText(estimasi.status)}</span></td>
+              <td>
+                <button class="btn btn-sm btn-outline-primary view-estimasi" data-id="${estimasi.id}">
+                  <i class="fas fa-eye"></i>
+                </button>
+              </td>
+            `;
+            tbody.appendChild(row);
+          });
+        } else {
+          tbody.innerHTML = '<tr><td colspan="6" class="text-center">Tidak ada data estimasi</td></tr>';
+        }
+
+        // Tambahkan event listener untuk tombol view
+        document.querySelectorAll('.view-estimasi').forEach(button => {
+          button.addEventListener('click', function () {
+            const estimasiId = this.getAttribute('data-id');
+            viewEstimasi(estimasiId);
+          });
+        });
+
+      } catch (error) {
+        console.error('Error loading recent estimasi:', error);
+      }
+    }
+
+    // Load estimasi masuk
+    async function loadEstimasiMasuk() {
+      try {
+        const { data, error } = await supabase
+          .from('estimasi')
+          .select(`
+            *,
+            teknisi:teknisi_id (full_name, email)
+          `)
+          .order('created_at', { ascending: false });
+
+        if (error) throw error;
+
+        const tbody = document.getElementById('estimasiMasukList');
+        tbody.innerHTML = '';
+
+        if (data && data.length > 0) {
+          data.forEach(estimasi => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+              <td>${estimasi.nopol}</td>
+              <td>${estimasi.jenis_mobil}</td>
+              <td>${Array.isArray(estimasi.komponen) ? estimasi.komponen.join(', ') : estimasi.komponen}</td>
+              <td>${estimasi.teknisi?.full_name || estimasi.teknisi?.email || 'Unknown'}</td>
+              <td>${new Date(estimasi.created_at).toLocaleDateString('id-ID')}</td>
+              <td><span class="status-badge status-${estimasi.status}">${getStatusText(estimasi.status)}</span></td>
+              <td>
+                <button class="btn btn-sm btn-outline-primary view-estimasi" data-id="${estimasi.id}">
+                  <i class="fas fa-eye"></i>
+                </button>
+                ${estimasi.status === 'pending' ? `
+                <button class="btn btn-sm btn-advisor proses-estimasi" data-id="${estimasi.id}">
+                  <i class="fas fa-cog me-1"></i> Proses
+                </button>
+                ` : ''}
+              </td>
+            `;
+            tbody.appendChild(row);
+          });
+        } else {
+          tbody.innerHTML = '<tr><td colspan="7" class="text-center">Tidak ada data estimasi</td></tr>';
+        }
+
+        // Tambahkan event listener untuk tombol
+        document.querySelectorAll('.view-estimasi').forEach(button => {
+          button.addEventListener('click', function () {
+            const estimasiId = this.getAttribute('data-id');
+            viewEstimasi(estimasiId);
+          });
+        });
+
+        document.querySelectorAll('.proses-estimasi').forEach(button => {
+          button.addEventListener('click', function () {
+            const estimasiId = this.getAttribute('data-id');
+            prosesEstimasi(estimasiId);
+          });
+        });
+
+      } catch (error) {
+        console.error('Error loading estimasi masuk:', error);
+      }
+    }
+
+    // Load estimasi diproses
+    async function loadEstimasiDiproses() {
+      try {
+        const { data, error } = await supabase
+          .from('estimasi')
+          .select(`
+            *,
+            teknisi:teknisi_id (full_name, email)
+          `)
+          .eq('status', 'progress')
+          .order('created_at', { ascending: false });
+
+        if (error) throw error;
+
+        const tbody = document.getElementById('estimasiDiprosesList');
+        tbody.innerHTML = '';
+
+        if (data && data.length > 0) {
+          data.forEach(estimasi => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+              <td>${estimasi.nopol}</td>
+              <td>${estimasi.jenis_mobil}</td>
+              <td>${Array.isArray(estimasi.komponen) ? estimasi.komponen.join(', ') : estimasi.komponen}</td>
+              <td>${estimasi.teknisi?.full_name || estimasi.teknisi?.email || 'Unknown'}</td>
+              <td>${new Date(estimasi.created_at).toLocaleDateString('id-ID')}</td>
+              <td><span class="status-badge status-${estimasi.status}">${getStatusText(estimasi.status)}</span></td>
+              <td>
+                <button class="btn btn-sm btn-outline-primary view-estimasi" data-id="${estimasi.id}">
+                  <i class="fas fa-eye"></i>
+                </button>
+                <button class="btn btn-sm btn-advisor input-jasa" data-id="${estimasi.id}">
+                  <i class="fas fa-tools me-1"></i> Input Jasa
+                </button>
+              </td>
+            `;
+            tbody.appendChild(row);
+          });
+        } else {
+          tbody.innerHTML = '<tr><td colspan="7" class="text-center">Tidak ada data estimasi</td></tr>';
+        }
+
+        // Tambahkan event listener untuk tombol
+        document.querySelectorAll('.view-estimasi').forEach(button => {
+          button.addEventListener('click', function () {
+            const estimasiId = this.getAttribute('data-id');
+            viewEstimasi(estimasiId);
+          });
+        });
+
+        document.querySelectorAll('.input-jasa').forEach(button => {
+          button.addEventListener('click', function () {
+            const estimasiId = this.getAttribute('data-id');
+            openInputJasaModal(estimasiId);
+          });
+        });
+
+      } catch (error) {
+        console.error('Error loading estimasi diproses:', error);
+      }
+    }
+
+    // Load estimasi selesai
+    async function loadEstimasiSelesai() {
+      try {
+        const { data, error } = await supabase
+          .from('estimasi')
+          .select(`
+            *,
+            teknisi:teknisi_id (full_name, email)
+          `)
+          .eq('status', 'completed')
+          .order('updated_at', { ascending: false });
+
+        if (error) throw error;
+
+        const tbody = document.getElementById('estimasiSelesaiList');
+        tbody.innerHTML = '';
+
+        if (data && data.length > 0) {
+          data.forEach(estimasi => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+              <td>${estimasi.nopol}</td>
+              <td>${estimasi.jenis_mobil}</td>
+              <td>${Array.isArray(estimasi.komponen) ? estimasi.komponen.join(', ') : estimasi.komponen}</td>
+              <td>${estimasi.teknisi?.full_name || estimasi.teknisi?.email || 'Unknown'}</td>
+              <td>${new Date(estimasi.updated_at).toLocaleDateString('id-ID')}</td>
+              <td>Rp ${estimasi.total_harga ? estimasi.total_harga.toLocaleString('id-ID') : '0'}</td>
+              <td>
+                <button class="btn btn-sm btn-outline-primary view-estimasi" data-id="${estimasi.id}">
+                  <i class="fas fa-eye"></i>
+                </button>
+              </td>
+            `;
+            tbody.appendChild(row);
+          });
+        } else {
+          tbody.innerHTML = '<tr><td colspan="7" class="text-center">Tidak ada data estimasi</td></tr>';
+        }
+
+        // Tambahkan event listener untuk tombol
+        document.querySelectorAll('.view-estimasi').forEach(button => {
+          button.addEventListener('click', function () {
+            const estimasiId = this.getAttribute('data-id');
+            viewEstimasi(estimasiId);
+          });
+        });
+
+      } catch (error) {
+        console.error('Error loading estimasi selesai:', error);
+      }
+    }
+
+    // Fungsi untuk melihat detail estimasi
+    async function viewEstimasi(estimasiId) {
+      try {
+        const { data, error } = await supabase
+          .from('estimasi')
+          .select(`
+            *,
+            teknisi:teknisi_id (full_name, email)
+          `)
+          .eq('id', estimasiId)
+          .single();
+
+        if (error) throw error;
+
+        if (data) {
+          const modalContent = document.getElementById('estimasiDetail');
+          modalContent.innerHTML = `
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <strong>No. Polisi:</strong> ${data.nopol}
+              </div>
+              <div class="col-md-6">
+                <strong>Jenis Mobil:</strong> ${data.jenis_mobil}
+              </div>
+            </div>
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <strong>Telepon Customer:</strong> ${data.telepon_customer || '-'}
+              </div>
+              <div class="col-md-6">
+                <strong>Service Advisor:</strong> ${data.service_advisor || '-'}
+              </div>
+            </div>
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <strong>Teknisi:</strong> ${data.teknisi?.full_name || data.teknisi?.email || 'Unknown'}
+              </div>
+              <div class="col-md-6">
+                <strong>Status:</strong> <span class="status-badge status-${data.status}">${getStatusText(data.status)}</span>
+              </div>
+            </div>
+            <div class="row mb-3">
+              <div class="col-12">
+                <strong>Komponen:</strong>
+                <ul>
+                  ${Array.isArray(data.komponen) ? data.komponen.map(k => `<li>${k}</li>`).join('') : `<li>${data.komponen}</li>`}
+                </ul>
+              </div>
+            </div>
+            <div class="row mb-3">
+              <div class="col-12">
+                <strong>Keterangan:</strong> ${data.keterangan || '-'}
+              </div>
+            </div>
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <strong>Dibuat:</strong> ${new Date(data.created_at).toLocaleString('id-ID')}
+              </div>
+              <div class="col-md-6">
+                <strong>Diperbarui:</strong> ${new Date(data.updated_at).toLocaleString('id-ID')}
+              </div>
+            </div>
+            ${data.foto_url ? `
+            <div class="row mb-3">
+              <div class="col-12">
+                <strong>Foto:</strong><br>
+                <img src="${data.foto_url}" class="img-fluid mt-2" style="max-height: 200px;">
+              </div>
+            </div>
+            ` : ''}
+          `;
+
+          // Tampilkan tombol input jasa jika status progress
+          const inputJasaBtn = document.getElementById('inputJasaBtn');
+          if (data.status === 'progress') {
+            inputJasaBtn.style.display = 'block';
+            inputJasaBtn.onclick = function () {
+              openInputJasaModal(estimasiId);
+            };
+          } else {
+            inputJasaBtn.style.display = 'none';
+          }
+
+          // Tampilkan modal
+          const modal = new bootstrap.Modal(document.getElementById('viewEstimasiModal'));
+          modal.show();
+        }
+
+      } catch (error) {
+        console.error('Error viewing estimasi:', error);
+        alert('Terjadi kesalahan saat memuat detail estimasi');
+      }
+    }
+
+    // Fungsi untuk memproses estimasi (mengubah status dari pending ke progress)
+    async function prosesEstimasi(estimasiId) {
+      try {
+        const { error } = await supabase
+          .from('estimasi')
+          .update({ status: 'progress' })
+          .eq('id', estimasiId);
+
+        if (error) throw error;
+
+        alert('Estimasi berhasil diproses');
+        await loadDashboardData();
+
+      } catch (error) {
+        console.error('Error processing estimasi:', error);
+        alert('Terjadi kesalahan saat memproses estimasi');
+      }
+    }
+
+    // Fungsi untuk membuka modal input jasa
+    async function openInputJasaModal(estimasiId) {
+      try {
+        currentEstimasiId = estimasiId;
+
+        // Dapatkan data estimasi
+        const { data: estimasi, error: estimasiError } = await supabase
+          .from('estimasi')
+          .select('*')
+          .eq('id', estimasiId)
+          .single();
+
+        if (estimasiError) throw estimasiError;
+
+        // Dapatkan data jasa
+        const { data: jasa, error: jasaError } = await supabase
+          .from('jasa')
+          .select('*')
+          .eq('estimasi_id', estimasiId);
+
+        if (jasaError) throw jasaError;
+
+        jasaData = jasa || [];
+
+        // Buat form input jasa
+        const formContent = document.getElementById('jasaFormContent');
+        formContent.innerHTML = '';
+
+        // Tambahkan header
+        const header = document.createElement('div');
+        header.className = 'row mb-3';
+        header.innerHTML = `
+          <div class="col-md-6">
+            <strong>No. Polisi:</strong> ${estimasi.nopol}
+          </div>
+          <div class="col-md-6">
+            <strong>Jenis Mobil:</strong> ${estimasi.jenis_mobil}
+          </div>
+        `;
+        formContent.appendChild(header);
+
+        // Buat form untuk setiap komponen
+        const komponenList = Array.isArray(estimasi.komponen) ? estimasi.komponen : [estimasi.komponen];
+        
+        komponenList.forEach((komponen, index) => {
+          const jasaItem = jasaData.find(j => j.nama_jasa === komponen) || { nama_jasa: komponen, harga: 0 };
+
+          const formRow = document.createElement('div');
+          formRow.className = 'jasa-form-row';
+          formRow.innerHTML = `
+            <div class="jasa-form-col">
+              <label class="form-label">Nama Jasa</label>
+              <input type="text" class="form-control" value="${komponen}" readonly>
+            </div>
+            <div class="jasa-form-col">
+              <label class="form-label">Harga Jasa</label>
+              <input type="number" class="form-control harga-jasa" data-komponen="${komponen}" 
+                     value="${jasaItem.harga}" placeholder="Masukkan harga">
+            </div>
+          `;
+          formContent.appendChild(formRow);
+        });
+
+        // Tampilkan modal
+        const modal = new bootstrap.Modal(document.getElementById('inputJasaModal'));
+        modal.show();
+
+      } catch (error) {
+        console.error('Error opening jasa modal:', error);
+        alert('Terjadi kesalahan saat membuka form input jasa');
+      }
+    }
+
+    // Fungsi untuk menyimpan harga jasa
+    async function simpanJasa() {
+      try {
+        if (!currentEstimasiId) return;
+
+        // Kumpulkan data jasa dari form
+        const jasaInputs = document.querySelectorAll('.harga-jasa');
+        const jasaToSave = [];
+
+        jasaInputs.forEach(input => {
+          const namaJasa = input.getAttribute('data-komponen');
+          const harga = parseInt(input.value) || 0;
+
+          if (harga > 0) {
+            jasaToSave.push({
+              estimasi_id: currentEstimasiId,
+              nama_jasa: namaJasa,
+              harga: harga
+            });
+          }
+        });
+
+        if (jasaToSave.length === 0) {
+          alert('Harap masukkan harga untuk setidaknya satu jasa');
+          return;
+        }
+
+        // Hapus data jasa lama
+        const { error: deleteError } = await supabase
+          .from('jasa')
+          .delete()
+          .eq('estimasi_id', currentEstimasiId);
+
+        if (deleteError) throw deleteError;
+
+        // Simpan data jasa baru
+        const { error: insertError } = await supabase
+          .from('jasa')
+          .insert(jasaToSave);
+
+        if (insertError) throw insertError;
+
+        // Hitung total harga
+        const totalHarga = jasaToSave.reduce((sum, jasa) => sum + jasa.harga, 0);
+
+        // Update estimasi dengan total harga dan status completed
+        const { error: updateError } = await supabase
+          .from('estimasi')
+          .update({ 
+            total_harga: totalHarga,
+            status: 'completed',
+            updated_at: new Date().toISOString()
+          })
+          .eq('id', currentEstimasiId);
+
+        if (updateError) throw updateError;
+
+        alert('Harga jasa berhasil disimpan dan estimasi telah diselesaikan');
+        
+        // Tutup modal
+        const modal = bootstrap.Modal.getInstance(document.getElementById('inputJasaModal'));
+        modal.hide();
+
+        // Refresh data
+        await loadDashboardData();
+
+      } catch (error) {
+        console.error('Error saving jasa:', error);
+        alert('Terjadi kesalahan saat menyimpan harga jasa');
+      }
+    }
+
+    // Fungsi untuk mendapatkan teks status
+    function getStatusText(status) {
+      switch (status) {
+        case 'pending': return 'Pending';
+        case 'progress': return 'Diproses';
+        case 'completed': return 'Selesai';
+        default: return status;
+      }
+    }
+
+    // Event listener untuk navigasi sidebar
+    document.querySelectorAll('.sidebar-menu a').forEach(link => {
+      link.addEventListener('click', function (e) {
+        e.preventDefault();
+        
+        // Update active class
+        document.querySelectorAll('.sidebar-menu a').forEach(a => a.classList.remove('active'));
+        this.classList.add('active');
+        
+        // Tampilkan section yang sesuai
+        const sectionId = this.getAttribute('data-section');
+        document.querySelectorAll('.content-section').forEach(section => {
+          section.classList.remove('active');
+        });
+        document.getElementById(sectionId).classList.add('active');
+        
+        // Update page title
+        const pageTitle = document.getElementById('pageTitle');
+        const mobileTitle = document.getElementById('mobileTitle');
+        pageTitle.textContent = this.querySelector('span').textContent;
+        mobileTitle.textContent = this.querySelector('span').textContent;
+        
+        // Pada tampilan mobile, tutup sidebar setelah memilih menu
+        if (window.innerWidth < 768) {
+          document.getElementById('sidebar').classList.remove('show');
+        }
+      });
+    });
+
+    // Event listener untuk tombol logout
+    document.getElementById('logoutBtn').addEventListener('click', async function () {
+      await supabase.auth.signOut();
+      window.location.href = 'login.html';
+    });
+
+    document.getElementById('logoutBtnDesktop').addEventListener('click', async function () {
+      await supabase.auth.signOut();
+      window.location.href = 'login.html';
+    });
+
+    // Event listener untuk tombol refresh
+    document.getElementById('refreshBtn').addEventListener('click', function () {
+      loadEstimasiMasuk();
+    });
+
+    document.getElementById('refreshDiprosesBtn').addEventListener('click', function () {
+      loadEstimasiDiproses();
+    });
+
+    document.getElementById('refreshSelesaiBtn').addEventListener('click', function () {
+      loadEstimasiSelesai();
+    });
+
+    // Event listener untuk tombol simpan jasa
+    document.getElementById('simpanJasaBtn').addEventListener('click', simpanJasa);
+
+    // Event listener untuk tombol menu mobile
+    document.getElementById('mobileMenuBtn').addEventListener('click', function () {
+      document.getElementById('sidebar').classList.toggle('show');
+    });
+
+    // Event listener untuk filter status
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', function () {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        
+        const status = this.getAttribute('data-status');
+        filterEstimasiByStatus(status);
+      });
+    });
+
+    // Fungsi untuk filter estimasi berdasarkan status
+    function filterEstimasiByStatus(status) {
+      const rows = document.querySelectorAll('#estimasiMasukList tr');
+      
+      rows.forEach(row => {
+        if (status === 'all') {
+          row.style.display = '';
+        } else {
+          const rowStatus = row.querySelector('.status-badge').classList[1].replace('status-', '');
+          row.style.display = rowStatus === status ? '' : 'none';
+        }
+      });
+    }
+
+    // Inisialisasi tooltips
+    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    tooltipTriggerList.map(function (tooltipTriggerEl) {
+      return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+  </script>
+</body>
+
+</html>
