@@ -1,353 +1,107 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flow Chart Estimasi CR7</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background-color: #f5f5f5;
-        }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        
-        h1 {
-            text-align: center;
-            color: #333;
-            margin-bottom: 30px;
-        }
-        
-        .flowchart-container {
-            position: relative;
-            width: 100%;
-            height: 700px;
-            border: 1px solid #ddd;
-            overflow: auto;
-            background-color: #f9f9f9;
-        }
-        
-        .node {
-            position: absolute;
-            padding: 10px 15px;
-            border-radius: 5px;
-            text-align: center;
-            font-size: 14px;
-            cursor: pointer;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
-            min-width: 150px;
-            max-width: 200px;
-            word-wrap: break-word;
-        }
-        
-        .node:hover {
-            transform: scale(1.05);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-        }
-        
-        .process {
-            background-color: #e3f2fd;
-            border: 2px solid #2196f3;
-        }
-        
-        .decision {
-            background-color: #fff3e0;
-            border: 2px solid #ff9800;
-            border-radius: 50%;
-            width: 120px;
-            height: 120px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .start-end {
-            background-color: #e8f5e9;
-            border: 2px solid #4caf50;
-            border-radius: 20px;
-        }
-        
-        .connector {
-            position: absolute;
-            background-color: #333;
-            z-index: -1;
-        }
-        
-        .arrow {
-            position: absolute;
-            width: 0;
-            height: 0;
-            border-style: solid;
-        }
-        
-        .legend {
-            display: flex;
-            justify-content: center;
-            margin-top: 20px;
-            flex-wrap: wrap;
-        }
-        
-        .legend-item {
-            display: flex;
-            align-items: center;
-            margin: 0 15px;
-        }
-        
-        .legend-color {
-            width: 20px;
-            height: 20px;
-            margin-right: 8px;
-            border-radius: 3px;
-        }
-        
-        .legend-process {
-            background-color: #e3f2fd;
-            border: 1px solid #2196f3;
-        }
-        
-        .legend-decision {
-            background-color: #fff3e0;
-            border: 1px solid #ff9800;
-            border-radius: 50%;
-        }
-        
-        .legend-start-end {
-            background-color: #e8f5e9;
-            border: 1px solid #4caf50;
-            border-radius: 10px;
-        }
-        
-        .node-info {
-            position: fixed;
-            background-color: white;
-            border: 1px solid #ddd;
-            padding: 15px;
-            border-radius: 5px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-            max-width: 300px;
-            display: none;
-            z-index: 100;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flow Estimasi CR7</title>
+
+  <!-- Import Mermaid.js -->
+  <script type="module">
+    import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs";
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: "neutral",
+      themeVariables: {
+        primaryColor: "#e3f2fd",
+        primaryBorderColor: "#1565c0",
+        primaryTextColor: "#0d47a1",
+        lineColor: "#1565c0",
+        fontSize: "15px",
+        fontFamily: "Poppins, sans-serif",
+      },
+    });
+  </script>
+
+  <!-- CSS -->
+  <style>
+    body {
+      background: linear-gradient(135deg, #eef4fa, #ffffff);
+      font-family: "Poppins", sans-serif;
+      color: #333;
+      margin: 0;
+      padding: 40px 20px;
+    }
+
+    h1 {
+      text-align: center;
+      color: #0d47a1;
+      font-size: 26px;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+      margin-bottom: 30px;
+    }
+
+    .diagram-wrapper {
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      overflow-x: auto;
+    }
+
+    .mermaid svg {
+      margin: auto;
+      display: block;
+      max-width: 100%;
+      height: auto;
+    }
+
+    footer {
+      text-align: center;
+      color: #666;
+      font-size: 14px;
+      margin-top: 40px;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Flow Chart Estimasi CR7</h1>
-        
-        <div class="flowchart-container" id="flowchart">
-            <!-- Node akan dibuat dengan JavaScript -->
-        </div>
-        
-        <div class="legend">
-            <div class="legend-item">
-                <div class="legend-color legend-process"></div>
-                <span>Proses</span>
-            </div>
-            <div class="legend-item">
-                <div class="legend-color legend-decision"></div>
-                <span>Keputusan</span>
-            </div>
-            <div class="legend-item">
-                <div class="legend-color legend-start-end"></div>
-                <span>Mulai/Selesai</span>
-            </div>
-        </div>
+  <h1>Flowchart Estimasi CR7</h1>
+
+  <div class="diagram-wrapper">
+    <div class="mermaid">
+      flowchart TD
+        %% === Alur Estimasi CR7 ===
+        A[Teknisi Mengisi Komponen] --> B[Data Dikirim ke Sparepart]
+        B --> C[Sparepart Mengisi Harga Part di Website CR7]
+        C --> D[Flow Kembali ke Teknisi]
+        D --> E{Perlu Pengeditan?}
+
+        %% Percabangan pengeditan
+        E -->|Ya| B2[Kembali ke Sparepart untuk Edit Harga/Barang]
+        E -->|Tidak| F[Kirim ke PTM / Controller]
+        F --> G[Kirim ke Service Advisor]
+
+        %% SA decision
+        G --> H{Service Advisor Sudah Mengisi Harga Jasa?}
+        H -->|Belum| I[PTM Ingatkan SA untuk Mengisi]
+        I --> J[Status: Sent]
+        H -->|Sudah| K[PTM Mengecek dan Memberi Status Released]
+
+        %% Estimasi ACC Customer
+        K --> L{Estimasi Di-ACC Customer?}
+        L -->|Ya| M[PTM Dapat Edit Estimasi - Hapus Komponen Tertentu]
+        M --> N[Estimasi Diteruskan ke MRA untuk Follow Up Customer]
+        L -->|Tidak| O[MRA Melakukan Follow Up dan Isi Remark 'Belum Ganti']
+
+        %% MRA Output
+        N --> P{Hasil Follow Up?}
+        P -->|ACC| Q[Status Akhir: Customer Menyetujui Estimasi]
+        P -->|Belum| R[Status: Menunggu Keputusan / Remark Follow Up]
+
+        %% Penataan layout
+        J -.-> G
     </div>
-    
-    <div class="node-info" id="nodeInfo"></div>
+  </div>
 
-    <script>
-        // Data untuk node flow chart
-        const nodes = [
-            { id: 1, type: 'start-end', text: 'Mulai Estimasi CR7', x: 100, y: 50 },
-            { id: 2, type: 'process', text: 'Teknisi Mengisi Komponen', x: 100, y: 150 },
-            { id: 3, type: 'process', text: 'Data Dikirim ke Sparepart', x: 100, y: 250 },
-            { id: 4, type: 'process', text: 'Sparepart Mengisi Harga Part', x: 100, y: 350 },
-            { id: 5, type: 'process', text: 'Flow Kembali ke Teknisi', x: 100, y: 450 },
-            { id: 6, type: 'decision', text: 'Perlu Pengeditan?', x: 350, y: 450 },
-            { id: 7, type: 'process', text: 'Kembali ke Sparepart', x: 350, y: 550 },
-            { id: 8, type: 'process', text: 'Kirim ke PTM/Controller', x: 100, y: 550 },
-            { id: 9, type: 'process', text: 'Kirim ke Service Advisor', x: 100, y: 650 },
-            { id: 10, type: 'decision', text: 'SA Sudah Mengisi?', x: 350, y: 650 },
-            { id: 11, type: 'process', text: 'PTM Ingatkan SA', x: 550, y: 650 },
-            { id: 12, type: 'process', text: 'Status: Sent', x: 550, y: 750 },
-            { id: 13, type: 'process', text: 'SA Mengisi Harga Jasa', x: 350, y: 750 },
-            { id: 14, type: 'process', text: 'PTM Mengecek & Status: Released', x: 350, y: 850 },
-            { id: 15, type: 'decision', text: 'Estimasi Diacc Customer?', x: 600, y: 850 },
-            { id: 16, type: 'process', text: 'PTM Edit Estimasi (Hapus Komponen)', x: 600, y: 950 },
-            { id: 17, type: 'process', text: 'Estimasi Diteruskan ke MRA', x: 600, y: 1050 },
-            { id: 18, type: 'process', text: 'MRA Follow Up Customer', x: 600, y: 1150 },
-            { id: 19, type: 'process', text: 'MRA Isi Remark Follow Up', x: 600, y: 1250 },
-            { id: 20, type: 'start-end', text: 'Selesai', x: 600, y: 1350 }
-        ];
-
-        // Koneksi antar node
-        const connections = [
-            { from: 1, to: 2 },
-            { from: 2, to: 3 },
-            { from: 3, to: 4 },
-            { from: 4, to: 5 },
-            { from: 5, to: 6 },
-            { from: 6, to: 7, label: 'Ya' },
-            { from: 7, to: 4 },
-            { from: 6, to: 8, label: 'Tidak' },
-            { from: 8, to: 9 },
-            { from: 9, to: 10 },
-            { from: 10, to: 11, label: 'Belum' },
-            { from: 11, to: 12 },
-            { from: 12, to: 9 },
-            { from: 10, to: 13, label: 'Sudah' },
-            { from: 13, to: 14 },
-            { from: 14, to: 15 },
-            { from: 15, to: 16, label: 'Ya' },
-            { from: 16, to: 17 },
-            { from: 15, to: 17, label: 'Tidak' },
-            { from: 17, to: 18 },
-            { from: 18, to: 19 },
-            { from: 19, to: 20 }
-        ];
-
-        // Informasi detail untuk setiap node
-        const nodeDetails = {
-            1: "Proses Estimasi CR7 dimulai",
-            2: "Teknisi mengisi komponen yang diperlukan untuk perbaikan",
-            3: "Data komponen dikirim ke bagian sparepart untuk penentuan harga",
-            4: "Sparepart mengisi harga part melalui website CR7",
-            5: "Flow kembali ke teknisi untuk verifikasi",
-            6: "Periksa apakah perlu pengeditan (penambahan/pengurangan barang)",
-            7: "Jika perlu pengeditan, kembali ke sparepart untuk penyesuaian harga",
-            8: "Jika tidak perlu pengeditan, kirim ke PTM/Controller",
-            9: "Estimasi dikirim ke Service Advisor",
-            10: "Periksa apakah Service Advisor sudah mengisi harga jasa",
-            11: "Jika belum, PTM mengingatkan Service Advisor untuk mengisi",
-            12: "Status estimasi tetap 'Sent' sampai Service Advisor mengisi",
-            13: "Service Advisor mengisi harga jasa",
-            14: "PTM mengecek dan memberikan status 'Released'",
-            15: "Periksa apakah estimasi diacc oleh customer",
-            16: "Jika diacc, PTM dapat mengedit estimasi (misal menghapus komponen)",
-            17: "Estimasi diteruskan ke MRA untuk follow up",
-            18: "MRA melakukan follow up ke customer",
-            19: "MRA mengisi hasil follow up (remark)",
-            20: "Proses estimasi selesai"
-        };
-
-        // Fungsi untuk membuat node
-        function createNodes() {
-            const flowchart = document.getElementById('flowchart');
-            
-            nodes.forEach(node => {
-                const nodeElement = document.createElement('div');
-                nodeElement.id = `node-${node.id}`;
-                nodeElement.className = `node ${node.type}`;
-                nodeElement.textContent = node.text;
-                nodeElement.style.left = `${node.x}px`;
-                nodeElement.style.top = `${node.y}px`;
-                
-                // Tambahkan event listener untuk menampilkan info
-                nodeElement.addEventListener('click', () => showNodeInfo(node.id));
-                
-                flowchart.appendChild(nodeElement);
-            });
-        }
-
-        // Fungsi untuk membuat koneksi
-        function createConnections() {
-            const flowchart = document.getElementById('flowchart');
-            
-            connections.forEach(conn => {
-                const fromNode = nodes.find(n => n.id === conn.from);
-                const toNode = nodes.find(n => n.id === conn.to);
-                
-                if (fromNode && toNode) {
-                    // Hitung posisi tengah node
-                    const fromX = fromNode.x + (fromNode.type === 'decision' ? 60 : 75);
-                    const fromY = fromNode.y + (fromNode.type === 'decision' ? 60 : 25);
-                    const toX = toNode.x + (toNode.type === 'decision' ? 60 : 75);
-                    const toY = toNode.y + (toNode.type === 'decision' ? 60 : 25);
-                    
-                    // Buat garis koneksi
-                    const connector = document.createElement('div');
-                    connector.className = 'connector';
-                    
-                    // Hitung panjang dan sudut garis
-                    const length = Math.sqrt(Math.pow(toX - fromX, 2) + Math.pow(toY - fromY, 2));
-                    const angle = Math.atan2(toY - fromY, toX - fromX) * 180 / Math.PI;
-                    
-                    connector.style.width = `${length}px`;
-                    connector.style.height = '2px';
-                    connector.style.left = `${fromX}px`;
-                    connector.style.top = `${fromY}px`;
-                    connector.style.transform = `rotate(${angle}deg)`;
-                    connector.style.transformOrigin = '0 0';
-                    
-                    flowchart.appendChild(connector);
-                    
-                    // Buat panah
-                    const arrow = document.createElement('div');
-                    arrow.className = 'arrow';
-                    
-                    // Posisikan panah di ujung garis
-                    arrow.style.left = `${toX - 5}px`;
-                    arrow.style.top = `${toY - 5}px`;
-                    arrow.style.borderWidth = '5px 0 5px 10px';
-                    arrow.style.borderColor = `transparent transparent transparent #333`;
-                    arrow.style.transform = `rotate(${angle}deg)`;
-                    
-                    flowchart.appendChild(arrow);
-                    
-                    // Tambahkan label jika ada
-                    if (conn.label) {
-                        const label = document.createElement('div');
-                        label.className = 'connector-label';
-                        label.textContent = conn.label;
-                        label.style.position = 'absolute';
-                        label.style.left = `${(fromX + toX) / 2}px`;
-                        label.style.top = `${(fromY + toY) / 2 - 10}px`;
-                        label.style.backgroundColor = 'white';
-                        label.style.padding = '2px 5px';
-                        label.style.fontSize = '12px';
-                        label.style.borderRadius = '3px';
-                        label.style.boxShadow = '0 1px 3px rgba(0,0,0,0.2)';
-                        
-                        flowchart.appendChild(label);
-                    }
-                }
-            });
-        }
-
-        // Fungsi untuk menampilkan informasi node
-        function showNodeInfo(nodeId) {
-            const info = document.getElementById('nodeInfo');
-            info.textContent = nodeDetails[nodeId] || 'Informasi tidak tersedia';
-            info.style.display = 'block';
-            
-            // Posisikan info di dekat node yang diklik
-            const node = document.getElementById(`node-${nodeId}`);
-            const rect = node.getBoundingClientRect();
-            info.style.left = `${rect.right + 10}px`;
-            info.style.top = `${rect.top}px`;
-            
-            // Sembunyikan info setelah beberapa detik
-            setTimeout(() => {
-                info.style.display = 'none';
-            }, 5000);
-        }
-
-        // Inisialisasi flow chart saat halaman dimuat
-        document.addEventListener('DOMContentLoaded', () => {
-            createNodes();
-            createConnections();
-        });
-    </script>
+  <footer>© 2025 Flow Estimasi CR7 | Dibuat dengan ❤️ menggunakan Mermaid.js</footer>
 </body>
 </html>
