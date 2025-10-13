@@ -2406,7 +2406,7 @@
                     .from('master_kendaraan')
                     .select('*')
                     .ilike('nopol', `%${nopol}%`)
-                    .order('updated_at', { ascending: false })
+                    .order('nopol', { ascending: false })
                     .limit(10);
 
                 if (error) throw error;
