@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Flow Estimasi CR7 - Visual Infografis</title>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&display=swap" rel="stylesheet">
+
+  <script type="module">
+    import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs";
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: "base", // Gunakan 'base' untuk kustomisasi penuh
+      // Konfigurasi untuk garis siku dan tidak saling menumpuk
+      flowchart: {
+        curve: 'linear', // Menggunakan 'linear' untuk garis lurus siku
+        htmlLabels: true,
+        diagramPadding: 20
+      },
+      themeVariables: {
+        fontFamily: "Poppins, sans-serif",
+        primaryColor: "#ffffff",
+        primaryBorderColor: "#3b82f6",
+        lineColor: "#3b82f6",
+        fontSize: "15px",
+        // Pastikan warna-warna dasar adalah putih untuk efek glass
+        nodeBorder: "#3b82f6",
+        nodeBkg: "#ffffff",
+        edgeColor: "#3b82f6",
+        edgeLabelColor: "#3b82f6",
+      },
+    });
+  </script>
+
+  <style>
+    :root {
+      /* Warna-warna dasar untuk efek glass */
+      --glass-bg-startEnd: rgba(220, 252, 231, 0.7); /* Success */
+      --glass-bg-process: rgba(219, 234, 254, 0.7); /* Process */
+      --glass-bg-decision: rgba(255, 248, 225, 0.7); /* Decision */
+      --glass-bg-warning: rgba(254, 226, 226, 0.7); /* Warning */
+      --glass-bg-database: rgba(228, 218, 202, 0.7); /* Database */
+      --glass-bg-sparepart: rgba(236, 174, 49, 0.7); /* Sparepart */
+      --glass-bg-serviceAdvisor: rgba(196, 241, 249, 0.7); /* SA/PTM */
+      --glass-bg-mra: rgba(237, 233, 254, 0.7); /* MRA/MRS */
+    }
+
+    body {
+      font-family: "Poppins", sans-serif;
+      /* Background untuk efek glass */
+      background: linear-gradient(135deg, #a3d4ff, #e0f2fe, #fff); 
+      margin: 0;
+      padding: 40px 15px;
+      color: #333;
+      min-height: 100vh;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 2.3rem;
+      font-weight: 700;
+      color: #1a237e;
+      margin-bottom: 20px;
+    }
+
+    .diagram-wrapper {
+      /* Efek Liquid Glass Frosted */
+      background: rgba(255, 255, 255, 0.15); /* Latar belakang transparan */
+      backdrop-filter: blur(10px) saturate(180%);
+      -webkit-backdrop-filter: blur(10px) saturate(180%);
+      border: 1px solid rgba(255, 255, 255, 0.3); /* Garis batas halus */
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+      max-width: 95%; /* Lebih lebar untuk diagram kompleks */
+      margin: 0 auto;
+      min-height: 500px;
+    }
+
+    .mermaid {
+      display: flex;
+      justify-content: center;
+      /* Memastikan diagram tidak terpotong */
+      overflow-x: auto; 
+      padding: 10px 0;
+    }
+
+    /* Kustomisasi Mermaid.js untuk efek glass pada node */
+    .mermaid svg {
+      max-width: 100%;
+      height: auto;
+    }
+
+    /* Aturan umum untuk node */
+    .node rect, .node polygon, .node circle {
+      stroke-width: 2px !important;
+      fill-opacity: 0.9 !important; /* Opasitas untuk efek glass */
+      transition: all 0.3s ease;
+      cursor: default;
+    }
+    
+    .node:hover rect, .node:hover polygon, .node:hover circle {
+        fill-opacity: 1 !important;
+        box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    }
+    
+    /* Penerapan Warna dan Border sesuai classDef (Frosted Glass Color) */
+    .startEnd rect, .startEnd circle {
+      fill: var(--glass-bg-startEnd) !important;
+      stroke: #22c55e !important;
+    }
+    .process rect {
+      fill: var(--glass-bg-process) !important;
+      stroke: #2563eb !important;
+    }
+    .decision polygon { /* Keputusan menggunakan poligon */
+      fill: var(--glass-bg-decision) !important;
+      stroke: #f59e0b !important;
+    }
+    .warning rect, .warning circle {
+      fill: var(--glass-bg-warning) !important;
+      stroke: #ef4444 !important;
+    }
+    .database rect {
+      fill: var(--glass-bg-database) !important;
+      stroke: #9A8C98 !important;
+    }
+    /* Sub-bidang Database berbentuk silinder/tabung (default Mermaid) */
+    .database .top, .database .bottom { 
+       fill: var(--glass-bg-database) !important;
+       stroke: #9A8C98 !important;
+    }
+    .sparepart circle { /* Sparepart menggunakan lingkaran */
+      fill: var(--glass-bg-sparepart) !important;
+      stroke: #b45309 !important;
+    }
+    .serviceAdvisor rect, .serviceAdvisor circle {
+      fill: var(--glass-bg-serviceAdvisor) !important;
+      stroke: #0e7490 !important;
+    }
+    .mra rect, .mra circle {
+      fill: var(--glass-bg-mra) !important;
+      stroke: #8b5cf6 !important;
+    }
+    
+    /* Label pada garis (edges) */
+    .edgeLabel {
+      background-color: rgba(255, 255, 255, 0.8) !important; 
+      padding: 2px 5px;
+      border-radius: 4px;
+      border: 1px solid rgba(0,0,0,0.1);
+    }
+
+    /* Legend */
+    .legend {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin: 25px 0;
+      flex-wrap: wrap;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      /* Efek glass untuk legend */
+      background: rgba(255, 255, 255, 0.3); 
+      backdrop-filter: blur(5px);
+      padding: 6px 12px;
+      border-radius: 50px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+      border: 1px solid rgba(255, 255, 255, 0.5);
+    }
+
+    .legend-color {
+      width: 14px;
+      height: 14px;
+      border-radius: 3px;
+      border-width: 2px;
+      border-style: solid;
+    }
+
+    .legend-process { background: var(--glass-bg-process); border-color: #2563eb; }
+    .legend-decision { background: var(--glass-bg-decision); border-color: #f59e0b; }
+    .legend-success { background: var(--glass-bg-startEnd); border-color: #22c55e; }
+    .legend-warning { background: var(--glass-bg-warning); border-color: #ef4444; }
+    .legend-database { background: var(--glass-bg-database); border-color: #9A8C98; }
+    .legend-sparepart { background: var(--glass-bg-sparepart); border-color: #b45309; }
+    .legend-serviceAdvisor { background: var(--glass-bg-serviceAdvisor); border-color: #0e7490; }
+    .legend-mra { background: var(--glass-bg-mra); border-color: #8b5cf6; }
+
+    footer {
+      text-align: center;
+      margin-top: 30px;
+      color: #666;
+      font-size: 14px;
+      padding-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>💡 Flow Estimasi CR7</h1>
+
+  <div class="legend">
+    <div class="legend-item"><div class="legend-color legend-success"></div> Mulai / Selesai</div>
+    <div class="legend-item"><div class="legend-color legend-process"></div> Proses</div>
+    <div class="legend-item"><div class="legend-color legend-decision"></div> Keputusan</div>
+    <div class="legend-item"><div class="legend-color legend-warning"></div> Selesai / Revisi</div>
+    <div class="legend-item"><div class="legend-color legend-database"></div> Sistem CR7</div>
+    <div class="legend-item"><div class="legend-color legend-sparepart"></div> Sparepart</div>
+    <div class="legend-item"><div class="legend-color legend-serviceAdvisor"></div> Service Advisor / PTM</div>
+    <div class="legend-item"><div class="legend-color legend-mra"></div> MRA / MRS</div>
+  </div>
+
+  <div class="diagram-wrapper">
+    <div class="mermaid">
+     flowchart TD
+    
+    %% Tentukan Rank Separasi agar tidak menumpuk
+    ranksep 40;
+    nodesep 30;
+    
+    A([Mulai Estimasi CR7]) --> B[/Teknisi Mengisi Form Estimasi/]
+    
+    B --> DB1[(Sistem CR7)]
+    
+    %% Alur Part
+    DB1 --> SP1((Sparepart))
+    SP1 --> C[/Petugas part Mengisi harga sparepart/]
+    C --> DB2[(Sistem CR7)]
+    DB2 --> TK[Teknisi cek Estimasi]
+    TK --> TK2{Tambah Estimasi?}
+    
+    TK2 --> |Ya ✅| TK3[/Teknisi menambah part Estimasi/]
+    TK3 --> SP2((Sparepart))
+    SP2 --> TK[Teknisi cek Estimasi] %% Loop kembali ke cek estimasi
+    
+    TK2 --> |Tidak ❌| TK4["`Kirim ke Service Advisor
+    Kirim ke PTM (controller)`"]
+    
+    TK4 --> SA((Service Advisor/PTM))
+
+    %% Alur Service Advisor / PTM
+    SA --> E[/Service Advisor mengisi harga jasa/]
+    E --> DB3[(Sistem Cr7)]
+    DB3 --> PTM[PTM cek harga jasa]
+    PTM --> PTM2{Harga jasa sudah di isi?}
+    
+    PTM2 --> |Ya ✅| PTM3{Ada info penggantian dari SA?}
+    
+    PTM3 --> |Ya ✅| PTMF4{Estimasi disetujui Semua?}
+    
+    PTMF4 --> |Ya ✅| PTMF5[/Rubah status ke Released/]
+    PTMF5 --> selesai1([Selesai])
+    
+    PTMF4 --> |Tidak ❌| PTMF6[Coret item sudah ganti]
+    PTMF6 --> MRAF((MRA / MRS))
+
+    PTM3 --> |Tidak ❌| PTM7["`Kirim ke MRA untuk FU`"]
+    PTM7 --> PTM8[(Sistem CR7)]
+    PTM8 --> MRAF1((MRA / MRS))
+    
+    PTM2 --> |Tidak ❌| PTM6[Informasikan ke SA]
+    PTM6 --> E
+
+    %% Alur MRA / MRS
+    MRAF --> MRA2[/Follow UP Customer/]
+    MRAF1 --> MRA2
+
+    MRA2 --> MRA3{Customer mau ganti?}
+    
+    MRA3 --> |Ya ✅| MRA4["`1.Jadwalkan penggantian
+    2.Order ke petugas Part
+    3.Remark hasil FU`"]
+    MRA4 --> MRA6[(Sistem CR7)]
+    
+    MRA3 --> |Tidak ❌| MRA5[Remark hasil FU]
+    MRA5 --> MRA6[(Sistem CR7)]
+    
+    MRA6 --> selesai2([Selesai])
+    
+    %% === CLASS DEFINITIONS (Hanya untuk Warna Teks dan Border) ===
+    classDef startEnd fill:transparent,stroke:#22c55e,color:#166534;  %% Mulai/Selesai
+    classDef process fill:transparent,stroke:#2563eb,color:#1e3a8a;    %% Proses umum
+    classDef decision fill:transparent,stroke:#f59e0b,color:#78350f;  %% Percabangan
+    classDef warning fill:transparent,stroke:#ef4444,color:#7f1d1d;   %% Flow selesai/revisi
+    classDef database fill:transparent,stroke:#9A8C98,color:#4B3F72;   %% Sistem CR7
+    classDef sparepart fill:transparent,stroke:#b45309,color:#78350f; %% Sparepart
+    classDef serviceAdvisor fill:transparent,stroke:#0e7490,color:#164e63; %% SA / PTM
+    classDef mra fill:transparent,stroke:#8b5cf6,color:#4c1d95;       %% MRA / MRS
+    
+    %% === CLASS ASSIGNMENTS ===
+    class A startEnd;
+    class selesai1,selesai2 warning;
+
+    class B,C,E,TK,TK3,PTM,PTM6,PTMF5,PTMF6,MRA2,MRA4,MRA5 process;
+    class TK2,PTM2,PTM3,PTMF4,MRA3 decision;
+
+    class DB1,DB2,DB3,MRA6,PTM8 database;
+
+    class SP1,SP2 sparepart;
+
+    class SA serviceAdvisor;
+    class MRAF,MRAF1 mra;
+    
+    %% Menambahkan link kembali untuk PTM6 ke E dan SP2 ke TK
+    linkStyle 19 stroke-dasharray: 5, 5; %% PTM6 ke E
+    linkStyle 6 stroke-dasharray: 5, 5; %% SP2 ke TK
+
+
+    </div>
+  </div>
+
+  <footer>© 2025 Estimasi CR7 Visual Flow | Dibuat dengan ❤️ Mermaid.js</footer>
+
+</body>
+</html>
