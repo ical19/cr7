@@ -120,46 +120,69 @@
 
   <div class="diagram-wrapper">
     <div class="mermaid">
-      flowchart TD
-        A([Mulai Estimasi CR7]) --> B[Teknisi Mengisi Form Estimasi]
-        B --> C[Data Dikirim ke Sparepart]
-        C --> D[Sparepart Mengisi Harga Part di Website CR7]
-        D --> E[Flow Kembali ke Teknisi]
-        E --> F{Perlu Pengeditan?}
+     flowchart TD
+    A([Mulai Estimasi CR7]) --> B[/Teknisi Mengisi Form Estimasi/]
+    B --> DB1[(Sistem CR7)]
+    DB1 --> SP1((Sparepart))
+    SP((Sparepart)) --> C[/Petugas part Mengisi harga sparepart/]
+    C --> DB2[(Sistem CR7)]
+    DB2 --> TK[Teknisi cek Estimasi]
+    TK --> TK2{Tambah Estimasi}
 
-        F -->|Ya ✅| G[Kembali ke Sparepart untuk Edit Harga/Barang]
-        F -->|Tidak ❌| H[Kirim ke PTM / Controller]
-        H --> I[Kirim ke Service Advisor]
+    TK2 --> |Ya ✅| TK3[/Teknisi menambah part Estimasi/]
+    TK3 --> SP2((Sparepart))
+    TK2 --> |Tidak ❌| TK4["`Kirim ke Service Advisor
+    Kirim ke PTM (controller)`"]
+    TK4 --> SA((Service Advisor/PTM))
 
-        I --> J{Service Advisor Sudah Mengisi Harga Jasa?}
-        J -->|Belum ❌| K[PTM Ingatkan SA untuk Mengisi]
-        K --> L[Status: Sent]
-        J -->|Sudah ✅| M[PTM Mengecek dan Memberi Status Released]
+    SA1((Service Advisor/PTM)) --> E[/Service Advisor mengisi harga jasa/]
+    E --> DB3[(Sistem Cr7)]
+    DB3 --> PTM[PTM cek harga jasa]
+    PTM --> PTM2{Harga jasa sudah di isi?}
+    PTM2 --> |Ya ✅| PTM3{Ada info penggantian dari SA?}
+    PTM3 --> |Ya ✅| PTM4["`Ganti sebagian :
+    1.PTM Coret item
+    2.Kirim ke MRA untuk FU
+    -
+    Ganti Semua Estimasi :
+    PTM rubah status ke Sudah ganti`"]
+    PTM4 --> MRA((MRA / MRS))
+    PTM3 --> |Tidak ❌| PTM7["`Kirim ke MRA untuk FU`"]
+    PTM7 --> MRA
 
-        M --> N{Estimasi Di-ACC Customer?}
-        N -->|Ya ✅| O[PTM Dapat Edit Estimasi - Hapus Komponen Tertentu]
-        O --> P[Estimasi Diteruskan ke MRA untuk Follow Up Customer]
-        N -->|Tidak ❌| Q[MRA Melakukan Follow Up dan Isi Remark 'Belum Ganti']
+    PTM2 --> |Tidak ❌| PTM6[Informasikan ke SA]
+    PTM6 --> SA2((Service Advisor/PTM))
 
-        P --> R{Hasil Follow Up?}
-        R -->|ACC ✅| S[Status Akhir: Customer Menyetujui Estimasi]
-        R -->|Belum ❌| T[Status: Menunggu Keputusan / Remark Follow Up]
+    MRA1((MRA / MRS)) --> MRA2[/Follow UP Customer/]
+    MRA2 --> MRA3{Customer mau ganti?}
+    MRA3 --> |Ya ✅| MRA4["`1.Jadwalkan penggantian
+    2.Order ke petugas Part
+    3.Remark hasil FU`"]
+    MRA4 --> MRA6[(Sistem CR7)]
+    MRA3 --> |Tidak ❌| MRA5[Remark hasil FU]
+    MRA5 --> MRA6[(Sistem CR7)]
+    MRA6 --> selesai([Selesai])
 
-        S --> U([Proses Selesai])
-        T --> U
+    %% === CLASS DEFINITIONS ===
+    classDef startEnd fill:#dcfce7,stroke:#22c55e,stroke-width:2px,color:#166534;  %% Mulai/Selesai
+    classDef process fill:#dbeafe,stroke:#2563eb,stroke-width:2px,color:#1e3a8a;    %% Proses umum
+    classDef decision fill:#fff8e1,stroke:#f59e0b,stroke-width:2px,color:#78350f;  %% Percabangan
+    classDef warning fill:#fee2e2,stroke:#ef4444,stroke-width:2px,color:#7f1d1d;   %% Flow selesai
+    classDef database fill:#E4DACA,stroke:#9A8C98,stroke-width:2px,color:#4B3F72;   %% Sistem CR7
+    classDef sparepart fill:#ECAE31,stroke:#b45309,stroke-width:2px,color:#78350f; %% Sparepart
+    classDef serviceAdvisor fill:#C4F1F9,stroke:#0e7490,stroke-width:2px,color:#164e63; %% SA / PTM
+    classDef mra fill:#ede9fe,stroke:#8b5cf6,stroke-width:2px,color:#4c1d95;       %% MRA / MRS
 
-        %% Styling nodes
-        classDef startEnd fill:#dcfce7,stroke:#22c55e,stroke-width:2px,color:#166534;
-        classDef process fill:#dbeafe,stroke:#2563eb,stroke-width:2px,color:#1e3a8a;
-        classDef decision fill:#fff8e1,stroke:#f59e0b,stroke-width:2px,color:#78350f;
-        classDef warning fill:#fee2e2,stroke:#ef4444,stroke-width:2px,color:#7f1d1d;
-        classDef success fill:#dcfce7,stroke:#22c55e,stroke-width:2px,color:#166534;
-
-        class A,U success;
-        class B,C,D,E,G,H,I,K,L,M,O,P,Q process;
-        class F,J,N,R decision;
-        class T warning;
-        class S,U success;
+    %% === CLASS ASSIGNMENTS ===
+    class A startEnd;
+    class selesai warning;
+    class B,C,E,TK,PTM,TK3,PTM6,MRA2,MRA4,MRA5 process;
+    class TK2,PTM2,PTM3,MRA3 decision;
+    class DB1,DB2,DB3,MRA6 database;
+    class SP,SP1,SP2 sparepart;
+    class SA,SA1,SA2 serviceAdvisor;
+    class PTM4,PTM7 serviceAdvisor;
+    class MRA,MRA1 mra;
     </div>
   </div>
 
