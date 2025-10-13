@@ -140,15 +140,14 @@
     DB3 --> PTM[PTM cek harga jasa]
     PTM --> PTM2{Harga jasa sudah di isi?}
     PTM2 --> |Ya ✅| PTM3{Ada info penggantian dari SA?}
-    PTM3 --> |Ya ✅| PTM4["`Ganti sebagian :
-    1.PTM Coret item
-    2.Kirim ke MRA untuk FU
-    -
-    Ganti Semua Estimasi :
-    PTM rubah status ke Sudah ganti`"]
-    PTM4 --> MRA((MRA / MRS))
+    PTM3 --> |Ya ✅| PTMF4{Estimasi disetujui Semua?}
+    PTMF4 --> |Ya ✅| PTMF5[/Rubah status ke Released/]
+    PTMF5 --> selesai1([Selesai])
+    PTMF4 --> |Tidak ❌| PTMF6[Coret item sudah ganti]
+    PTMF6 --> MRAF((MRA / MRS))
     PTM3 --> |Tidak ❌| PTM7["`Kirim ke MRA untuk FU`"]
-    PTM7 --> MRA
+    PTM7 --> PTM8[(Sistem CR7)]
+    PTM8 --> MRAF1((MRA / MRS))
 
     PTM2 --> |Tidak ❌| PTM6[Informasikan ke SA]
     PTM6 --> SA2((Service Advisor/PTM))
@@ -161,7 +160,7 @@
     MRA4 --> MRA6[(Sistem CR7)]
     MRA3 --> |Tidak ❌| MRA5[Remark hasil FU]
     MRA5 --> MRA6[(Sistem CR7)]
-    MRA6 --> selesai([Selesai])
+    MRA6 --> selesai2([Selesai])
 
     %% === CLASS DEFINITIONS ===
     classDef startEnd fill:#dcfce7,stroke:#22c55e,stroke-width:2px,color:#166534;  %% Mulai/Selesai
@@ -174,15 +173,22 @@
     classDef mra fill:#ede9fe,stroke:#8b5cf6,stroke-width:2px,color:#4c1d95;       %% MRA / MRS
 
     %% === CLASS ASSIGNMENTS ===
-    class A startEnd;
-    class selesai warning;
-    class B,C,E,TK,PTM,TK3,PTM6,MRA2,MRA4,MRA5 process;
-    class TK2,PTM2,PTM3,MRA3 decision;
-    class DB1,DB2,DB3,MRA6 database;
-    class SP,SP1,SP2 sparepart;
-    class SA,SA1,SA2 serviceAdvisor;
-    class PTM4,PTM7 serviceAdvisor;
-    class MRA,MRA1 mra;
+class A startEnd;
+class selesai1,selesai2 warning;
+
+class B,C,E,TK,PTM,TK3,PTM6,PTMF5,PTMF6,MRA2,MRA4,MRA5 process;
+class TK2,PTM2,PTM3,PTMF4,MRA3 decision;
+
+class DB1,DB2,DB3,MRA6,PTM8 database;
+
+class SP,SP1,SP2 sparepart;
+
+class SA,SA1,SA2 serviceAdvisor;
+class PTM4,PTM7 serviceAdvisor;
+
+class MRA,MRA1,MRAF,MRAF1 mra;
+
+
     </div>
   </div>
 
