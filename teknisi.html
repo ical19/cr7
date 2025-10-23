@@ -1431,15 +1431,19 @@
         <!-- Input Estimasi Section -->
         <div class="content-section" id="input-estimasi">
             <div class="card">
-                <div class="card-header">
-                    Form Input Estimasi Sparepart
-                </div>
+                <div class="card-header d-flex justify-content-between align-items-center">
+    <span>Form Input Estimasi Sparepart</span>
+    <button type="button" class="btn btn-sm btn-outline-primary" id="enableManualEdit">
+        <i class="fas fa-edit"></i> Edit Manual
+    </button>
+</div>
+
                 <div class="card-body">
                     <form id="estimasiForm">
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="nopol" class="form-label">Nomor Polisi</label>
+                                    <label for="nopol" class="form-label">Nomor Polisi <span class="text-danger">*</span></label>
                                     <div class="input-group">
                                         <input type="text" class="form-control" id="nopol"
                                             placeholder="Contoh: B 1234 ABC" required oninput="formatNopol(this)">
@@ -1457,11 +1461,64 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="jenisMobil" class="form-label">Jenis Mobil</label>
-                                    <input type="text" class="form-control" id="jenisMobil"
-                                        placeholder="Akan terisi otomatis" required readonly>
-                                    <small class="form-text text-muted">Jenis mobil akan terisi otomatis dari
-                                        database</small>
+                                    <label for="jenisMobil" class="form-label">Jenis Mobil</label><span class="text-danger">*</span></label>
+                                    <select class="form-select" id="jenisMobil" required disabled>
+  <option value="" selected disabled>Pilih Jenis Mobil</option>
+  <option value="AGYA">AGYA</option>
+  <option value="ALL NEW AVANZA">ALL NEW AVANZA</option>
+  <option value="ALPHARD">ALPHARD</option>
+  <option value="ALPHARD CBU">ALPHARD CBU</option>
+  <option value="AVANZA">AVANZA</option>
+  <option value="BZ4X">BZ4X</option>
+  <option value="CALYA">CALYA</option>
+  <option value="CAMRY">CAMRY</option>
+  <option value="C-HR">C-HR</option>
+  <option value="COROLLA">COROLLA</option>
+  <option value="COROLLA ALTIS">COROLLA ALTIS</option>
+  <option value="COROLLA CROSS">COROLLA CROSS</option>
+  <option value="CROWN">CROWN</option>
+  <option value="DYNA">DYNA</option>
+  <option value="ETIOS">ETIOS</option>
+  <option value="FORTUNER">FORTUNER</option>
+  <option value="FT86">FT86</option>
+  <option value="GR YARIS">GR YARIS</option>
+  <option value="GR YARIS CBU NON TAM">GR YARIS CBU NON TAM</option>
+  <option value="HARRIER">HARRIER</option>
+  <option value="HARRIER CBU">HARRIER CBU</option>
+  <option value="HIACE">HIACE</option>
+  <option value="HILUX">HILUX</option>
+  <option value="HILUX RANGGA">HILUX RANGGA</option>
+  <option value="INNOVA">INNOVA</option>
+  <option value="INNOVA ZENIX">INNOVA ZENIX</option>
+  <option value="INNOVA ZENIX HYBRID">INNOVA ZENIX HYBRID</option>
+  <option value="INNOVA ZENIX Q">INNOVA ZENIX Q</option>
+  <option value="KIJANG">KIJANG</option>
+  <option value="LANDCRUISER">LANDCRUISER</option>
+  <option value="LANDCRUISER 200">LANDCRUISER 200</option>
+  <option value="LANDCRUISER 300">LANDCRUISER 300</option>
+  <option value="LANDCRUISER CBU">LANDCRUISER CBU</option>
+  <option value="LEXUS">LEXUS</option>
+  <option value="LIMO">LIMO</option>
+  <option value="MARKX">MARKX</option>
+  <option value="NAV1">NAV1</option>
+  <option value="OTHER">OTHER</option>
+  <option value="PRADO">PRADO</option>
+  <option value="PREVIA">PREVIA</option>
+  <option value="PRIUS">PRIUS</option>
+  <option value="RAIZE">RAIZE</option>
+  <option value="RUSH">RUSH</option>
+  <option value="SIENTA">SIENTA</option>
+  <option value="STARLET">STARLET</option>
+  <option value="SUPRA">SUPRA</option>
+  <option value="TRANSMOVER">TRANSMOVER</option>
+  <option value="VELLFIRE">VELLFIRE</option>
+  <option value="VELOZ">VELOZ</option>
+  <option value="VIOS">VIOS</option>
+  <option value="VOXY">VOXY</option>
+  <option value="YARIS">YARIS</option>
+  <option value="YARIS CROSS">YARIS CROSS</option>
+</select>
+<small class="form-text text-muted">Pilih tipe kendaraan dari daftar.</small>
                                 </div>
                             </div>
                         </div>
@@ -1476,7 +1533,7 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="serviceAdvisor" class="form-label">Service Advisor</label>
+                                    <label for="serviceAdvisor" class="form-label">Service Advisor</label><span class="text-danger">*</span></label>
                                     <select class="form-select" id="serviceAdvisor" required>
                                         <option value="" selected disabled>Pilih Service Advisor</option>
                                         <option value="Abdul Azis">Abdul Azis</option>
@@ -1498,7 +1555,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="komponen" class="form-label">Komponen yang Diestimasi</label>
+                            <label for="komponen" class="form-label">Komponen yang Diestimasi</label><span class="text-danger">*</span></label>
                             <input name='tags' class="form-control"
                                 placeholder="Tambahkan komponen (tekan enter untuk menambah)">
                             <small class="form-text text-muted">Tekan Enter untuk menambah komponen</small>
@@ -5038,6 +5095,51 @@
         }
 
     </script>
+<script>
+document.getElementById("enableManualEdit").addEventListener("click", () => {
+  const jenisMobilSelect = document.getElementById("jenisMobil");
+  const telepon = document.getElementById("telepon");
+  const nopol = document.getElementById("nopol");
+  const nomorRangka = document.getElementById("nomorRangka");
+
+  // Aktifkan semua field manual
+  [jenisMobilSelect, telepon, nopol, nomorRangka].forEach(el => {
+    el.removeAttribute("readonly");
+    el.removeAttribute("disabled");
+  });
+
+  // Beri efek visual
+  jenisMobilSelect.classList.add("border-primary");
+  const btn = document.getElementById("enableManualEdit");
+  btn.classList.replace("btn-outline-primary", "btn-success");
+  btn.innerHTML = '<i class="fas fa-check"></i> Mode Manual Aktif';
+});
+
+document.getElementById("estimasiForm").addEventListener("submit", function (e) {
+  e.preventDefault();
+  const nopol = document.getElementById("nopol").value.trim();
+  const jenisMobil = document.getElementById("jenisMobil").value.trim();
+  const sa = document.getElementById("serviceAdvisor").value.trim();
+  const komponen = document.querySelector("[name='tags']").value.trim();
+
+  if (!nopol || !jenisMobil || !sa || !komponen) {
+    const toastEl = document.createElement("div");
+    toastEl.className = "toast align-items-center text-white bg-danger border-0 position-fixed top-0 end-0 m-3";
+    toastEl.innerHTML = `
+      <div class="d-flex">
+        <div class="toast-body">⚠️ Harap isi semua field wajib yang bertanda * sebelum menyimpan!</div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+      </div>`;
+    document.body.appendChild(toastEl);
+    const toast = new bootstrap.Toast(toastEl);
+    toast.show();
+    setTimeout(() => toastEl.remove(), 4000);
+    return;
+  }
+
+  this.submit();
+});
+</script>
 
     <!-- Toast container -->
     <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1055">
