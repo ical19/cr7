@@ -14,6 +14,145 @@
 
     // Inject CSS untuk styling yang elegan
     const css = `
+    /* === HEADER NOTIFIKASI BARU === */
+#estimasi-sparepart-li .dropdown-menu .external {
+  background: linear-gradient(135deg, #1f2b6c 0%, #3a6ea5 100%);
+  color: #ffffff;
+  padding: 15px 18px;
+  border-radius: 8px 8px 0 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.external-header {
+  display: flex;
+  flex-direction: column;
+}
+
+.external-header h3 {
+  font-size: 15px;
+  font-weight: 700;
+  margin: 0;
+  color: #fff;
+}
+
+.external-header span {
+  font-size: 12px;
+  opacity: 0.9;
+}
+
+.btn-refresh-modern {
+  background: rgba(255, 255, 255, 0.15);
+  border: none;
+  color: #fff;
+  font-size: 13px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-refresh-modern:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: rotate(90deg);
+}
+
+    /* === NOTIFIKASI BARU === */
+
+.list-notif {
+  max-height: 60vh !important;
+  overflow-y: auto;
+  padding: 0 10px 10px;
+}
+
+/* Card notifikasi */
+.notif-item {
+  display: block;
+  background: #ffffff;
+  border: 1px solid #e1e5e9;
+  border-left: 5px solid #3498db;
+  border-radius: 8px;
+  margin: 10px 0;
+  padding: 12px 14px;
+  transition: all 0.2s ease-in-out;
+  text-decoration: none;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+}
+
+.notif-item:hover {
+  background-color: #f8faff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+}
+
+/* Bagian judul (nopol + mobil) */
+.notif-header {
+  font-weight: 600;
+  color: #2c3e50;
+  font-size: 14px;
+  margin-bottom: 6px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Label badge kecil */
+.badge-status {
+  background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+  color: white;
+  font-size: 10px;
+  font-weight: 600;
+  border-radius: 10px;
+  padding: 2px 6px;
+  margin-left: 5px;
+}
+
+/* Daftar sparepart ringkas */
+.notif-body {
+  color: #555;
+  font-size: 12px;
+  margin-bottom: 6px;
+  line-height: 1.4;
+}
+
+/* Tanggal & teknisi */
+.notif-footer {
+  font-size: 11px;
+  color: #888;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid #f0f0f0;
+  padding-top: 4px;
+}
+
+/* --- scroll wrapper di dalam estimasi-table --- */
+.estimasi-table {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    margin-bottom: 20px;
+    overflow: hidden;
+}
+
+/* ✅ bagian dalam yang bisa scroll */
+.estimasi-scroll {
+    max-height: 400px;   /* tinggi maksimum kontainer tabel */
+    overflow-y: auto;    /* aktifkan scroll vertikal */
+    overflow-x: hidden;  /* hilangkan scroll horizontal */
+}
+
+/* header tabel tetap menempel di atas saat scroll */
+.estimasi-scroll thead th {
+    position: sticky;
+    top: 0;
+    background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+    color: white;
+    z-index: 5;
+}
+
         #estimasi-wrapper {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 20px 0;
@@ -359,10 +498,32 @@
 
         const parseNumber = txt => {
             if (!txt) return 0;
-            const clean = (''+txt).replace(/[^\d.,]/g,'').replace(',', '.');
-            const num = parseFloat(clean);
-            return isNaN(num) ? 0 : Math.round(num);
+            let s = String(txt).trim();
+
+            // hapus spasi
+            s = s.replace(/\s+/g, '');
+
+            const hasComma = s.indexOf(',') !== -1;
+            const hasDot = s.indexOf('.') !== -1;
+
+            if (hasComma && hasDot) {
+                // Kasus seperti "65,000.00" (comma = ribuan, dot = desimal)
+                // Hapus semua koma (ribuan), lalu ambil bagian sebelum titik (abaikan desimal)
+                s = s.replace(/,/g, '').split('.')[0];
+            } else if (hasComma && !hasDot) {
+                // Kasus seperti "65,000" atau "2,345,000" -> hapus koma
+                s = s.replace(/,/g, '');
+            } else if (!hasComma && hasDot) {
+                // Kasus seperti "65000.00" -> ambil bagian sebelum titik
+                s = s.split('.')[0];
+            }
+            // Sisakan hanya digit untuk berjaga-jaga
+            s = s.replace(/[^\d]/g, '');
+
+            const n = parseInt(s, 10);
+            return isNaN(n) ? 0 : n;
         };
+
 
 
         const fmt = n => (Number(n)||0).toLocaleString('id-ID');
@@ -434,9 +595,13 @@
     </a>
     <ul class="dropdown-menu">
         <li class="external">
-            <h3><span id="notif-count">0</span> estimasi pending</h3>
-            <button id="btn-refresh-notif" class="btn btn-xs btn-default btn-estimasi">🔄 Refresh</button>
-        </li>
+  <div class="external-header">
+    <h3>📋 Estimasi Pending</h3>
+    <span><span id="notif-count">0</span> data belum diproses</span>
+  </div>
+  <button id="btn-refresh-notif" class="btn-refresh-modern" title="Refresh">⟳</button>
+</li>
+
         <li>
             <ul class="dropdown-menu-list scroller list-notif" style="height:300px;overflow:auto;padding:0;"></ul>
         </li>
@@ -478,11 +643,13 @@
                 const { data: rows = [], error } = await supabase
                 .from('estimasi')
                 .select(`
-                 *,
-                 teknisi:users(full_name)
-                 `)
+    *,
+    teknisi:users(full_name)
+`, { count: 'exact' })   // ✅ tambahkan count
                 .eq('status', 'pending')
-                .order('created_at', { ascending: false });
+                .order('created_at', { ascending: false })
+                .limit(1000);            // ✅ pastikan tidak terpotong karena limit default
+
 
                 if (error) {
                     console.error('Error loading notifications:', error);
@@ -519,28 +686,38 @@
                     return;
                 }
 
-                rows.forEach(row => {
+                rows.forEach((row, i) => {
                     let spare = [];
                     try {
-                        spare = typeof row.sparepart_data === 'string'
-                            ? JSON.parse(row.sparepart_data)
-                        : (row.sparepart_data || []);
+                        if (typeof row.sparepart_data === 'string' && row.sparepart_data.trim().length > 0) {
+                            spare = JSON.parse(row.sparepart_data);
+                        } else if (Array.isArray(row.sparepart_data)) {
+                            spare = row.sparepart_data;
+                        }
                     } catch (e) {
-                        console.warn('Error parsing sparepart data:', e);
+                        console.warn(`[Notif #${i}] Gagal parse sparepart_data:`, e, row.sparepart_data);
+                        spare = [];
                     }
+
 
                     const a = document.createElement('a');
                     a.href = '#';
                     a.className = 'notif-item';
                     a.innerHTML = `
-                <div><b>${escapeHtml(row.nopol || '-')}</b> - ${escapeHtml(row.jenis_mobil || '-')}</div>
-                <div style="font-size:12px;color:#666">
-                    ${escapeHtml(spare.map(s => s.name).slice(0, 4).join(', ') || '-')}
-                </div>
-                <div style="font-size:11px;color:#999;margin-top:2px;">
-                    ${new Date(row.created_at).toLocaleDateString('id-ID')}
-                </div>
-            `;
+  <div class="notif-header">
+    <span>${escapeHtml(row.nopol || '-')} - ${escapeHtml(row.jenis_mobil || '-')}</span>
+    <span class="badge-status">Pending</span>
+  </div>
+  <div class="notif-body">
+    ${escapeHtml(spare.map(s => s.name).slice(0, 3).join(', ') || 'Tidak ada komponen')}
+    ${spare.length > 3 ? '...' : ''}
+  </div>
+  <div class="notif-footer">
+    <span>${new Date(row.created_at).toLocaleDateString('id-ID')}</span>
+    <span>👨‍🔧 ${escapeHtml(row.teknisi?.full_name || '-')}</span>
+  </div>
+`;
+
 
                     const liRow = document.createElement('li');
                     liRow.appendChild(a);
@@ -558,6 +735,14 @@
                         }
                     });
                 });
+
+                // ================== UPDATE HEADER TIMESTAMP ==================
+                const headerSpan = document.querySelector('.external-header span');
+                if (headerSpan) {
+                    const now = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+                    headerSpan.innerHTML = `<span id="notif-count">${rows.length}</span> data belum diproses • diperbarui ${now}`;
+                }
+
 
             } catch (error) {
                 console.error('Error in loadNotifikasi:', error);
@@ -640,6 +825,7 @@
                     <span style="margin-left:10px;color:#666;font-size:12px;">Klik pada row di tabel part master untuk menambahkan item</span>
                 </div>
                 <div class="estimasi-table">
+                <div class="estimasi-scroll">
                     <table>
                         <thead>
                             <tr>
@@ -661,6 +847,7 @@
                             </tr>
                         </tfoot>
                     </table>
+                    </div>
                 </div>
                 <div style="margin-top:20px;text-align:center;">
                     <button id="btn-save" class="btn btn-success btn-estimasi" style="padding:10px 30px;">💾 Simpan Estimasi</button>
@@ -1051,7 +1238,7 @@
             if (cellIndex === -1) return;
 
             // => EXCLUDE: jika kolom ke-3 (index 2) diklik, jangan lakukan salin
-            if (cellIndex === 2) {
+            if (cellIndex > 1) {
                 // optional: beri efek kecil untuk memberi tahu user klik di kolom yang di-exclude
                 // td.style.transition = 'background .2s';
                 // td.style.background = '#fff3cd';
