@@ -359,8 +359,11 @@
 
         const parseNumber = txt => {
             if (!txt) return 0;
-            return parseInt((''+txt).replace(/[^\d]/g,'')) || 0;
+            const clean = (''+txt).replace(/[^\d.,]/g,'').replace(',', '.');
+            const num = parseFloat(clean);
+            return isNaN(num) ? 0 : Math.round(num);
         };
+
 
         const fmt = n => (Number(n)||0).toLocaleString('id-ID');
 
@@ -1029,15 +1032,41 @@
         }
 
         function partClickHandler(ev) {
+            // cari baris terdekat
             const tr = ev.target.closest('tr');
             if (!tr) return;
 
+            // cari sel (td) yang "mengandung" target klik dengan cara yang robust
+            let td = ev.target.closest('td');
+            if (!td) {
+                // fallback: cari child td dari tr yang memang mengandung ev.target
+                td = Array.from(tr.children).find(c => c.contains(ev.target)) || tr.children[0];
+            }
+
+            // jika tetap tidak ketemu, keluar
+            if (!td) return;
+
+            // hitung index kolom (0-based)
+            const cellIndex = Array.from(tr.children).indexOf(td);
+            if (cellIndex === -1) return;
+
+            // => EXCLUDE: jika kolom ke-3 (index 2) diklik, jangan lakukan salin
+            if (cellIndex === 2) {
+                // optional: beri efek kecil untuk memberi tahu user klik di kolom yang di-exclude
+                // td.style.transition = 'background .2s';
+                // td.style.background = '#fff3cd';
+                // setTimeout(()=> td.style.background = '', 300);
+                return;
+            }
+
+            // sekarang ambil nilai dari sel sesuai struktur grid-mu
             const cells = tr.querySelectorAll('td');
             const partNo = (cells[0]?.innerText || '').trim();
             const partName = (cells[1]?.innerText || '').trim();
             const stockCPD = (cells[5]?.innerText || '').trim();
             const retail = (cells[6]?.innerText || '').trim();
 
+            // pastikan wrapper estimasi terbuka
             const wrap = document.getElementById('estimasi-wrapper');
             if (!wrap) {
                 alert('⚠️ Silahkan buka estimasi terlebih dahulu dari notifikasi dropdown');
@@ -1045,20 +1074,19 @@
             }
 
             const tbody = wrap.querySelector('#sparepart-body');
-            let target = [...tbody.querySelectorAll('tr')].find(r =>
-                                                                !(r.querySelector('.col-number').value || '').trim()
-                                                               );
+            let target = [...tbody.querySelectorAll('tr')].find(r => !(r.querySelector('.col-number').value || '').trim());
 
             if (!target) {
                 tbody.appendChild(createRowElement(tbody.children.length + 1, {}));
                 target = tbody.lastChild;
             }
 
-            // Hanya isi nomor part & harga
+            // isi kolom sesuai
             target.querySelector('.col-number').value = partNo;
+            // gunakan parseNumber/ fmt yang sudah kamu miliki
             target.querySelector('.col-price').value = fmt(parseNumber(retail));
 
-            // Ketersediaan otomatis dari Stock CPD
+            // ketersediaan otomatis dari Stock CPD
             if (stockCPD.toLowerCase().includes('not available')) {
                 target.querySelector('.col-availability').value = 'BO';
             } else {
@@ -1067,17 +1095,18 @@
 
             target.querySelector('.col-qty').value = 1;
 
-            // Trigger update total
+            // trigger update total
             const inputEvent = new Event('input', { bubbles: true });
             target.querySelector('.col-price').dispatchEvent(inputEvent);
 
-            // Highlight efek sukses
+            // highlight efek sukses
             const originalBg = target.style.backgroundColor;
             target.style.backgroundColor = '#d4edda';
             setTimeout(() => {
                 target.style.backgroundColor = originalBg;
             }, 1000);
         }
+
 
     })();
 })();
