@@ -1550,8 +1550,7 @@
                             <label for="nomorRangka" class="form-label">Nomor Rangka</label>
                             <input type="text" class="form-control" id="nomorRangka" placeholder="Akan terisi otomatis"
                                 readonly>
-                            <small class="form-text text-muted">Nomor rangka sebagai primary key (tidak dapat
-                                diubah)</small>
+                            <small class="form-text text-muted">Nomor rangka biarkan kosong jika tidak ada datanya.</small>
                         </div>
 
                         <div class="form-group">
@@ -2023,8 +2022,7 @@
                                             class="text-danger">*</span></label>
                                     <input name='editTags' class="form-control" id="editKomponenInput"
                                         placeholder="Tambahkan komponen (tekan enter untuk menambah)">
-                                    <small class="form-text text-muted">Tekan Enter untuk menambah komponen. Maksimal 10
-                                        komponen.</small>
+                                    <small class="form-text text-muted">Tekan Enter untuk menambah komponen.</small>
                                 </div>
                             </div>
                         </div>
@@ -3173,7 +3171,7 @@
             if (input && !editTagify) {
                 editTagify = new Tagify(input, {
                     pattern: /^.{1,50}$/,
-                    maxTags: 10,
+                    maxTags: Infinity,
                     dropdown: {
                         enabled: 0
                     },
@@ -3230,7 +3228,7 @@
             if (input && !editTagify) {
                 editTagify = new Tagify(input, {
                     pattern: /^.{1,50}$/,
-                    maxTags: 10,
+                    maxTags: Infinity,
                     dropdown: {
                         enabled: 0
                     },
@@ -4923,9 +4921,26 @@
                 updateEstimasi('sent');
             });
 
-            $('#updateEstimasiBtn').click(function () {
-                updateEstimasi('completed');
-            });
+           $('#updateEstimasiBtn').click(async function () {
+    const id = document.getElementById('editEstimasiId').value;
+
+    // Ambil status saat ini dari database
+    const { data: estimasi, error } = await supabase
+        .from('estimasi')
+        .select('status')
+        .eq('id', id)
+        .single();
+
+    if (error) {
+        console.error('Gagal mengambil status estimasi:', error);
+        return;
+    }
+
+    // Gunakan status lama (tidak dipaksa jadi completed)
+    const currentStatus = estimasi?.status || 'pending';
+    updateEstimasi(currentStatus);
+});
+
 
             // Tombol Kirim ke Sparepart
             $('#sendToSparepartBtn').click(function () {
