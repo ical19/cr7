@@ -3828,6 +3828,20 @@ tr:has(.status-done) .disabled-action {
             }
         }
 
+        // Fungsi untuk mendapatkan class badge status
+function getStatusBadgeClass(status) {
+    switch (status) {
+        case 'pending': return 'status-pending';     // kuning
+        case 'progress': return 'status-progress';   // biru muda
+        case 'sent': return 'status-sent';           // biru kehijauan
+        case 'completed': return 'status-completed'; // hijau
+        case 'waiting': return 'status-waiting';     // merah muda
+        case 'done': return 'status-done';           // abu-abu
+        default: return 'status-secondary';          // default abu
+    }
+}
+
+
         // Load estimasi terbaru
         async function loadRecentEstimasi() {
             try {
@@ -4300,6 +4314,7 @@ tr:has(.status-done) .disabled-action {
         default: return status;
     }
 }
+        
 
 
         // Fungsi untuk mengirim estimasi ke Service Advisor
