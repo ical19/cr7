@@ -218,32 +218,50 @@
             color: var(--primary-color);
         }
 
-        .status-badge {
-            padding: 0.35rem 0.65rem;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
+        /* Warna dan gaya badge status - urut sesuai flow */
+.status-badge {
+    padding: 0.35rem 0.65rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
 
-        .status-pending {
-            background-color: #fff3cd;
-            color: #856404;
-        }
+/* 1️⃣ Pending → Waiting Part */
+.status-pending {
+    background-color: #fff3cd; /* kuning lembut */
+    color: #856404;
+}
 
-        .status-progress {
-            background-color: #cce5ff;
-            color: #004085;
-        }
+/* 2️⃣ Progress → ReCheck */
+.status-progress {
+    background-color: #cce5ff; /* biru muda */
+    color: #004085;
+}
 
-        .status-completed {
-            background-color: #d4edda;
-            color: #155724;
-        }
+/* 3️⃣ Sent → Waiting SA */
+.status-sent {
+    background-color: #d1ecf1; /* biru kehijauan */
+    color: #0c5460;
+}
 
-        .status-sent {
-            background-color: #d1ecf1;
-            color: #0c5460;
-        }
+/* 4️⃣ Completed */
+.status-completed {
+    background-color: #d4edda; /* hijau lembut */
+    color: #155724;
+}
+
+/* 5️⃣ Waiting → Waiting MRA */
+.status-waiting {
+    background-color: #f8d7da; /* merah muda lembut */
+    color: #721c24;
+}
+
+/* 6️⃣ Done */
+.status-done {
+    background-color: #e2e3e5; /* abu-abu netral */
+    color: #383d41;
+}
+
 
         /* Image Upload Styles */
         .image-upload-container {
@@ -1290,6 +1308,49 @@
             color: #dc3545;
             font-weight: bold;
         }
+        /* Tombol aksi terkunci */
+.disabled-action {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* Warna menyesuaikan status baris */
+tr:has(.status-pending) .disabled-action {
+  background-color: #fff3cd !important;
+  border-color: #ffeeba !important;
+  color: #856404 !important;
+}
+
+tr:has(.status-progress) .disabled-action {
+  background-color: #cce5ff !important;
+  border-color: #b8daff !important;
+  color: #004085 !important;
+}
+
+tr:has(.status-sent) .disabled-action {
+  background-color: #d1ecf1 !important;
+  border-color: #bee5eb !important;
+  color: #0c5460 !important;
+}
+
+tr:has(.status-completed) .disabled-action {
+  background-color: #d4edda !important;
+  border-color: #c3e6cb !important;
+  color: #155724 !important;
+}
+
+tr:has(.status-waiting) .disabled-action {
+  background-color: #f8d7da !important;
+  border-color: #f5c6cb !important;
+  color: #721c24 !important;
+}
+
+tr:has(.status-done) .disabled-action {
+  background-color: #e2e3e5 !important;
+  border-color: #d6d8db !important;
+  color: #383d41 !important;
+}
+
     </style>
 </head>
 
@@ -3801,27 +3862,35 @@
                     <td>${estimasi.created_at ? new Date(estimasi.created_at).toLocaleDateString('id-ID') : '-'}</td>
                     <td><span class="status-badge status-${estimasi.status}">${getStatusText(estimasi.status)}</span></td>
                     <td>
-                        <div class="action-buttons">
-                            <button class="btn btn-sm btn-outline-primary view-estimasi" data-id="${estimasi.id}" title="Lihat">
-                                <i class="fas fa-eye"></i>
-                            </button>
-                            ${estimasi.status !== 'sent' ? `
-                                <button class="btn btn-sm btn-outline-warning edit-estimasi" data-id="${estimasi.id}" title="Edit">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <button class="btn btn-sm btn-outline-danger delete-estimasi" data-id="${estimasi.id}" title="Hapus">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            ` : `
-                                <button class="btn btn-sm btn-outline-secondary" disabled title="Tidak dapat edit">
-                                    <i class="fas fa-lock"></i>
-                                </button>
-                                <button class="btn btn-sm btn-outline-secondary" disabled title="Tidak dapat hapus">
-                                    <i class="fas fa-lock"></i>
-                                </button>
-                            `}
-                        </div>
-                    </td>
+  <div class="action-buttons">
+    <!-- Tombol Lihat selalu aktif -->
+    <button class="btn btn-sm btn-outline-primary view-estimasi" data-id="${estimasi.id}" title="Lihat">
+      <i class="fas fa-eye"></i>
+    </button>
+
+    <!-- Tombol Edit & Hapus hanya aktif di pending & progress -->
+    ${
+      ['pending', 'progress'].includes(estimasi.status)
+      ? `
+        <button class="btn btn-sm btn-outline-warning edit-estimasi" data-id="${estimasi.id}" title="Edit">
+          <i class="fas fa-edit"></i>
+        </button>
+        <button class="btn btn-sm btn-outline-danger delete-estimasi" data-id="${estimasi.id}" title="Hapus">
+          <i class="fas fa-trash"></i>
+        </button>
+      `
+      : `
+        <button class="btn btn-sm btn-outline-secondary disabled-action" disabled title="Tidak dapat diubah">
+          <i class="fas fa-lock"></i>
+        </button>
+        <button class="btn btn-sm btn-outline-secondary disabled-action" disabled title="Tidak dapat dihapus">
+          <i class="fas fa-lock"></i>
+        </button>
+      `
+    }
+  </div>
+</td>
+
                 `;
 
                         tbody.appendChild(row);
@@ -3946,27 +4015,35 @@
                     <td>${new Date(estimasi.created_at).toLocaleDateString('id-ID')}</td>
                     <td><span class="status-badge status-${estimasi.status}">${getStatusText(estimasi.status)}</span></td>
                     <td>
-                        <div class="action-buttons">
-                            <button class="btn btn-sm btn-outline-primary view-estimasi" data-id="${estimasi.id}" title="Lihat">
-                                <i class="fas fa-eye"></i>
-                            </button>
-                            ${estimasi.status !== 'sent' ? `
-                                <button class="btn btn-sm btn-outline-warning edit-estimasi" data-id="${estimasi.id}" title="Edit">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <button class="btn btn-sm btn-outline-danger delete-estimasi" data-id="${estimasi.id}" title="Hapus">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            ` : `
-                                <button class="btn btn-sm btn-outline-secondary" disabled title="Tidak dapat edit">
-                                    <i class="fas fa-lock"></i>
-                                </button>
-                                <button class="btn btn-sm btn-outline-secondary" disabled title="Tidak dapat hapus">
-                                    <i class="fas fa-lock"></i>
-                                </button>
-                            `}
-                        </div>
-                    </td>
+  <div class="action-buttons">
+    <!-- Tombol Lihat selalu aktif -->
+    <button class="btn btn-sm btn-outline-primary view-estimasi" data-id="${estimasi.id}" title="Lihat">
+      <i class="fas fa-eye"></i>
+    </button>
+
+    <!-- Tombol Edit & Hapus hanya aktif di pending & progress -->
+    ${
+      ['pending', 'progress'].includes(estimasi.status)
+      ? `
+        <button class="btn btn-sm btn-outline-warning edit-estimasi" data-id="${estimasi.id}" title="Edit">
+          <i class="fas fa-edit"></i>
+        </button>
+        <button class="btn btn-sm btn-outline-danger delete-estimasi" data-id="${estimasi.id}" title="Hapus">
+          <i class="fas fa-trash"></i>
+        </button>
+      `
+      : `
+        <button class="btn btn-sm btn-outline-secondary disabled-action" disabled title="Tidak dapat diubah">
+          <i class="fas fa-lock"></i>
+        </button>
+        <button class="btn btn-sm btn-outline-secondary disabled-action" disabled title="Tidak dapat dihapus">
+          <i class="fas fa-lock"></i>
+        </button>
+      `
+    }
+  </div>
+</td>
+
                 `;
                         tbody.appendChild(row);
                     });
@@ -4212,15 +4289,18 @@
         });
 
         // Fungsi untuk mendapatkan class badge status
-        function getStatusBadgeClass(status) {
-            switch (status) {
-                case 'pending': return 'bg-warning';
-                case 'progress': return 'bg-info';
-                case 'completed': return 'bg-success';
-                case 'sent': return 'bg-primary';
-                default: return 'bg-secondary';
-            }
-        }
+        function getStatusText(status) {
+    switch (status) {
+        case 'pending': return 'Waiting Part'; // ubah teks
+        case 'progress': return 'ReCheck';
+        case 'sent': return 'Waiting SA';
+        case 'completed': return 'Completed';
+        case 'waiting': return 'Waiting MRA';
+        case 'done': return 'Done';
+        default: return status;
+    }
+}
+
 
         // Fungsi untuk mengirim estimasi ke Service Advisor
         async function sendToServiceAdvisor() {
