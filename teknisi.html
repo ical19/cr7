@@ -1350,6 +1350,32 @@ tr:has(.status-done) .disabled-action {
   border-color: #d6d8db !important;
   color: #383d41 !important;
 }
+#dashboard .card {
+  border-radius: 12px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.08);
+}
+
+#dashboard .stats-card {
+  border: none;
+  border-radius: 12px;
+}
+
+#dashboard .stats-number {
+  font-size: 1.4rem;
+  font-weight: bold;
+}
+
+#dashboard .stats-label {
+  font-size: 0.8rem;
+  opacity: 0.9;
+}
+
+@media (max-width: 768px) {
+  #dashboard .card-header .btn {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+  }
+}
 
     </style>
 </head>
@@ -1418,76 +1444,84 @@ tr:has(.status-done) .disabled-action {
 
         <!-- Dashboard Section -->
         <div class="content-section active" id="dashboard">
-            <div class="row">
-                <div class="col-6 col-md-3 mb-3">
-                    <div class="card stats-card">
-                        <div class="stats-icon">
-                            <i class="fas fa-clipboard-list"></i>
-                        </div>
-                        <div class="stats-number" id="totalEstimasi">0</div>
-                        <div class="stats-label">Total Estimasi</div>
-                    </div>
-                </div>
-                <div class="col-6 col-md-3 mb-3">
-                    <div class="card stats-card">
-                        <div class="stats-icon">
-                            <i class="fas fa-spinner"></i>
-                        </div>
-                        <div class="stats-number" id="estimasiProgress">0</div>
-                        <div class="stats-label">Dalam Proses</div>
-                    </div>
-                </div>
-                <div class="col-6 col-md-3 mb-3">
-                    <div class="card stats-card">
-                        <div class="stats-icon">
-                            <i class="fas fa-check-circle"></i>
-                        </div>
-                        <div class="stats-number" id="estimasiSelesai">0</div>
-                        <div class="stats-label">Selesai</div>
-                    </div>
-                </div>
-                <!-- Ganti card ke-4 dengan ini -->
-                <div class="col-6 col-md-3 mb-3">
-                    <div class="card stats-card">
-                        <div class="stats-icon">
-                            <i class="fas fa-paper-plane"></i>
-                        </div>
-                        <div class="stats-number" id="totalMobil">0</div>
-                        <div class="stats-label">Terkirim ke SA</div>
-                    </div>
+    <!-- 📊 Grafik Mingguan -->
+    <div class="row mb-3">
+        <div class="col-12">
+            <div class="card p-3">
+                <h6 class="mb-2">Estimasi Mingguan</h6>
+                <div style="height: 180px;">
+                    <canvas id="weeklyChart"></canvas>
                 </div>
             </div>
+        </div>
+    </div>
 
-            <div class="row">
-                <div class="col-12">
-                    <div class="card">
-                        <div class="card-header d-flex justify-content-between align-items-center">
-                            <span>Estimasi Terbaru</span>
-                            <a href="#" data-section="estimasi-saya2" class="btn btn-sm btn-primary">Lihat Semua</a>
-                        </div>
-                        <div class="card-body">
-                            <div class="table-responsive">
-                                <table class="table table-hover">
-                                    <thead>
-                                        <tr>
-                                            <th width="50">No</th>
-                                            <th>No. Polisi</th>
-                                            <th>Jenis Mobil</th>
-                                            <th>Tanggal</th>
-                                            <th>Status</th>
-                                            <th width="120">Aksi</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="recentEstimasi">
-                                        <!-- Data akan diisi dari Supabase -->
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
+    <!-- 📋 Daftar Estimasi Terbaru -->
+    <div class="row mb-3">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <span>Estimasi Terbaru</span>
+                    <div>
+                        <button id="addEstimasiBtn" class="btn btn-sm btn-success me-2">
+                            <i class="fas fa-plus"></i> Tambah Estimasi
+                        </button>
+                        <a href="#" data-section="estimasi-saya2" class="btn btn-sm btn-primary">
+                            <i class="fas fa-list"></i> Lihat Semua
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th width="50">No</th>
+                                    <th>No. Polisi</th>
+                                    <th>Jenis Mobil</th>
+                                    <th>Tanggal</th>
+                                    <th>Status</th>
+                                    <th width="120">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recentEstimasi">
+                                <!-- Data akan diisi dari Supabase -->
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
+
+    <!-- 📈 Statistik Ringkas -->
+    <div class="row text-center g-2">
+        <div class="col-6 col-md-3">
+            <div class="card stats-card py-3 bg-warning text-white">
+                <div class="stats-number" id="totalEstimasi">0</div>
+                <div class="stats-label">Total Estimasi</div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card stats-card py-3 bg-info text-white">
+                <div class="stats-number" id="estimasiProgress">0</div>
+                <div class="stats-label">Dalam Proses</div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card stats-card py-3 bg-success text-white">
+                <div class="stats-number" id="estimasiSelesai">0</div>
+                <div class="stats-label">Selesai</div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card stats-card py-3 bg-primary text-white">
+                <div class="stats-number" id="totalMobil">0</div>
+                <div class="stats-label">Terkirim ke SA</div>
+            </div>
+        </div>
+    </div>
+</div>
 
         <!-- Input Estimasi Section -->
         <div class="content-section" id="input-estimasi">
@@ -5234,6 +5268,80 @@ document.getElementById("estimasiForm").addEventListener("submit", function (e) 
 
   this.submit();
 });
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', async () => {
+  await loadDashboardChart();
+  await loadDashboardStats();
+});
+
+async function loadDashboardChart() {
+  const { data, error } = await supabase
+    .from('estimasi')
+    .select('created_at');
+
+  if (error) {
+    console.error(error);
+    return;
+  }
+
+  const weekData = [0, 0, 0, 0];
+  const now = new Date();
+
+  data.forEach(item => {
+    const diffWeeks = Math.floor((now - new Date(item.created_at)) / (7 * 24 * 60 * 60 * 1000));
+    if (diffWeeks >= 0 && diffWeeks < 4) weekData[3 - diffWeeks]++;
+  });
+
+  const ctx = document.getElementById('weeklyChart').getContext('2d');
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+      datasets: [{
+        label: 'Jumlah Estimasi',
+        data: weekData,
+        backgroundColor: '#007bff',
+        borderRadius: 8
+      }]
+    },
+    options: {
+      maintainAspectRatio: false,
+      responsive: true,
+      scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } },
+      plugins: { legend: { display: false } }
+    }
+  });
+}
+
+async function loadDashboardStats() {
+  const { data, error } = await supabase
+    .from('estimasi')
+    .select('status');
+
+  if (error) {
+    console.error(error);
+    return;
+  }
+
+  const total = data.length;
+  const pending = data.filter(e => e.status === 'pending').length;
+  const progress = data.filter(e => e.status === 'progress').length;
+  const sent = data.filter(e => e.status === 'sent').length;
+
+  document.getElementById('totalEstimasi').textContent = total;
+  document.getElementById('estimasiProgress').textContent = pending;
+  document.getElementById('estimasiSelesai').textContent = progress;
+  document.getElementById('totalMobil').textContent = sent;
+}
+
+// Navigasi tombol
+$('#addEstimasiBtn').on('click', () => {
+  $('[data-section="estimasi-saya2"]').click(); // arahkan ke halaman tambah estimasi
+});
+</script>
+
 </script>
 
     <!-- Toast container -->
