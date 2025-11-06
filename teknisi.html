@@ -4039,8 +4039,7 @@
               <i class="fas fa-eye"></i>
             </button>
 
-            ${['pending', 'progress'].includes(estimasi.status)
-                                ? !isExpired
+            !isExpired
                                     ? `
                     <button class="btn btn-sm btn-outline-warning edit-estimasi" data-id="${estimasi.id}" title="Edit">
                       <i class="fas fa-edit"></i>
@@ -4057,14 +4056,7 @@
                       <i class="fas fa-lock"></i>
                     </button>
                     `
-                                : `
-                    <button class="btn btn-sm btn-outline-secondary disabled-action" disabled title="Tidak dapat diubah">
-                      <i class="fas fa-lock"></i>
-                    </button>
-                    <button class="btn btn-sm btn-outline-secondary disabled-action" disabled title="Tidak dapat dihapus">
-                      <i class="fas fa-lock"></i>
-                    </button>
-                    `
+                                
                             }
           </div>
         </td>
