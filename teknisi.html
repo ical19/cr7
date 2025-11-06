@@ -4017,11 +4017,14 @@
 
                         // === Logika kunci edit berdasarkan waktu server ===
                         const createdAt = new Date(estimasi.created_at);
-                        const diffHours = (serverTime - createdAt) / (1000 * 60 * 60);
-                        const isSameDay = serverTime.toDateString() === createdAt.toDateString();
-                        const isExpired = diffHours >= 24 || !isSameDay;
 
-                        // 🔹 Tambahkan log agar Anda tahu status setiap data
+                        // Hitung selisih jam antara waktu server dan waktu dibuat
+                        const diffHours = (serverTime - createdAt) / (1000 * 60 * 60);
+
+                        // 🔹 Hanya dikunci jika sudah lebih dari 24 jam
+                        const isExpired = diffHours >= 24;
+
+                        // Tambahkan log biar bisa dipantau
                         console.log(
                             `📄 Estimasi ID: ${estimasi.id} | Created: ${createdAt.toLocaleString('id-ID')} | Selisih: ${diffHours.toFixed(2)} jam | ${isExpired ? '🔒 LOCKED' : '✅ UNLOCKED'}`
                         );
@@ -4039,26 +4042,25 @@
               <i class="fas fa-eye"></i>
             </button>
 
-            !isExpired
-                                    ? `
-                    <button class="btn btn-sm btn-outline-warning edit-estimasi" data-id="${estimasi.id}" title="Edit">
-                      <i class="fas fa-edit"></i>
-                    </button>
-                    <button class="btn btn-sm btn-outline-danger delete-estimasi" data-id="${estimasi.id}" title="Hapus">
-                      <i class="fas fa-trash"></i>
-                    </button>
-                    `
-                                    : `
-                    <button class="btn btn-sm btn-outline-secondary disabled-action" disabled title="Terkunci (lewat 1 hari)">
-                      <i class="fas fa-lock"></i>
-                    </button>
-                    <button class="btn btn-sm btn-outline-secondary disabled-action" disabled title="Terkunci (lewat 1 hari)">
-                      <i class="fas fa-lock"></i>
-                    </button>
-                    `
-                                
+            ${!isExpired
+                                ? `
+        <button class="btn btn-sm btn-outline-warning edit-estimasi" data-id="${estimasi.id}" title="Edit">
+          <i class="fas fa-edit"></i>
+        </button>
+        <button class="btn btn-sm btn-outline-danger delete-estimasi" data-id="${estimasi.id}" title="Hapus">
+          <i class="fas fa-trash"></i>
+        </button>
+      `
+                                : `
+        <button class="btn btn-sm btn-outline-secondary disabled-action" disabled title="Terkunci (lebih dari 1 hari)">
+          <i class="fas fa-lock"></i>
+        </button>
+        <button class="btn btn-sm btn-outline-secondary disabled-action" disabled title="Terkunci (lebih dari 1 hari)">
+          <i class="fas fa-lock"></i>
+        </button>
+      `
                             }
-          </div>
+
         </td>
     `;
 
@@ -5753,5 +5755,4 @@
         </div>
     </div>
 </body>
-
 </html>
