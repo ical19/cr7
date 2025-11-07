@@ -11,10 +11,13 @@
       --primary-color: #0069d9;
       --secondary-color: #28a745;
       --accent-color: #0056b3;
-      --text-color: #333;
-      --light-text: #fff;
-      --card-bg: rgba(255, 255, 255, 0.95);
-      --shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+      --light-bg: #f5f7ff;
+      --card-bg: rgba(255, 255, 255, 0.85);
+      --frosted-bg: rgba(255, 255, 255, 0.7);
+      --text-color: #2c3e50;
+      --light-text: rgba(44, 62, 80, 0.7);
+      --shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      --border-color: rgba(255, 255, 255, 0.4);
     }
     
     * {
@@ -30,9 +33,47 @@
       min-height: 100vh;
       margin: 0;
       background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      color: var(--light-text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      color: var(--text-color);
       padding: 20px;
+      overflow: hidden;
+      position: relative;
+    }
+    
+    /* Background dengan efek partikel */
+    .bg-particles {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+    }
+    
+    .particle {
+      position: absolute;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+      animation: float 15s infinite linear;
+    }
+    
+    @keyframes float {
+      0%, 100% {
+        transform: translate(0, 0) rotate(0deg);
+        opacity: 0.2;
+      }
+      25% {
+        transform: translate(20px, 40px) rotate(90deg);
+        opacity: 0.4;
+      }
+      50% {
+        transform: translate(-20px, 80px) rotate(180deg);
+        opacity: 0.2;
+      }
+      75% {
+        transform: translate(30px, 40px) rotate(270deg);
+        opacity: 0.4;
+      }
     }
     
     .container {
@@ -41,95 +82,249 @@
       align-items: center;
       justify-content: center;
       width: 100%;
-      max-width: 480px;
+      max-width: 500px;
+      z-index: 1;
     }
     
     .card {
-      background: var(--card-bg);
-      border-radius: 16px;
-      padding: 40px 30px;
+      background: var(--frosted-bg);
+      border-radius: 28px;
+      padding: 45px 35px;
       box-shadow: var(--shadow);
       width: 100%;
       text-align: center;
       color: var(--text-color);
+      backdrop-filter: blur(30px) saturate(180%);
+      -webkit-backdrop-filter: blur(30px) saturate(180%);
+      border: 1px solid var(--border-color);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, 
+        transparent, 
+        rgba(255, 255, 255, 0.8), 
+        transparent
+      );
+    }
+    
+    .card::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, 
+        transparent, 
+        rgba(255, 255, 255, 0.4), 
+        transparent
+      );
+      animation: shimmer 3s infinite;
+    }
+    
+    @keyframes shimmer {
+      0% {
+        left: -100%;
+      }
+      100% {
+        left: 100%;
+      }
     }
     
     .logo {
-      margin-bottom: 30px;
+      margin-bottom: 35px;
       display: flex;
       justify-content: center;
       align-items: center;
     }
     
     .logo-icon {
-      font-size: 42px;
+      font-size: 44px;
       color: var(--primary-color);
-      margin-right: 12px;
+      margin-right: 15px;
     }
     
     .logo-text {
-      font-size: 28px;
+      font-size: 32px;
       font-weight: 700;
       color: var(--primary-color);
     }
     
     .loader {
       position: relative;
-      width: 100px;
-      height: 100px;
-      margin: 0 auto 30px;
+      width: 140px;
+      height: 140px;
+      margin: 0 auto 35px;
     }
     
-    .spinner {
+    .liquid-loader {
       width: 100%;
       height: 100%;
-      border: 4px solid rgba(0, 105, 217, 0.1);
+      position: relative;
       border-radius: 50%;
-      border-top: 4px solid var(--primary-color);
-      animation: spin 1.2s linear infinite;
+      background: linear-gradient(135deg, 
+        rgba(0, 105, 217, 0.1), 
+        rgba(40, 167, 69, 0.1)
+      );
+      overflow: hidden;
+      box-shadow: 
+        inset 0 0 20px rgba(255, 255, 255, 0.3),
+        0 0 40px rgba(0, 105, 217, 0.15);
     }
     
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
+    .liquid-loader::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(135deg, 
+        rgba(0, 105, 217, 0.25), 
+        rgba(40, 167, 69, 0.25)
+      );
+      border-radius: 40%;
+      animation: liquid-wave 5s linear infinite;
+      filter: blur(8px);
+    }
+    
+    .liquid-loader::after {
+      content: '';
+      position: absolute;
+      top: -60%;
+      left: -60%;
+      width: 220%;
+      height: 220%;
+      background: linear-gradient(135deg, 
+        rgba(0, 105, 217, 0.15), 
+        rgba(40, 167, 69, 0.15)
+      );
+      border-radius: 42%;
+      animation: liquid-wave 7s linear infinite;
+      animation-delay: 0.5s;
+      filter: blur(12px);
+    }
+    
+    @keyframes liquid-wave {
+      0% {
+        transform: rotate(0deg);
+      }
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+    
+    .liquid-loader-inner {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      right: 12px;
+      bottom: 12px;
+      background: var(--frosted-bg);
+      border-radius: 50%;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      box-shadow: 
+        inset 0 0 20px rgba(255, 255, 255, 0.4),
+        0 0 20px rgba(0, 0, 0, 0.05);
+    }
+    
+    .liquid-loader-inner i {
+      font-size: 36px;
+      color: var(--primary-color);
+      animation: pulse 2.5s ease-in-out infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+      50% {
+        transform: scale(1.15);
+        opacity: 0.8;
+      }
     }
     
     .loading-text {
-      margin-top: 20px;
-      font-size: 16px;
+      margin-top: 25px;
+      font-size: 17px;
       text-align: center;
       font-weight: 500;
       line-height: 1.6;
+      color: var(--light-text);
     }
     
     .status-dots {
       display: flex;
       justify-content: center;
-      margin-top: 25px;
-      gap: 8px;
+      margin-top: 30px;
+      gap: 12px;
     }
     
     .status-dot {
-      width: 10px;
-      height: 10px;
+      width: 12px;
+      height: 12px;
       border-radius: 50%;
-      background: rgba(0, 105, 217, 0.3);
-      transition: background 0.3s ease;
+      background: rgba(44, 62, 80, 0.2);
+      transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+      box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
+    }
+    
+    .status-dot::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, 
+        transparent, 
+        rgba(255, 255, 255, 0.9), 
+        transparent
+      );
+      transition: all 0.6s ease;
     }
     
     .status-dot.active {
       background: var(--primary-color);
+      transform: scale(1.3);
+      box-shadow: 
+        0 0 15px var(--primary-color),
+        inset 0 0 5px rgba(255, 255, 255, 0.5);
+    }
+    
+    .status-dot.active::before {
+      left: 100%;
     }
     
     .footer {
-      margin-top: 30px;
+      margin-top: 35px;
       text-align: center;
       font-size: 14px;
-      opacity: 0.8;
+      color: var(--light-text);
+      opacity: 0.7;
     }
   </style>
 </head>
 <body>
+  <div class="bg-particles" id="particles"></div>
+  
   <div class="container">
     <div class="card">
       <div class="logo">
@@ -138,7 +333,11 @@
       </div>
       
       <div class="loader">
-        <div class="spinner"></div>
+        <div class="liquid-loader">
+          <div class="liquid-loader-inner">
+            <i class="fas fa-fingerprint"></i>
+          </div>
+        </div>
       </div>
       
       <div class="loading-text" id="loadingText">Memulai sistem autentikasi...</div>
@@ -169,8 +368,31 @@
     const step2 = document.getElementById("step2");
     const step3 = document.getElementById("step3");
     const step4 = document.getElementById("step4");
+    const particlesContainer = document.getElementById("particles");
 
-    document.addEventListener("DOMContentLoaded", checkAuth);
+    // Create background particles
+    function createParticles() {
+      for (let i = 0; i < 15; i++) {
+        const particle = document.createElement('div');
+        particle.classList.add('particle');
+        
+        const size = Math.random() * 60 + 20;
+        particle.style.width = `${size}px`;
+        particle.style.height = `${size}px`;
+        
+        particle.style.left = `${Math.random() * 100}%`;
+        particle.style.top = `${Math.random() * 100}%`;
+        
+        particle.style.animationDelay = `${Math.random() * 15}s`;
+        
+        particlesContainer.appendChild(particle);
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      createParticles();
+      checkAuth();
+    });
 
     function updateStep(stepElement) {
       stepElement.classList.add('active');
