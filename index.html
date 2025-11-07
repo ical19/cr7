@@ -8,16 +8,21 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     :root {
-      --primary-color: #0a84ff;
-      --secondary-color: #5e5ce6;
-      --accent-color: #bf5af2;
-      --light-bg: #f5f7ff;
-      --card-bg: rgba(255, 255, 255, 0.85);
-      --frosted-bg: rgba(255, 255, 255, 0.7);
-      --text-color: #2c3e50;
-      --light-text: rgba(44, 62, 80, 0.7);
-      --shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-      --border-color: rgba(255, 255, 255, 0.4);
+      /* 🎨 Palet Warna Fluent Windows 11 */
+      --fluent-brand: #0078D4;         /* Biru brand utama */
+      --fluent-brand-dark: #106EBE;
+      --fluent-success: #107C10;       /* Hijau status sukses */
+      --fluent-warning: #FFB900;       /* Kuning status peringatan */
+      --fluent-danger: #D83B01;        /* Merah error */
+      --fluent-neutral-light: #FAF9F8; /* Netral sangat terang */
+      --fluent-neutral: #F3F2F1;       /* Latar belakang utama */
+      --fluent-neutral-dark: #323130;  /* Teks utama */
+      --fluent-neutral-mid: #605E5C;   /* Teks sekunder */
+      --fluent-border: rgba(255, 255, 255, 0.65);
+      --fluent-card: rgba(255, 255, 255, 0.80);
+      --fluent-frosted: rgba(255, 255, 255, 0.75);
+      --fluent-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+      --fluent-glow: 0 0 20px rgba(0, 120, 212, 0.2);
     }
     
     * {
@@ -31,16 +36,15 @@
       align-items: center;
       justify-content: center;
       min-height: 100vh;
-      margin: 0;
-      background: linear-gradient(135deg, #e0e7ff, #f0f4ff);
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-      color: var(--text-color);
+      background: linear-gradient(135deg, var(--fluent-neutral-light), #EDEBE9);
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      color: var(--fluent-neutral-dark);
       padding: 20px;
       overflow: hidden;
       position: relative;
     }
     
-    /* Background dengan efek partikel */
+    /* Background dengan efek partikel Fluent */
     .bg-particles {
       position: absolute;
       top: 0;
@@ -52,9 +56,17 @@
     
     .particle {
       position: absolute;
-      background: rgba(10, 132, 255, 0.08);
       border-radius: 50%;
-      animation: float 15s infinite linear;
+      animation: float 20s infinite linear;
+    }
+    
+    /* 🟢 Partikel Latar */
+    .particle.primary {
+      background: rgba(0, 120, 212, 0.06);
+    }
+    
+    .particle.accent {
+      background: rgba(16, 124, 16, 0.05);
     }
     
     @keyframes float {
@@ -63,15 +75,15 @@
         opacity: 0.2;
       }
       25% {
-        transform: translate(20px, 40px) rotate(90deg);
+        transform: translate(30px, 50px) rotate(90deg);
         opacity: 0.4;
       }
       50% {
-        transform: translate(-20px, 80px) rotate(180deg);
+        transform: translate(-30px, 100px) rotate(180deg);
         opacity: 0.2;
       }
       75% {
-        transform: translate(30px, 40px) rotate(270deg);
+        transform: translate(40px, 50px) rotate(270deg);
         opacity: 0.4;
       }
     }
@@ -82,25 +94,33 @@
       align-items: center;
       justify-content: center;
       width: 100%;
-      max-width: 500px;
+      max-width: 480px;
       z-index: 1;
     }
     
+    /* 💎 Kartu Utama */
     .card {
-      background: var(--frosted-bg);
-      border-radius: 28px;
-      padding: 45px 35px;
-      box-shadow: var(--shadow);
+      background: var(--fluent-frosted);
+      border-radius: 20px;
+      padding: 40px 32px;
+      box-shadow: var(--fluent-shadow);
       width: 100%;
       text-align: center;
-      color: var(--text-color);
-      backdrop-filter: blur(30px) saturate(180%);
-      -webkit-backdrop-filter: blur(30px) saturate(180%);
-      border: 1px solid var(--border-color);
+      color: var(--fluent-neutral-dark);
+      backdrop-filter: blur(25px) saturate(160%);
+      -webkit-backdrop-filter: blur(25px) saturate(160%);
+      border: 1px solid var(--fluent-border);
       position: relative;
       overflow: hidden;
+      transition: all 0.3s ease;
     }
     
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.14);
+    }
+    
+    /* ✨ Efek Garis Atas & Shimmer */
     .card::before {
       content: '';
       position: absolute;
@@ -108,11 +128,7 @@
       left: 0;
       right: 0;
       height: 1px;
-      background: linear-gradient(90deg, 
-        transparent, 
-        rgba(255, 255, 255, 0.8), 
-        transparent
-      );
+      background: linear-gradient(90deg, transparent, rgba(0, 120, 212, 0.4), transparent);
     }
     
     .card::after {
@@ -122,66 +138,58 @@
       left: -100%;
       width: 100%;
       height: 100%;
-      background: linear-gradient(90deg, 
-        transparent, 
-        rgba(255, 255, 255, 0.4), 
-        transparent
-      );
-      animation: shimmer 3s infinite;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.9), transparent);
+      animation: shimmer 5s infinite;
     }
     
     @keyframes shimmer {
-      0% {
-        left: -100%;
-      }
-      100% {
-        left: 100%;
-      }
+      0% { left: -100%; }
+      100% { left: 100%; }
     }
     
     .logo {
-      margin-bottom: 35px;
+      margin-bottom: 32px;
       display: flex;
       justify-content: center;
       align-items: center;
     }
     
     .logo-icon {
-      font-size: 44px;
-      background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+      font-size: 40px;
+      background: linear-gradient(135deg, var(--fluent-brand), var(--fluent-success));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      margin-right: 15px;
+      margin-right: 12px;
     }
     
+    /* 🔷 Logo */
     .logo-text {
-      font-size: 32px;
-      font-weight: 700;
-      background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+      font-size: 26px;
+      font-weight: 600;
+      background: linear-gradient(135deg, var(--fluent-brand), var(--fluent-success));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
+      letter-spacing: -0.5px;
     }
     
     .loader {
       position: relative;
-      width: 140px;
-      height: 140px;
-      margin: 0 auto 35px;
+      width: 130px;
+      height: 130px;
+      margin: 0 auto 32px;
     }
     
+    /* 🌊 Loader Cair */
     .liquid-loader {
       width: 100%;
       height: 100%;
       position: relative;
       border-radius: 50%;
-      background: linear-gradient(135deg, 
-        rgba(10, 132, 255, 0.1), 
-        rgba(191, 90, 242, 0.1)
-      );
+      background: linear-gradient(135deg, rgba(0, 120, 212, 0.08), rgba(16, 124, 16, 0.06));
       overflow: hidden;
-      box-shadow: 
-        inset 0 0 20px rgba(255, 255, 255, 0.3),
-        0 0 40px rgba(10, 132, 255, 0.15);
+      box-shadow:
+        inset 0 0 20px rgba(255, 255, 255, 0.6),
+        0 0 30px rgba(0, 120, 212, 0.1);
     }
     
     .liquid-loader::before {
@@ -191,13 +199,10 @@
       left: -50%;
       width: 200%;
       height: 200%;
-      background: linear-gradient(135deg, 
-        rgba(10, 132, 255, 0.25), 
-        rgba(191, 90, 242, 0.25)
-      );
+      background: linear-gradient(135deg, rgba(0, 120, 212, 0.25), rgba(16, 124, 16, 0.18));
       border-radius: 40%;
-      animation: liquid-wave 5s linear infinite;
-      filter: blur(8px);
+      animation: liquid-wave 6s linear infinite;
+      filter: blur(12px);
     }
     
     .liquid-loader::after {
@@ -207,14 +212,11 @@
       left: -60%;
       width: 220%;
       height: 220%;
-      background: linear-gradient(135deg, 
-        rgba(10, 132, 255, 0.15), 
-        rgba(191, 90, 242, 0.15)
-      );
+      background: linear-gradient(135deg, rgba(0, 120, 212, 0.15), rgba(16, 124, 16, 0.10));
       border-radius: 42%;
-      animation: liquid-wave 7s linear infinite;
+      animation: liquid-wave 8s linear infinite;
       animation-delay: 0.5s;
-      filter: blur(12px);
+      filter: blur(16px);
     }
     
     @keyframes liquid-wave {
@@ -228,11 +230,11 @@
     
     .liquid-loader-inner {
       position: absolute;
-      top: 12px;
-      left: 12px;
-      right: 12px;
-      bottom: 12px;
-      background: var(--frosted-bg);
+      top: 10px;
+      left: 10px;
+      right: 10px;
+      bottom: 10px;
+      background: var(--fluent-frosted);
       border-radius: 50%;
       z-index: 1;
       display: flex;
@@ -240,18 +242,18 @@
       justify-content: center;
       backdrop-filter: blur(15px);
       -webkit-backdrop-filter: blur(15px);
-      border: 1px solid rgba(255, 255, 255, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.8);
       box-shadow: 
-        inset 0 0 20px rgba(255, 255, 255, 0.4),
-        0 0 20px rgba(0, 0, 0, 0.05);
+        inset 0 0 25px rgba(255, 255, 255, 0.7),
+        0 0 20px rgba(0, 0, 0, 0.03);
     }
     
     .liquid-loader-inner i {
-      font-size: 36px;
-      background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+      font-size: 32px;
+      background: linear-gradient(135deg, var(--fluent-brand), var(--fluent-success));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      animation: pulse 2.5s ease-in-out infinite;
+      animation: pulse 2.4s ease-in-out infinite;
     }
     
     @keyframes pulse {
@@ -260,36 +262,38 @@
         opacity: 1;
       }
       50% {
-        transform: scale(1.15);
-        opacity: 0.8;
+        transform: scale(1.1);
+        opacity: 0.9;
       }
     }
     
+    /* 💫 Teks Loading */
     .loading-text {
-      margin-top: 25px;
-      font-size: 17px;
+      margin-top: 24px;
+      font-size: 15px;
       text-align: center;
       font-weight: 500;
       line-height: 1.6;
-      color: var(--light-text);
+      color: var(--fluent-neutral-mid);
     }
     
     .status-dots {
       display: flex;
       justify-content: center;
-      margin-top: 30px;
-      gap: 12px;
+      margin-top: 28px;
+      gap: 10px;
     }
     
+    /* 🔵 Status Dots */
     .status-dot {
-      width: 12px;
-      height: 12px;
+      width: 10px;
+      height: 10px;
       border-radius: 50%;
-      background: rgba(44, 62, 80, 0.2);
-      transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+      background: rgba(96, 94, 92, 0.25);
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
       position: relative;
       overflow: hidden;
-      box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
+      box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.05);
     }
     
     .status-dot::before {
@@ -304,27 +308,56 @@
         rgba(255, 255, 255, 0.9), 
         transparent
       );
-      transition: all 0.6s ease;
+      transition: all 0.4s ease;
     }
     
     .status-dot.active {
-      background: var(--primary-color);
       transform: scale(1.3);
-      box-shadow: 
-        0 0 15px var(--primary-color),
-        inset 0 0 5px rgba(255, 255, 255, 0.5);
+    }
+    
+    .status-dot:nth-child(1).active {
+      background: var(--fluent-brand);
+      box-shadow: 0 0 10px var(--fluent-brand), inset 0 0 4px rgba(255, 255, 255, 0.6);
+    }
+    
+    .status-dot:nth-child(2).active {
+      background: var(--fluent-success);
+      box-shadow: 0 0 10px var(--fluent-success), inset 0 0 4px rgba(255, 255, 255, 0.6);
+    }
+    
+    .status-dot:nth-child(3).active {
+      background: var(--fluent-warning);
+      box-shadow: 0 0 10px var(--fluent-warning), inset 0 0 4px rgba(255, 255, 255, 0.6);
+    }
+    
+    .status-dot:nth-child(4).active {
+      background: var(--fluent-danger);
+      box-shadow: 0 0 10px var(--fluent-danger), inset 0 0 4px rgba(255, 255, 255, 0.6);
     }
     
     .status-dot.active::before {
       left: 100%;
     }
     
+    /* ⚙️ Footer */
     .footer {
-      margin-top: 35px;
+      margin-top: 28px;
       text-align: center;
-      font-size: 14px;
-      color: var(--light-text);
+      font-size: 12px;
+      color: var(--fluent-neutral-mid);
       opacity: 0.7;
+    }
+
+    /* Error message styling */
+    .error-message {
+      background: rgba(216, 59, 1, 0.1);
+      border: 1px solid rgba(216, 59, 1, 0.3);
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin-top: 20px;
+      color: var(--fluent-danger);
+      font-size: 14px;
+      display: none;
     }
   </style>
 </head>
@@ -335,13 +368,13 @@
     <div class="card">
       <div class="logo">
         <i class="fas fa-cogs logo-icon"></i>
-        <div class="logo-text">CR7 System</div>
+        <div class="logo-text">CR7 SYSTEM</div>
       </div>
       
       <div class="loader">
         <div class="liquid-loader">
           <div class="liquid-loader-inner">
-            <i class="fas fa-sparkles"></i>
+            <i class="fas fa-fingerprint"></i>
           </div>
         </div>
       </div>
@@ -354,6 +387,8 @@
         <div class="status-dot" id="step3"></div>
         <div class="status-dot" id="step4"></div>
       </div>
+
+      <div class="error-message" id="errorMessage"></div>
     </div>
     
     <div class="footer">
@@ -374,31 +409,43 @@
     const step2 = document.getElementById("step2");
     const step3 = document.getElementById("step3");
     const step4 = document.getElementById("step4");
+    const errorMessage = document.getElementById("errorMessage");
     const particlesContainer = document.getElementById("particles");
 
-    // Create background particles
+    // Create background particles dengan tema Fluent
     function createParticles() {
-      for (let i = 0; i < 15; i++) {
+      for (let i = 0; i < 18; i++) {
         const particle = document.createElement('div');
         particle.classList.add('particle');
         
-        const size = Math.random() * 60 + 20;
+        // Random pilih warna primary atau accent
+        if (Math.random() > 0.5) {
+          particle.classList.add('primary');
+        } else {
+          particle.classList.add('accent');
+        }
+        
+        const size = Math.random() * 45 + 10;
         particle.style.width = `${size}px`;
         particle.style.height = `${size}px`;
         
         particle.style.left = `${Math.random() * 100}%`;
         particle.style.top = `${Math.random() * 100}%`;
         
-        particle.style.animationDelay = `${Math.random() * 15}s`;
+        particle.style.animationDelay = `${Math.random() * 20}s`;
         
         particlesContainer.appendChild(particle);
       }
     }
 
-    document.addEventListener("DOMContentLoaded", () => {
-      createParticles();
-      checkAuth();
-    });
+    function showError(message) {
+      errorMessage.textContent = message;
+      errorMessage.style.display = 'block';
+    }
+
+    function hideError() {
+      errorMessage.style.display = 'none';
+    }
 
     function updateStep(stepElement) {
       stepElement.classList.add('active');
@@ -406,6 +453,8 @@
 
     async function checkAuth() {
       try {
+        hideError();
+
         // 1. Cek session
         loadingText.textContent = "Menghubungkan ke database...";
         updateStep(step1);
@@ -414,13 +463,14 @@
         console.log("DEBUG getSession:", data, error);
 
         if (error) {
+          showError("Kesalahan koneksi database: " + error.message);
           loadingText.textContent = "Error koneksi database, mengarahkan ke halaman login...";
-          return setTimeout(() => window.location.href="login.html",1500);
+          return setTimeout(() => window.location.href="login.html", 2000);
         }
         
         if (!data.session) {
           loadingText.textContent = "Sesi tidak ditemukan, mengarahkan ke halaman login...";
-          return setTimeout(() => window.location.href="login.html",1500);
+          return setTimeout(() => window.location.href="login.html", 2000);
         }
 
         // 2. Ambil data user
@@ -431,8 +481,9 @@
         console.log("DEBUG getUser:", userRes, userError);
         
         if (userError || !userRes.user) {
+          showError("Autentikasi pengguna gagal: " + (userError?.message || "User tidak ditemukan"));
           loadingText.textContent = "Autentikasi pengguna tidak valid, mengarahkan ke halaman login...";
-          return setTimeout(() => window.location.href="login.html",1500);
+          return setTimeout(() => window.location.href="login.html", 2000);
         }
         
         const user = userRes.user;
@@ -449,8 +500,9 @@
         console.log("DEBUG role:", userData, roleError);
 
         if (roleError || !userData) {
+          showError("Level akses tidak ditemukan: " + (roleError?.message || "Data user tidak tersedia"));
           loadingText.textContent = "Level akses tidak ditemukan, mengarahkan ke halaman login...";
-          return setTimeout(() => window.location.href="login.html",1500);
+          return setTimeout(() => window.location.href="login.html", 2000);
         }
 
         const role = userData.role;
@@ -465,16 +517,24 @@
             case "service-advisor": window.location.href="sa.html"; break;
             case "mra": window.location.href="mra.html"; break;
             case "administrator": window.location.href="admin.html"; break;
-            default: window.location.href="login.html";
+            default: 
+              showError("Role tidak dikenali: " + role);
+              setTimeout(() => window.location.href="login.html", 2000);
           }
         }, 1500);
 
       } catch(err) {
         console.error("Error check auth:", err);
+        showError("Terjadi kesalahan sistem: " + err.message);
         loadingText.textContent = "Terjadi kesalahan sistem, mengarahkan ke halaman login...";
-        setTimeout(() => window.location.href="login.html", 1500);
+        setTimeout(() => window.location.href="login.html", 2000);
       }
     }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      createParticles();
+      checkAuth();
+    });
   </script>
 </body>
 </html>
