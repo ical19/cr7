@@ -2905,90 +2905,92 @@
         }
 
         // Modifikasi form submission untuk menyimpan ke master kendaraan
-        $('#estimasiForm').submit(async function (e) {
-            e.preventDefault();
+$('#estimasiForm').submit(async function (e) {
+    e.preventDefault();
 
-            const nopol = $('#nopol').val();
-            const jenisMobil = $('#jenisMobil').val();
-            const telepon = $('#telepon').val();
-            const serviceAdvisor = $('#serviceAdvisor').val();
-            const nomorRangka = $('#nomorRangka').val();
-            const keterangan = $('#keterangan').val();
+    const nopol = $('#nopol').val();
+    const jenisMobil = $('#jenisMobil').val();
+    const telepon = $('#telepon').val();
+    const serviceAdvisor = $('#serviceAdvisor').val();
+    const nomorRangka = $('#nomorRangka').val();
+    const keterangan = $('#keterangan').val();
 
-            // Dapatkan tag dari Tagify
-            const tags = tagify.value.map(tag => tag.value);
+    // Dapatkan tag dari Tagify
+    const tags = tagify.value.map(tag => tag.value);
 
-            if (!nopol || !jenisMobil || !telepon || !serviceAdvisor || tags.length === 0) {
-                //alert('Harap isi semua field yang diperlukan!');
-                return;
-            }
+    if (!nopol || !jenisMobil || !telepon || !serviceAdvisor || tags.length === 0) {
+        showToast('error', 'Error', 'Harap isi semua field yang diperlukan!');
+        return;
+    }
 
-            try {
-                // Tampilkan loading
-                const submitBtn = $('#submitBtn');
-                submitBtn.html('<span class="loading-spinner"></span> Menyimpan...');
-                submitBtn.prop('disabled', true);
+    try {
+        // Tampilkan loading
+        const submitBtn = $('#submitBtn');
+        submitBtn.html('<span class="loading-spinner"></span> Menyimpan...');
+        submitBtn.prop('disabled', true);
 
-                // 1. Simpan/Update data ke master_kendaraan
-                // const kendaraanData = {
-                //     nomor_rangka: nomorRangka,
-                //     nopol: nopol,
-                //     jenis_mobil: jenisMobil,
-                //     telepon_customer: telepon
-                // };
-
-                // await saveToMasterKendaraan(kendaraanData);
-
-                // 2. Upload foto jika ada
-                let fotoUrls = [];
-                if (selectedImages.length > 0) {
-                    for (const image of selectedImages) {
-                        const url = await uploadFoto(image);
-                        if (url) {
-                            fotoUrls.push(url);
-                        }
-                    }
+        // 1. Upload foto jika ada - INI YANG DITAMBAHKAN
+        let fotoUrls = [];
+        console.log("🖼️ Jumlah gambar yang akan diupload:", selectedImages.length);
+        
+        if (selectedImages.length > 0) {
+            for (let i = 0; i < selectedImages.length; i++) {
+                const image = selectedImages[i];
+                console.log(`📤 Uploading gambar ${i+1}/${selectedImages.length}:`, image.name);
+                
+                const url = await uploadFoto(image);
+                if (url) {
+                    fotoUrls.push(url);
+                    console.log(`✅ Gambar ${i+1} berhasil diupload:`, url);
+                } else {
+                    console.error(`❌ Gagal upload gambar ${i+1}`);
                 }
-
-                // 3. Simpan data estimasi
-                const { data, error } = await supabase
-                    .from('estimasi')
-                    .insert([
-                        {
-                            nopol: nopol,
-                            jenis_mobil: jenisMobil,
-                            telepon_customer: telepon,
-                            service_advisor: serviceAdvisor,
-                            nomor_rangka: nomorRangka,
-                            komponen: tags,
-                            keterangan: keterangan,
-                            foto_url: fotoUrls,
-                            teknisi_id: currentUser.id,
-                            status: 'pending'
-                        }
-                    ])
-                    .select();
-
-                if (error) throw error;
-
-                // Tampilkan pesan sukses
-                showToast('success', 'Berhasil', 'Estimasi berhasil disimpan dan data kendaraan tersimpan di master!');
-
-                // Reset form
-                resetForm();
-
-                // Reload data dashboard
-                await loadDashboardData();
-
-            } catch (error) {
-                console.error('Error saving estimation:', error);
-                showToast('error', 'Error', 'Terjadi kesalahan saat menyimpan estimasi: ' + error.message);
-            } finally {
-                // Reset button
-                $('#submitBtn').html('<i class="fas fa-save me-2"></i> Simpan Estimasi');
-                $('#submitBtn').prop('disabled', false);
             }
-        });
+        } else {
+            console.log("ℹ️ Tidak ada gambar yang diupload");
+        }
+
+        console.log("📊 URL foto yang akan disimpan:", fotoUrls);
+
+        // 2. Simpan data estimasi
+        const { data, error } = await supabase
+            .from('estimasi')
+            .insert([
+                {
+                    nopol: nopol,
+                    jenis_mobil: jenisMobil,
+                    telepon_customer: telepon,
+                    service_advisor: serviceAdvisor,
+                    nomor_rangka: nomorRangka,
+                    komponen: tags,
+                    keterangan: keterangan,
+                    foto_url: fotoUrls, // Pastikan ini array
+                    teknisi_id: currentUser.id,
+                    status: 'pending'
+                }
+            ])
+            .select();
+
+        if (error) throw error;
+
+        // Tampilkan pesan sukses
+        showToast('success', 'Berhasil', `Estimasi berhasil disimpan! ${fotoUrls.length > 0 ? fotoUrls.length + ' gambar diupload.' : ''}`);
+
+        // Reset form
+        resetForm();
+
+        // Reload data dashboard
+        await loadDashboardData();
+
+    } catch (error) {
+        console.error('❌ Error saving estimation:', error);
+        showToast('error', 'Error', 'Terjadi kesalahan saat menyimpan estimasi: ' + error.message);
+    } finally {
+        // Reset button
+        $('#submitBtn').html('<i class="fas fa-save me-2"></i> Simpan Estimasi');
+        $('#submitBtn').prop('disabled', false);
+    }
+});
 
         // Inisialisasi di Document Ready
         $(document).ready(function () {
@@ -4944,71 +4946,180 @@
                 minimumFractionDigits: 0
             }).format(amount);
         }
-        // Upload foto ke Supabase Storage
-        async function uploadFoto(file) {
-            try {
-                // Generate nama file unik
-                const fileName = `${currentUser.id}/${Date.now()}_${file.name}`;
+        
+// Upload foto ke Supabase Storage - VERSI DIPERBAIKI
+async function uploadFoto(file) {
+    try {
+        console.log("🚀 Memulai upload file:", file.name, "Size:", file.size, "Type:", file.type);
 
-                // Upload file ke Supabase Storage
-                const { data, error } = await supabase.storage
+        // Validasi file
+        if (!file || file.size === 0) {
+            console.error("❌ File tidak valid atau kosong");
+            return null;
+        }
+
+        // Generate nama file unik
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${currentUser.id}/${Date.now()}_${Math.random().toString(36).substring(2)}.${fileExt}`;
+        
+        console.log("📁 Nama file di storage:", fileName);
+
+        // Upload file ke Supabase Storage
+        const { data, error } = await supabase.storage
+            .from('estimasi-fotos')
+            .upload(fileName, file, {
+                cacheControl: '3600',
+                upsert: false
+            });
+
+        if (error) {
+            console.error("❌ Error upload ke storage:", error);
+            
+            // Handle specific errors
+            if (error.message.includes('quota') || error.message.includes('storage')) {
+                console.log("💾 Storage penuh, mencoba hapus file lama...");
+                const newUrl = await handleStorageFull(file);
+                return newUrl;
+            } else if (error.message.includes('exists')) {
+                console.log("📁 File sudah ada, generate nama baru...");
+                // Coba dengan nama yang berbeda
+                const newFileName = `${currentUser.id}/${Date.now()}_${Math.random().toString(36).substring(2)}_new.${fileExt}`;
+                const { data: retryData, error: retryError } = await supabase.storage
                     .from('estimasi-fotos')
-                    .upload(fileName, file);
-
-                if (error) {
-                    // Jika error karena storage penuh, hapus file lama
-                    if (error.message.includes('quota')) {
-                        await handleStorageFull(file);
-                        return null;
-                    }
-                    throw error;
-                }
-
-                // Dapatkan URL publik
-                const { data: { publicUrl } } = supabase.storage
-                    .from('estimasi-fotos')
-                    .getPublicUrl(fileName);
-
-                return publicUrl;
-
-            } catch (error) {
-                console.error('Error uploading foto:', error);
-                return null;
+                    .upload(newFileName, file);
+                
+                if (retryError) throw retryError;
+                data = retryData;
+            } else {
+                throw error;
             }
         }
 
-        // Handle storage penuh dengan menghapus file lama
-        async function handleStorageFull(newFile) {
-            try {
-                // Dapatkan daftar file user
-                const { data: files, error } = await supabase.storage
-                    .from('estimasi-fotos')
-                    .list(`${currentUser.id}`);
+        console.log("✅ Upload berhasil, data:", data);
 
-                if (error) throw error;
+        // Dapatkan URL publik
+        const { data: { publicUrl } } = supabase.storage
+            .from('estimasi-fotos')
+            .getPublicUrl(fileName);
 
-                if (files && files.length > 0) {
-                    // Urutkan berdasarkan created_at (yang paling lama pertama)
-                    files.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+        console.log("🔗 URL publik:", publicUrl);
+        return publicUrl;
 
-                    // Hapus file paling lama
-                    const { error: deleteError } = await supabase.storage
-                        .from('estimasi-fotos')
-                        .remove([`${currentUser.id}/${files[0].name}`]);
-
-                    if (deleteError) throw deleteError;
-
-                    // Coba upload lagi
-                    return await uploadFoto(newFile);
-                }
-
-                return null;
-
-            } catch (error) {
-                console.error('Error handling storage full:', error);
-                return null;
-            }
+    } catch (error) {
+        console.error('❌ Error uploading foto:', error);
+        
+        // Tampilkan error spesifik ke user
+        if (error.message.includes('quota')) {
+            showToast('error', 'Storage Penuh', 'Storage gambar penuh. Silahkan hubungi administrator.');
+        } else if (error.message.includes('JWT')) {
+            showToast('error', 'Auth Error', 'Sesi login bermasalah. Silahkan login ulang.');
+        } else {
+            showToast('error', 'Upload Gagal', 'Gagal mengupload gambar: ' + error.message);
         }
+        
+        return null;
+    }
+}
+
+        // Fungsi untuk debug storage - TAMBAHKAN INI
+async function debugStorage() {
+    try {
+        console.log("🔍 Debug Storage Info:");
+        
+        // Cek bucket exists
+        const { data: buckets, error: bucketsError } = await supabase.storage.listBuckets();
+        if (bucketsError) {
+            console.error("❌ Error list buckets:", bucketsError);
+        } else {
+            console.log("📦 Buckets tersedia:", buckets);
+        }
+
+        // Cek files user
+        const { data: files, error: filesError } = await supabase.storage
+            .from('estimasi-fotos')
+            .list(`${currentUser.id}`, {
+                limit: 10,
+                offset: 0
+            });
+
+        if (filesError) {
+            console.error("❌ Error list files:", filesError);
+        } else {
+            console.log(`📁 Files user ${currentUser.id}:`, files);
+            console.log(`📊 Total files: ${files ? files.length : 0}`);
+        }
+
+        // Test upload kecil
+        const testBlob = new Blob(['test'], { type: 'text/plain' });
+        const testFile = new File([testBlob], 'test.txt');
+        
+        const { data: testUpload, error: testError } = await supabase.storage
+            .from('estimasi-fotos')
+            .upload(`${currentUser.id}/test_${Date.now()}.txt`, testFile);
+
+        if (testError) {
+            console.error("❌ Test upload gagal:", testError);
+        } else {
+            console.log("✅ Test upload berhasil:", testUpload);
+            
+            // Hapus file test
+            await supabase.storage
+                .from('estimasi-fotos')
+                .remove([`${currentUser.id}/test_${Date.now()}.txt`]);
+        }
+
+    } catch (error) {
+        console.error("❌ Debug storage error:", error);
+    }
+}
+
+// Panggil fungsi debug (opsional, bisa di console)
+// debugStorage();
+
+// Handle storage penuh - VERSI DISEDERHANAKAN
+async function handleStorageFull(newFile) {
+    try {
+        console.log("🔄 Menangani storage penuh...");
+        
+        // Dapatkan daftar file user
+        const { data: files, error } = await supabase.storage
+            .from('estimasi-fotos')
+            .list(`${currentUser.id}`, {
+                sortBy: { column: 'created_at', order: 'asc' }
+            });
+
+        if (error) throw error;
+
+        if (files && files.length > 0) {
+            // Hapus 5 file paling lama
+            const filesToDelete = files.slice(0, Math.min(5, files.length));
+            const filePaths = filesToDelete.map(file => `${currentUser.id}/${file.name}`);
+            
+            console.log("🗑️ Menghapus file lama:", filePaths);
+
+            const { error: deleteError } = await supabase.storage
+                .from('estimasi-fotos')
+                .remove(filePaths);
+
+            if (deleteError) throw deleteError;
+
+            console.log("✅ File lama dihapus, mencoba upload ulang...");
+            
+            // Tunggu sebentar sebelum upload ulang
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            
+            // Coba upload lagi
+            return await uploadFoto(newFile);
+        }
+
+        console.error("❌ Tidak ada file yang bisa dihapus");
+        return null;
+
+    } catch (error) {
+        console.error('❌ Error handling storage full:', error);
+        return null;
+    }
+}
 
         // Format angka ke format Rupiah
         function formatRupiah(angka) {
