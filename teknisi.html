@@ -4498,9 +4498,11 @@ $('#estimasiForm').submit(async function (e) {
         function getStatusText(status) {
             switch (status) {
                 case 'pending': return 'Pending';
-                case 'progress': return 'Proses';
-                case 'completed': return 'Selesai';
-                case 'sent': return 'Terkirim ke SA';
+                case 'progress': return 'ReCheck Part';
+                case 'completed': return 'Complete';
+                case 'done': return 'Done';
+                case 'waiting': return 'Waiting MRA';
+                case 'sent': return 'Waiting SA';
                 default: return status;
             }
         }
@@ -4784,179 +4786,234 @@ $('#estimasiForm').submit(async function (e) {
     await loadRecentEstimasi(); // ✅ panggil ulang fungsi setelah delete
 }
 
-        // Cetak PDF dengan format tertentu
-        async function generatePdf(format = 'a4') {
-            try {
-                const { data, error } = await supabase
-                    .from('estimasi')
-                    .select('*')
-                    .eq('id', currentEstimasiId)
-                    .single();
+// Cetak PDF dengan format tertentu
+async function generatePdf(format = 'a4') {
+    try {
+        const { data: estimasiData, error: estimasiError } = await supabase
+            .from('estimasi')
+            .select('*')
+            .eq('id', currentEstimasiId)
+            .single();
 
-                if (error) throw error;
+        if (estimasiError) throw estimasiError;
 
-                // Handle foto_url yang bisa berupa string atau array
-                let fotoUrls = [];
-                if (data.foto_url) {
-                    if (Array.isArray(data.foto_url)) {
-                        fotoUrls = data.foto_url;
-                    } else if (typeof data.foto_url === 'string') {
-                        try {
-                            fotoUrls = JSON.parse(data.foto_url);
-                            if (!Array.isArray(fotoUrls)) {
-                                fotoUrls = [data.foto_url];
-                            }
-                        } catch (e) {
-                            fotoUrls = [data.foto_url];
-                        }
-                    }
-                }
-
-                let sparepartData = [];
-                if (data.sparepart_data) {
-                    if (Array.isArray(data.sparepart_data)) {
-                        sparepartData = data.sparepart_data;
-                    } else if (typeof data.sparepart_data === 'string') {
-                        try {
-                            sparepartData = JSON.parse(data.sparepart_data);
-                            if (!Array.isArray(sparepartData)) {
-                                sparepartData = [];
-                            }
-                        } catch (e) {
-                            sparepartData = [];
-                        }
-                    }
-                }
-
-
-                // Buat konten PDF
-                const pdfContent = `
-            <div style="font-family: Arial, sans-serif; padding: 20px;">
-                <div style="text-align: center; margin-bottom: 20px;">
-                    <h2 style="color: #e60000; margin-bottom: 5px;">Tunas Toyota Batutulis</h2>
-                    <p style="margin: 0; font-size: 14px;">Jl. Batutulis No. 42,RT.7/RW.2 Jakarta Pusat</p>
-                    <p style="margin: 0; font-size: 14px;">Telp: (021) 3454465</p>
-                    <hr style="border-top: 2px solid #e60000; margin: 15px 0;">
-                    <h3 style="margin-bottom: 20px;">Estimasi Perbaikan Kendaraan</h3>
-                </div>
-                
-                <div style="display: flex; margin-bottom: 20px;">
-                    <div style="flex: 1;">
-                        <p><strong>Nomor Polisi:</strong> ${data.nopol}</p>
-                        <p><strong>Jenis Mobil:</strong> ${data.jenis_mobil}</p>
-                        <p><strong>Nomor Rangka:</strong> ${data.nomor_rangka || '-'}</p>
-                        <p><strong>Telepon Customer:</strong> ${data.telepon_customer || '-'}</p>
-                    </div>
-                    <div style="flex: 1;">
-                        <p><strong>Service Advisor:</strong> ${data.service_advisor || '-'}</p>
-                        <p><strong>Tanggal Estimasi:</strong> ${new Date(data.created_at).toLocaleDateString('id-ID')}</p>
-                        <p><strong>Status:</strong> ${getStatusText(data.status)}</p>
-                    </div>
-                </div>
-                
-                <div style="margin-bottom: 20px;">
-                    <p><strong>Komponen yang Perlu Diperbaiki/Diganti:</strong></p>
-                    <ul>
-                        ${Array.isArray(data.komponen) ?
-                        data.komponen.map(k => `<li>${k}</li>`).join('') :
-                        `<li>${data.komponen}</li>`}
-                    </ul>
-                </div>
-                
-                ${sparepartData.length > 0 ? `
-                <div style="margin-bottom: 20px;">
-                    <p><strong>Detail Sparepart:</strong></p>
-                    <table style="width: 100%; border-collapse: collapse; margin: 10px 0;">
-                        <thead>
-                            <tr>
-                                <th style="background-color: #e60000; color: white; padding: 10px; text-align: left;">Nama Komponen</th>
-                                <th style="background-color: #e60000; color: white; padding: 10px; text-align: left;">Harga Satuan</th>
-                                <th style="background-color: #e60000; color: white; padding: 10px; text-align: left;">Jumlah</th>
-                                <th style="background-color: #e60000; color: white; padding: 10px; text-align: left;">Ketersediaan</th>
-                                <th style="background-color: #e60000; color: white; padding: 10px; text-align: left;">Subtotal</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${sparepartData.map(item => `
-                                <tr>
-                                    <td style="padding: 10px; border-bottom: 1px solid #ddd;">${item.name || '-'}</td>
-                                    <td style="padding: 10px; border-bottom: 1px solid #ddd;">${formatRupiah(item.price || 0)}</td>
-                                    <td style="padding: 10px; border-bottom: 1px solid #ddd;">${item.qty || 1}</td>
-                                    <td style="padding: 10px; border-bottom: 1px solid #ddd;">${item.availability || '-'}</td>
-                                    <td style="padding: 10px; border-bottom: 1px solid #ddd;">${formatRupiah(item.subtotal || 0)}</td>
-                                </tr>
-                            `).join('')}
-                            <tr style="font-weight: bold; background-color: #f2f2f2;">
-                                <td colspan="4" style="padding: 10px; text-align: right;">Total Harga:</td>
-                                <td style="padding: 10px;">${formatRupiah(data.total_harga || 0)}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                ` : ''}
-                
-                <div style="margin-bottom: 20px;">
-                    <p><strong>Keterangan:</strong> ${data.keterangan || 'Tidak ada keterangan tambahan'}</p>
-                </div>
-                
-                ${fotoUrls.length > 0 ? `
-                <div style="margin-bottom: 20px;">
-                    <p><strong>Foto Kondisi Kendaraan:</strong></p>
-                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;">
-                        ${fotoUrls.map(url => `<img src="${url}" 
-     style="max-width:100%; height:auto; max-height:150px; object-fit:contain; border-radius:5px; border:1px solid #ddd;">
-`).join('')}
-                    </div>
-                </div>
-                ` : ''}
-                
-                <div style="background-color: #f8f9fa; padding: 15px; border-radius: 8px; margin-top: 30px;">
-                    <p style="margin: 0; font-weight: bold;">Untuk melakukan perbaikan komponen tersebut, hubungi:</p>
-                    <p style="margin: 5px 0 0 0;">
-                        <strong>Admin Tunas Toyota Batutulis</strong><br>
-                        <a href="https://wa.me/6281315389866?text=Halo%20Tunas%20Toyota%20Batutulis,%20saya%20ingin%20melakukan%20penggantian%20part%20berikut:%20${encodeURIComponent(Array.isArray(data.komponen) ? data.komponen.join(', ') : data.komponen)}" 
-                            style="color: #25D366; text-decoration: none;">
-                            <i class="fab fa-whatsapp"></i> 081315389866
-                        </a>
-                    </p>
-                </div>
-                
-                <div style="margin-top: 30px; text-align: center; font-size: 12px; color: #6c757d;">
-                    <p>Dicetak pada: ${new Date().toLocaleDateString('id-ID')} ${new Date().toLocaleTimeString('id-ID')}</p>
-                </div>
-            </div>
-            `;
-                // Buat elemen sementara untuk konten PDF
-                const tempDiv = document.createElement('div');
-                tempDiv.innerHTML = pdfContent;
-
-                // Opsi untuk html2pdf berdasarkan format
-                const opt = {
-                    margin: 10,
-                    filename: `estimasi_${data.nopol}_${new Date().getTime()}.pdf`,
-                    image: { type: 'jpeg', quality: 0.98 },
-                    html2canvas: {
-                        scale: format === 'a4' ? 2 : 1.5,
-                        useCORS: true,
-                        allowTaint: true
-                    },
-                    jsPDF: {
-                        unit: 'mm',
-                        format: format,
-                        orientation: 'portrait'
-                    }
-                };
-
-                // Generate PDF
-                html2pdf().set(opt).from(tempDiv).save().then(() => {
-                    showToast('success', 'PDF Berhasil', `File estimasi format ${format.toUpperCase()} berhasil diunduh!`);
-                });
-
-            } catch (error) {
-                console.error('Error generating PDF:', error);
-                //alert('Terjadi kesalahan saat membuat PDF: ' + error.message);
+        // Ambil data teknisi
+        let teknisiNama = '-';
+        if (estimasiData.teknisi_id) {
+            const { data: userData, error: userError } = await supabase
+                .from('users')
+                .select('full_name')
+                .eq('id', estimasiData.teknisi_id)
+                .single();
+            
+            if (!userError && userData) {
+                teknisiNama = userData.full_name;
             }
         }
+
+        // Handle foto_url yang bisa berupa string atau array
+        let fotoUrls = [];
+        if (estimasiData.foto_url) {
+            if (Array.isArray(estimasiData.foto_url)) {
+                fotoUrls = estimasiData.foto_url;
+            } else if (typeof estimasiData.foto_url === 'string') {
+                try {
+                    fotoUrls = JSON.parse(estimasiData.foto_url);
+                    if (!Array.isArray(fotoUrls)) {
+                        fotoUrls = [estimasiData.foto_url];
+                    }
+                } catch (e) {
+                    fotoUrls = [estimasiData.foto_url];
+                }
+            }
+        }
+
+        let sparepartData = [];
+        if (estimasiData.sparepart_data) {
+            if (Array.isArray(estimasiData.sparepart_data)) {
+                sparepartData = estimasiData.sparepart_data;
+            } else if (typeof estimasiData.sparepart_data === 'string') {
+                try {
+                    sparepartData = JSON.parse(estimasiData.sparepart_data);
+                    if (!Array.isArray(sparepartData)) {
+                        sparepartData = [];
+                    }
+                } catch (e) {
+                    sparepartData = [];
+                }
+            }
+        }
+
+        // Format komponen menjadi string dengan koma
+        let komponenText = '-';
+        if (estimasiData.komponen) {
+            if (Array.isArray(estimasiData.komponen)) {
+                komponenText = estimasiData.komponen.join(', ');
+            } else {
+                komponenText = estimasiData.komponen;
+            }
+        }
+
+        // Hitung total harga manual dari sparepart_data
+        let totalHargaManual = 0;
+        if (sparepartData.length > 0) {
+            totalHargaManual = sparepartData.reduce((total, item) => {
+                return total + (parseFloat(item.total) || 0);
+            }, 0);
+        }
+
+        // Buat konten PDF yang lebih compact
+        const pdfContent = `
+        <div style="font-family: Arial, sans-serif; padding: 15px; font-size: 12px;">
+            <div style="text-align: center; margin-bottom: 15px;">
+                <h2 style="color: #e60000; margin-bottom: 3px; font-size: 18px;">Tunas Toyota Batutulis</h2>
+                <p style="margin: 0; font-size: 11px;">Jl. Batutulis No. 42,RT.7/RW.2 Jakarta Pusat</p>
+                <p style="margin: 0; font-size: 11px;">Telp: (021) 3454465</p>
+                <hr style="border-top: 2px solid #e60000; margin: 10px 0;">
+                <h3 style="margin-bottom: 15px; font-size: 16px;">Estimasi Perbaikan Kendaraan</h3>
+            </div>
+            
+            <!-- Info Customer Compact -->
+            <div style="margin-bottom: 15px; background: #f8f9fa; padding: 10px; border-radius: 5px;">
+                <table style="width: 100%; border-collapse: collapse;">
+                    <tr>
+                        <td style="padding: 3px 5px; width: 30%;"><strong>Nomor Polisi:</strong></td>
+                        <td style="padding: 3px 5px;">${estimasiData.nopol}</td>
+                        <td style="padding: 3px 5px; width: 30%;"><strong>Tanggal Estimasi:</strong></td>
+                        <td style="padding: 3px 5px;">${new Date(estimasiData.created_at).toLocaleDateString('id-ID')}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 3px 5px;"><strong>Jenis Mobil:</strong></td>
+                        <td style="padding: 3px 5px;">${estimasiData.jenis_mobil}</td>
+                        <td style="padding: 3px 5px;"><strong>Nama Teknisi:</strong></td>
+                        <td style="padding: 3px 5px;">${teknisiNama}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 3px 5px;"><strong>Nomor Rangka:</strong></td>
+                        <td style="padding: 3px 5px;">${estimasiData.nomor_rangka || '-'}</td>
+                        <td style="padding: 3px 5px;"><strong>Service Advisor:</strong></td>
+                        <td style="padding: 3px 5px;">${estimasiData.service_advisor || '-'}</td>
+                    </tr>
+                </table>
+            </div>
+            
+            <!-- Komponen yang Perlu Diperbaiki -->
+            <div style="margin-bottom: 15px;">
+                <p style="margin: 0 0 5px 0; font-weight: bold;">Komponen yang Perlu Diperbaiki/Diganti:</p>
+                <div style="background: #fff; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                    ${komponenText}
+                </div>
+            </div>
+            
+            ${sparepartData.length > 0 ? `
+            <!-- Tabel Sparepart -->
+            <div style="margin-bottom: 15px;">
+                <p style="margin: 0 0 5px 0; font-weight: bold;">Detail Sparepart:</p>
+                <table style="width: 100%; border-collapse: collapse; font-size: 11px;">
+                    <thead>
+                        <tr>
+                            <th style="background-color: #e60000; color: white; padding: 6px; text-align: left; border: 1px solid #ddd;">Nama Komponen</th>
+                            <th style="background-color: #e60000; color: white; padding: 6px; text-align: center; border: 1px solid #ddd; width: 15%;">Harga Satuan</th>
+                            <th style="background-color: #e60000; color: white; padding: 6px; text-align: center; border: 1px solid #ddd; width: 10%;">Jumlah</th>
+                            <th style="background-color: #e60000; color: white; padding: 6px; text-align: center; border: 1px solid #ddd; width: 15%;">Ketersediaan</th>
+                            <th style="background-color: #e60000; color: white; padding: 6px; text-align: center; border: 1px solid #ddd; width: 15%;">Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${sparepartData.map(item => `
+                            <tr>
+                                <td style="padding: 6px; border: 1px solid #ddd;">${item.name || '-'}</td>
+                                <td style="padding: 6px; border: 1px solid #ddd; text-align: right;">${formatRupiah(item.price || 0)}</td>
+                                <td style="padding: 6px; border: 1px solid #ddd; text-align: center;">${item.qty || 1}</td>
+                                <td style="padding: 6px; border: 1px solid #ddd; text-align: center;">${item.availability || '-'}</td>
+                                <td style="padding: 6px; border: 1px solid #ddd; text-align: right;">${formatRupiah(item.total || 0)}</td>
+                            </tr>
+                        `).join('')}
+                        <tr style="font-weight: bold; background-color: #f2f2f2;">
+                            <td colspan="4" style="padding: 8px; border: 1px solid #ddd; text-align: right;">Total Harga Final:</td>
+                            <td style="padding: 8px; border: 1px solid #ddd; text-align: right;">${formatRupiah(totalHargaManual)}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            ` : ''}
+            
+            <!-- Keterangan -->
+            <div style="margin-bottom: 15px;">
+                <p style="margin: 0 0 5px 0; font-weight: bold;">Keterangan:</p>
+                <div style="background: #fff; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                    ${estimasiData.keterangan || 'Tidak ada keterangan tambahan'}
+                </div>
+            </div>
+            
+            ${fotoUrls.length > 0 ? `
+            <!-- Foto Komponen Bermasalah -->
+            <div style="margin-bottom: 15px;">
+                <p style="margin: 0 0 5px 0; font-weight: bold;">Foto Komponen Bermasalah:</p>
+                <div style="display: flex; flex-wrap: wrap; gap: 5px; justify-content: flex-start;">
+                    ${fotoUrls.map(url => `
+                        <img src="${url}" 
+                             style="max-width: 120px; max-height: 90px; object-fit: cover; border-radius: 3px; border: 1px solid #ddd; flex-shrink: 0;">
+                    `).join('')}
+                </div>
+            </div>
+            ` : ''}
+            
+            <!-- Kontak Info -->
+            <div style="background-color: #f8f9fa; padding: 10px; border-radius: 5px; margin-top: 20px; font-size: 11px;">
+                <p style="margin: 0 0 5px 0; font-weight: bold;">Untuk melakukan perbaikan komponen tersebut, hubungi:</p>
+                <p style="margin: 0;">
+                    <strong>Admin Tunas Toyota Batutulis</strong><br>
+                    <span style="color: #25D366;">
+                        <i class="fab fa-whatsapp"></i> 081315389866
+                    </span>
+                </p>
+            </div>
+            
+            <!-- Footer -->
+            <div style="margin-top: 20px; text-align: center; font-size: 10px; color: #6c757d;">
+                <p>Dicetak pada: ${new Date().toLocaleDateString('id-ID')} ${new Date().toLocaleTimeString('id-ID')}</p>
+            </div>
+        </div>
+        `;
+
+        // Buat elemen sementara untuk konten PDF
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = pdfContent;
+
+        // Opsi untuk html2pdf berdasarkan format
+        const opt = {
+            margin: 8,
+            filename: `estimasi_${estimasiData.nopol}_${new Date().getTime()}.pdf`,
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: {
+                scale: format === 'a4' ? 2 : 1.5,
+                useCORS: true,
+                allowTaint: true
+            },
+            jsPDF: {
+                unit: 'mm',
+                format: format,
+                orientation: 'portrait'
+            }
+        };
+
+        // Generate PDF
+        html2pdf().set(opt).from(tempDiv).save().then(() => {
+            showToast('success', 'PDF Berhasil', `File estimasi format ${format.toUpperCase()} berhasil diunduh!`);
+        });
+
+    } catch (error) {
+        console.error('Error generating PDF:', error);
+        showToast('error', 'Error', 'Terjadi kesalahan saat membuat PDF: ' + error.message);
+    }
+}
+
+// Fungsi format Rupiah (pastikan sudah ada)
+function formatRupiah(angka) {
+    if (!angka) return 'Rp 0';
+    return 'Rp ' + parseInt(angka).toLocaleString('id-ID');
+}
 
         // Cetak PDF dengan format A6
         async function getBase64FromUrl(url) {
