@@ -5032,197 +5032,250 @@ function formatRupiah(angka) {
             if (!text) return '';
             return text.length > maxLength ? text.substring(0, maxLength) + '..' : text;
         }
+async function generatePdfA5(format = 'A5') {
+    try {
+        const { data, error } = await supabase
+            .from('estimasi')
+            .select('*')
+            .eq('id', currentEstimasiId)
+            .single();
 
-        async function generatePdfA5(format = 'A5') {
-            try {
-                const { data, error } = await supabase
-                    .from('estimasi')
-                    .select('*')
-                    .eq('id', currentEstimasiId)
-                    .single();
+        if (error) throw error;
 
-                if (error) throw error;
+        // Ambil data teknisi
+        let teknisiNama = '-';
+        if (data.teknisi_id) {
+            const { data: userData, error: userError } = await supabase
+                .from('users')
+                .select('full_name')
+                .eq('id', data.teknisi_id)
+                .single();
+            
+            if (!userError && userData) {
+                teknisiNama = userData.full_name || '-';
+            }
+        }
 
-                // Handle sparepart
-                let sparepartData = [];
-                if (data.sparepart_data) {
-                    if (Array.isArray(data.sparepart_data)) {
-                        sparepartData = data.sparepart_data;
-                    } else if (typeof data.sparepart_data === 'string') {
-                        try {
-                            sparepartData = JSON.parse(data.sparepart_data);
-                            if (!Array.isArray(sparepartData)) sparepartData = [];
-                        } catch (e) {
-                            sparepartData = [];
-                        }
-                    }
+        // Handle sparepart
+        let sparepartData = [];
+        if (data.sparepart_data) {
+            if (Array.isArray(data.sparepart_data)) {
+                sparepartData = data.sparepart_data;
+            } else if (typeof data.sparepart_data === 'string') {
+                try {
+                    sparepartData = JSON.parse(data.sparepart_data);
+                    if (!Array.isArray(sparepartData)) sparepartData = [];
+                } catch (e) {
+                    sparepartData = [];
                 }
+            }
+        }
 
-                // QR admin
-                const qrBase64 = await getBase64FromUrl(
-                    "https://pjawwektzazcxakgopou.supabase.co/storage/v1/object/public/static/qrcode.png"
-                );
+        // Hitung total harga manual
+        let totalHargaManual = 0;
+        if (sparepartData.length > 0) {
+            totalHargaManual = sparepartData.reduce((total, item) => {
+                const itemTotal = parseFloat(item.total || item.subtotal || 0);
+                return total + itemTotal;
+            }, 0);
+        }
 
-                const whatsappIcon = await getBase64FromUrl(
-                    "https://pjawwektzazcxakgopou.supabase.co/storage/v1/object/public/static/whatsapp.png"
-                );
+        // QR admin
+        const qrBase64 = await getBase64FromUrl(
+            "https://pjawwektzazcxakgopou.supabase.co/storage/v1/object/public/static/qrcode.png"
+        );
 
-                const docDefinition = {
-                    pageSize: 'A5',
-                    pageMargins: [20, 80, 20, 80], // margin lebih besar untuk A5
+        const whatsappIcon = await getBase64FromUrl(
+            "https://pjawwektzazcxakgopou.supabase.co/storage/v1/object/public/static/whatsapp.png"
+        );
 
-                    header: {
-                        margin: [20, 20, 20, 10],
-                        stack: [
+        const docDefinition = {
+            pageSize: 'A5',
+            pageMargins: [20, 80, 20, 80], // margin lebih besar untuk A5
+
+            header: {
+                margin: [20, 20, 20, 10],
+                stack: [
+                    {
+                        columns: [
                             {
-                                columns: [
-                                    {
-                                        width: 'auto',
-                                        image: await getBase64FromUrl(
-                                            "https://pjawwektzazcxakgopou.supabase.co/storage/v1/object/public/static/tunas.png"
-                                        ),
-                                        fit: [25, 25],
-                                        margin: [0, 0, 8, 0]
-                                    },
-                                    {
-                                        width: '*',
-                                        stack: [
-                                            { text: 'Tunas Toyota Batutulis', fontSize: 14, bold: true, color: '#e60000' },
-                                            { text: 'Jl. Batutulis Raya No. 42, Jakarta Pusat', fontSize: 10 },
-                                            { text: 'Telp: (021) 3454465', fontSize: 9 }
-                                        ],
-                                        alignment: 'left'
-                                    }
-                                ]
+                                width: 'auto',
+                                image: await getBase64FromUrl(
+                                    "https://pjawwektzazcxakgopou.supabase.co/storage/v1/object/public/static/tunas.png"
+                                ),
+                                fit: [25, 25],
+                                margin: [0, 0, 8, 0]
                             },
                             {
-                                margin: [0, 8, 0, 0],
-                                canvas: [
-                                    { type: 'line', x1: 0, y1: 0, x2: 400, y2: 0, lineWidth: 1, color: '#e60000' }
-                                ]
+                                width: '*',
+                                stack: [
+                                    { text: 'Tunas Toyota Batutulis', fontSize: 14, bold: true, color: '#e60000' },
+                                    { text: 'Jl. Batutulis Raya No. 42, Jakarta Pusat', fontSize: 10 },
+                                    { text: 'Telp: (021) 3454465', fontSize: 9 }
+                                ],
+                                alignment: 'left'
                             }
                         ]
                     },
+                    {
+                        margin: [0, 8, 0, 0],
+                        canvas: [
+                            { type: 'line', x1: 0, y1: 0, x2: 400, y2: 0, lineWidth: 1, color: '#e60000' }
+                        ]
+                    }
+                ]
+            },
 
-                    footer: function (currentPage, pageCount) {
-                        return {
-                            margin: [20, 10, 20, 10],
-                            stack: [
+            footer: function (currentPage, pageCount) {
+                return {
+                    margin: [20, 10, 20, 10],
+                    stack: [
+                        {
+                            columns: [
                                 {
-                                    columns: [
+                                    width: '*',
+                                    stack: [
+                                        { text: 'Hubungi kami untuk melakukan perbaikan:', bold: true, fontSize: 10 },
+                                        { text: 'Admin Tunas Toyota', fontSize: 10 },
                                         {
-                                            width: '*',
-                                            stack: [
-                                                { text: 'Hubungi kami untuk melakukan perbaikan:', bold: true, fontSize: 10 },
-                                                { text: 'Admin Tunas Toyota', fontSize: 10 },
+                                            margin: [0, 2, 0, 0],
+                                            columns: [
                                                 {
-                                                    margin: [0, 2, 0, 0],
-                                                    columns: [
-                                                        {
-                                                            width: 12,
-                                                            image: whatsappIcon,
-                                                            fit: [10, 10],
-                                                            margin: [0, 0, 6, 0]
-                                                        },
-                                                        {
-                                                            width: '*',
-                                                            text: '081315389866',
-                                                            fontSize: 10,
-                                                            color: '#25D366',
-                                                            link: 'https://wa.me/6281315389866'
-                                                        }
-                                                    ]
+                                                    width: 12,
+                                                    image: whatsappIcon,
+                                                    fit: [10, 10],
+                                                    margin: [0, 0, 6, 0]
+                                                },
+                                                {
+                                                    width: '*',
+                                                    text: '081315389866',
+                                                    fontSize: 10,
+                                                    color: '#25D366',
+                                                    link: 'https://wa.me/6281315389866'
                                                 }
                                             ]
-                                        },
-                                        {
-                                            width: 60,
-                                            image: qrBase64,
-                                            fit: [50, 50]
                                         }
                                     ]
                                 },
                                 {
-                                    margin: [0, 5, 0, 0],
-                                    columns: [
-                                        {
-                                            width: '*',
-                                            text: `Dicetak pada: ${new Date().toLocaleDateString('id-ID')} ${new Date().toLocaleTimeString('id-ID')}`,
-                                            fontSize: 8,
-                                            color: '#6c757d',
-                                            alignment: 'left'
-                                        },
-                                        {
-                                            width: 50,
-                                            text: currentPage.toString() + ' / ' + pageCount,
-                                            fontSize: 8,
-                                            alignment: 'right'
-                                        }
-                                    ]
+                                    width: 60,
+                                    image: qrBase64,
+                                    fit: [50, 50]
                                 }
                             ]
-                        };
-                    },
-
-                    content: [
-                        { text: 'Estimasi Saran Perbaikan', alignment: 'center', fontSize: 12, margin: [0, 0, 0, 12] },
-
-                        { text: `Nomor Polisi: ${data.nopol}`, fontSize: 10, margin: [0, 0, 0, 3] },
-                        { text: `Nomor Rangka: ${data.nomor_rangka || '-'}`, fontSize: 10, margin: [0, 0, 0, 3] },
-                        { text: `Tanggal Estimasi: ${new Date(data.created_at).toLocaleDateString('id-ID')}`, fontSize: 10, margin: [0, 0, 0, 12] },
-
-                        (sparepartData.length > 0 ? {
-                            table: {
-                                widths: ['*', 'auto', 'auto', 'auto', 'auto'],
-                                body: [
-                                    [
-                                        { text: 'Nama Barang', fillColor: '#e60000', color: 'white', bold: true },
-                                        { text: 'Harga', fillColor: '#e60000', color: 'white', bold: true },
-                                        { text: 'Jml', fillColor: '#e60000', color: 'white', bold: true },
-                                        { text: 'Total', fillColor: '#e60000', color: 'white', bold: true },
-                                        { text: '(*)', fillColor: '#e60000', color: 'white', bold: true }
-                                    ],
-                                    ...sparepartData.map(item => {
-                                        let avail = '-';
-                                        if (item.availability) {
-                                            const val = item.availability.toLowerCase();
-                                            if (val === 'ready') avail = 'Ada';
-                                            else if (val === 'tam') avail = 'TAM';
-                                            else if (val === 'bo') avail = 'BO';
-                                        }
-                                        return [
-                                            truncateText(item.name, 25) || '-',
-                                            formatRupiah(item.price || 0),
-                                            item.qty || 1,
-                                            formatRupiah(item.subtotal || 0),
-                                            avail
-                                        ];
-                                    }),
-                                    [
-                                        { text: 'Total', colSpan: 3, alignment: 'right', bold: true }, {}, {},
-                                        { text: formatRupiah(data.total_harga || 0), bold: true },
-                                        ''
-                                    ]
-                                ]
-                            },
-                            fontSize: 9,
-                            margin: [0, 0, 0, 12]
-                        } : { text: '' }),
-
-                        { text: '*Harga dapat berubah sewaktu-waktu tanpa pemberitahuan', fontSize: 8, italics: true, margin: [0, 0, 0, 12] },
-
-                        { text: `Keterangan: ${data.keterangan || 'Tidak ada keterangan tambahan'}`, fontSize: 10 }
+                        },
+                        {
+                            margin: [0, 5, 0, 0],
+                            columns: [
+                                {
+                                    width: '*',
+                                    text: `Dicetak pada: ${new Date().toLocaleDateString('id-ID')} ${new Date().toLocaleTimeString('id-ID')}`,
+                                    fontSize: 8,
+                                    color: '#6c757d',
+                                    alignment: 'left'
+                                },
+                                {
+                                    width: 50,
+                                    text: currentPage.toString() + ' / ' + pageCount,
+                                    fontSize: 8,
+                                    alignment: 'right'
+                                }
+                            ]
+                        }
                     ]
                 };
+            },
 
-                // 👉 Download PDF
-                pdfMake.createPdf(docDefinition).download(`estimasi_${data.nopol}_${new Date().getTime()}.pdf`);
+            content: [
+                { text: 'Estimasi Saran Perbaikan', alignment: 'center', fontSize: 12, margin: [0, 0, 0, 12] },
 
-            } catch (error) {
-                console.error('Error generating PDF:', error);
-                //alert('Terjadi kesalahan saat membuat PDF: ' + error.message);
-            }
-        }
+                { text: `Nomor Polisi: ${data.nopol}`, fontSize: 10, margin: [0, 0, 0, 3] },
+                { text: `Nomor Rangka: ${data.nomor_rangka || '-'}`, fontSize: 10, margin: [0, 0, 0, 3] },
+                // TAMBAHAN: Nama Teknisi
+                { text: `Nama Teknisi: ${teknisiNama}`, fontSize: 10, margin: [0, 0, 0, 3] },
+                { text: `Tanggal Estimasi: ${new Date(data.created_at).toLocaleDateString('id-ID')}`, fontSize: 10, margin: [0, 0, 0, 12] },
+
+                (sparepartData.length > 0 ? {
+                    table: {
+                        widths: ['*', 'auto', 'auto', 'auto', 'auto'],
+                        body: [
+                            [
+                                { text: 'Nama Barang', fillColor: '#e60000', color: 'white', bold: true },
+                                { text: 'Harga', fillColor: '#e60000', color: 'white', bold: true },
+                                { text: 'Jml', fillColor: '#e60000', color: 'white', bold: true },
+                                { text: 'Total', fillColor: '#e60000', color: 'white', bold: true },
+                                { text: 'Part', fillColor: '#e60000', color: 'white', bold: true }
+                            ],
+                            ...sparepartData.map(item => {
+                                let avail = '-';
+                                if (item.availability) {
+                                    const val = item.availability.toLowerCase();
+                                    if (val === 'ada') avail = 'Ada';
+                                    else if (val === 'kosong') avail = 'Kosong';
+                                    else if (val === 'bo') avail = 'BO';
+                                    else if (val === 'tam') avail = 'TAM';
+                                }
+                                return [
+                                    truncateText(item.name, 25) || '-',
+                                    formatRupiah(item.price || 0),
+                                    item.qty || 1,
+                                    formatRupiah(item.total || item.subtotal || 0),
+                                    avail
+                                ];
+                            }),
+                            // MODIFIKASI: Menggunakan total harga manual
+                            [
+                                { text: 'Total Harga Final', colSpan: 3, alignment: 'right', bold: true }, {}, {},
+                                { text: formatRupiah(totalHargaManual), bold: true },
+                                ''
+                            ]
+                        ]
+                    },
+                    fontSize: 9,
+                    margin: [0, 0, 0, 12]
+                } : { text: '' }),
+
+                { text: '*Harga dapat berubah sewaktu-waktu tanpa pemberitahuan', fontSize: 8, italics: true, margin: [0, 0, 0, 2] },
+                { text: '*Ada (Dapat dilakukan penggantian), TAM (Order 3 hari), BO (Order 1 bulan), Kosong (berhenti produksi)', fontSize: 8, italics: true, margin: [0, 0, 0, 12] },
+
+                { text: `Keterangan: ${data.keterangan || 'Tidak ada keterangan tambahan'}`, fontSize: 10 }
+            ]
+        };
+
+        // 👉 Download PDF
+        pdfMake.createPdf(docDefinition).download(`estimasi_${data.nopol}_${new Date().getTime()}.pdf`);
+
+    } catch (error) {
+        console.error('Error generating PDF:', error);
+        //alert('Terjadi kesalahan saat membuat PDF: ' + error.message);
+    }
+}
+
+// Fungsi helper untuk memotong teks
+function truncateText(text, maxLength) {
+    if (!text) return '';
+    if (text.length <= maxLength) return text;
+    return text.substring(0, maxLength) + '...';
+}
+
+// Fungsi format Rupiah
+function formatRupiah(angka) {
+    if (!angka) return 'Rp 0';
+    return 'Rp ' + parseInt(angka).toLocaleString('id-ID');
+}
+
+// Fungsi getBase64FromUrl (pastikan sudah ada)
+async function getBase64FromUrl(url) {
+    const response = await fetch(url);
+    const blob = await response.blob();
+    return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(blob);
+        reader.onloadend = function() {
+            resolve(reader.result);
+        };
+    });
+}
 
 
         // Fungsi format Rupiah (jika belum ada)
