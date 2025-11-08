@@ -1,19 +1,18 @@
 <!DOCTYPE html>
 <html lang="id">
-
-<head>
-    <link rel="icon" type="image/x-icon" href="favicon.png">
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Dashboard Teknisi - Sistem Estimasi CR7</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Tagify CSS -->
-    <link href="https://unpkg.com/@yaireo/tagify/dist/tagify.css" rel="stylesheet">
-    <!-- Tambahkan di CSS -->
-    <style>
+    <head>
+        <link rel="icon" type="image/x-icon" href="favicon.png">
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Dashboard Teknisi - Sistem Estimasi CR7</title>
+        <!-- Bootstrap CSS -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+        <!-- Font Awesome -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+        <!-- Tagify CSS -->
+        <link href="https://unpkg.com/@yaireo/tagify/dist/tagify.css" rel="stylesheet">
+        <!-- Tambahkan di CSS -->
+        <style>
         /* Styles untuk grafik komponen */
         .chart-container {
             position: relative;
@@ -96,8 +95,8 @@
         .swipe-hint i {
             margin-right: 5px;
         }
-    </style>
-    <style>
+        </style>
+        <style>
         :root {
             --primary-color: #2c3e50;
             --secondary-color: #34495e;
@@ -1442,220 +1441,229 @@
             border-color: #d6d8db !important;
             color: #383d41 !important;
         }
-    </style>
-</head>
-
-<body>
-    <!-- Mobile Header -->
-    <div class="mobile-header">
-        <button class="mobile-menu-btn" id="mobileMenuBtn">
-            <i class="fas fa-bars"></i>
-        </button>
-        <h4 class="mobile-title" id="mobileTitle">Dashboard</h4>
-        <button class="btn btn-outline-secondary btn-sm" id="logoutBtn">
-            <i class="fas fa-sign-out-alt"></i>
-        </button>
-    </div>
-
-    <!-- Sidebar -->
-    <div class="sidebar" id="sidebar">
-        <div class="sidebar-brand">
-            <h4>CR7 <span class="d-none d-md-inline">Estimasi</span></h4>
+        </style>
+    </head>
+    <body>
+        <!-- Mobile Header -->
+        <div class="mobile-header">
+            <button class="mobile-menu-btn" id="mobileMenuBtn">
+                <i class="fas fa-bars"></i>
+            </button>
+            <h4 class="mobile-title" id="mobileTitle">Dashboard</h4>
+            <button class="btn btn-outline-secondary btn-sm" id="logoutBtn">
+                <i class="fas fa-sign-out-alt"></i>
+            </button>
         </div>
-
-        <ul class="sidebar-menu">
-            <li>
-                <a href="#" class="active" data-section="dashboard">
-                    <i class="fas fa-tachometer-alt"></i>
-                    <span>Dashboard</span>
-                </a>
-            </li>
-            <li>
-                <a href="#" data-section="input-estimasi">
-                    <i class="fas fa-plus-circle"></i>
-                    <span>Input Estimasi</span>
-                </a>
-            </li>
-            <li>
-                <a href="#" data-section="estimasi-saya">
-                    <i class="fas fa-list-alt"></i>
-                    <span>Estimasi Saya</span>
-                </a>
-            </li>
-            <li>
-                <a href="#" data-section="profil">
-                    <i class="fas fa-user"></i>
-                    <span>Profil</span>
-                </a>
-            </li>
-        </ul>
-
-        <div class="user-info">
-            <p class="mb-0">Halo, <strong id="userName">Teknisi</strong></p>
-            <small>Role: <span class="badge status-badge status-progress">Teknisi</span></small>
-        </div>
-    </div>
-
-    <!-- Main Content -->
-    <div class="main-content">
-        <div class="header d-none d-md-flex">
-            <h2 class="page-title" id="pageTitle">Dashboard</h2>
-            <div>
-                <button class="btn btn-outline-secondary btn-sm" id="logoutBtnDesktop">
-                    <i class="fas fa-sign-out-alt me-1"></i> Logout
-                </button>
+        <!-- Sidebar -->
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-brand">
+                <h4>CR7
+                    <span class="d-none d-md-inline">Estimasi</span>
+                </h4>
+            </div>
+            <ul class="sidebar-menu">
+                <li>
+                    <a href="#" class="active" data-section="dashboard">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" data-section="input-estimasi">
+                        <i class="fas fa-plus-circle"></i>
+                        <span>Input Estimasi</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" data-section="estimasi-saya">
+                        <i class="fas fa-list-alt"></i>
+                        <span>Estimasi Saya</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" data-section="profil">
+                        <i class="fas fa-user"></i>
+                        <span>Profil</span>
+                    </a>
+                </li>
+            </ul>
+            <div class="user-info">
+                <p class="mb-0">Halo,
+                    <strong id="userName">Teknisi</strong>
+                </p>
+                <small>Role:
+                    <span class="badge status-badge status-progress">Teknisi</span>
+                </small>
             </div>
         </div>
-
-        <!-- Dashboard Section -->
-        <!-- Modifikasi Dashboard Section -->
-        <div class="content-section active" id="dashboard">
-            <div class="dashboard-carousel">
-                <!-- Slide 1: Stats Cards -->
-                <div class="dashboard-slide active" id="stats-slide">
-                    <div class="row">
-                        <div class="col-6 col-md-3 mb-3">
-                            <div class="card stats-card">
-                                <div class="stats-icon">
-                                    <i class="fas fa-clipboard-list"></i>
-                                </div>
-                                <div class="stats-number" id="totalEstimasi">0</div>
-                                <div class="stats-label">Total Estimasi</div>
-                            </div>
-                        </div>
-                        <div class="col-6 col-md-3 mb-3">
-                            <div class="card stats-card">
-                                <div class="stats-icon">
-                                    <i class="fas fa-spinner"></i>
-                                </div>
-                                <div class="stats-number" id="estimasiProgress">0</div>
-                                <div class="stats-label">Dalam Proses</div>
-                            </div>
-                        </div>
-                        <div class="col-6 col-md-3 mb-3">
-                            <div class="card stats-card">
-                                <div class="stats-icon">
-                                    <i class="fas fa-check-circle"></i>
-                                </div>
-                                <div class="stats-number" id="estimasiSelesai">0</div>
-                                <div class="stats-label">Selesai</div>
-                            </div>
-                        </div>
-                        <div class="col-6 col-md-3 mb-3">
-                            <div class="card stats-card">
-                                <div class="stats-icon">
-                                    <i class="fas fa-paper-plane"></i>
-                                </div>
-                                <div class="stats-number" id="totalMobil">0</div>
-                                <div class="stats-label">Terkirim ke SA</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Slide 2: Grafik Komponen -->
-                <div class="dashboard-slide" id="chart-slide">
-                    <div class="card">
-                        <div class="card-header">
-                            <h5 class="card-title mb-0">
-                                <i class="fas fa-chart-bar me-2"></i>
-                                Grafik Komponen Estimasi Bulan Ini
-                            </h5>
-                        </div>
-                        <div class="card-body">
-                            <div class="chart-container">
-                                <div id="komponenChart" class="chart-placeholder">
-                                    <div class="text-center">
-                                        <i class="fas fa-spinner fa-spin me-2"></i>
-                                        Memuat grafik...
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Carousel Indicators -->
-            <div class="carousel-indicators">
-                <div class="carousel-indicator active" data-slide="0"></div>
-                <div class="carousel-indicator" data-slide="1"></div>
-            </div>
-
-            <!-- Swipe Hint - Akan hilang otomatis -->
-            <div class="swipe-hint" id="swipeHint">
-                <i class="fas fa-arrows-left-right"></i> Geser untuk melihat grafik
-            </div>
-
-            <!-- Estimasi Terbaru -->
-            <div class="row mt-4">
-                <div class="col-12">
-                    <div class="card">
-                        <div class="card-header d-flex justify-content-between align-items-center">
-                            <span>Estimasi Terbaru</span>
-                            <a href="#" data-section="estimasi-saya2" class="btn btn-sm btn-primary">Lihat Semua</a>
-                        </div>
-                        <div class="card-body">
-                            <div class="table-responsive">
-                                <table class="table table-hover">
-                                    <thead>
-                                        <tr>
-                                            <th width="50">No</th>
-                                            <th>No. Polisi</th>
-                                            <th>Jenis Mobil</th>
-                                            <th>Tanggal</th>
-                                            <th>Status</th>
-                                            <th width="120">Aksi</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="recentEstimasi">
-                                        <!-- Data akan diisi dari Supabase -->
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Input Estimasi Section -->
-        <div class="content-section" id="input-estimasi">
-            <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <span>Form Input Estimasi Sparepart</span>
-                    <button type="button" class="btn btn-sm btn-outline-primary" id="enableManualEdit">
-                        <i class="fas fa-edit"></i> Edit Manual
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="header d-none d-md-flex">
+                <h2 class="page-title" id="pageTitle">Dashboard</h2>
+                <div>
+                    <button class="btn btn-outline-secondary btn-sm" id="logoutBtnDesktop">
+                        <i class="fas fa-sign-out-alt me-1"></i>
+                        Logout
                     </button>
                 </div>
-
-                <div class="card-body">
-                    <form id="estimasiForm">
+            </div>
+            <!-- Dashboard Section -->
+            <!-- Modifikasi Dashboard Section -->
+            <div class="content-section active" id="dashboard">
+                <div class="dashboard-carousel">
+                    <!-- Slide 1: Stats Cards -->
+                    <div class="dashboard-slide active" id="stats-slide">
                         <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="nopol" class="form-label">Nomor Polisi <span
-                                            class="text-danger">*</span></label>
-                                    <div class="input-group">
-                                        <input type="text" class="form-control" id="nopol"
-                                            placeholder="Contoh: B 1234 ABC" required oninput="formatNopol(this)">
-                                        <button class="btn btn-outline-secondary" type="button" id="searchNopolBtn">
-                                            <i class="fas fa-search"></i>
-                                        </button>
+                            <div class="col-6 col-md-3 mb-3">
+                                <div class="card stats-card">
+                                    <div class="stats-icon">
+                                        <i class="fas fa-clipboard-list"></i>
                                     </div>
-                                    <div id="nopolSuggestions" class="dropdown-menu"
-                                        style="display: none; width: 100%;">
-                                        <!-- Suggestions akan muncul di sini -->
-                                    </div>
-                                    <small class="form-text text-muted">Ketik nomor polisi atau klik search untuk
-                                        mencari data existing</small>
+                                    <div class="stats-number" id="totalEstimasi">0</div>
+                                    <div class="stats-label">Total Estimasi</div>
                                 </div>
                             </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="jenisMobil" class="form-label">Jenis Mobil</label><span
-                                        class="text-danger">*</span></label>
-                                    <select class="form-select" id="jenisMobil" required disabled>
+                            <div class="col-6 col-md-3 mb-3">
+                                <div class="card stats-card">
+                                    <div class="stats-icon">
+                                        <i class="fas fa-spinner"></i>
+                                    </div>
+                                    <div class="stats-number" id="estimasiProgress">0</div>
+                                    <div class="stats-label">Dalam Proses</div>
+                                </div>
+                            </div>
+                            <div class="col-6 col-md-3 mb-3">
+                                <div class="card stats-card">
+                                    <div class="stats-icon">
+                                        <i class="fas fa-check-circle"></i>
+                                    </div>
+                                    <div class="stats-number" id="estimasiSelesai">0</div>
+                                    <div class="stats-label">Selesai</div>
+                                </div>
+                            </div>
+                            <div class="col-6 col-md-3 mb-3">
+                                <div class="card stats-card">
+                                    <div class="stats-icon">
+                                        <i class="fas fa-paper-plane"></i>
+                                    </div>
+                                    <div class="stats-number" id="totalMobil">0</div>
+                                    <div class="stats-label">Terkirim ke SA</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Slide 2: Grafik Komponen -->
+                    <div class="dashboard-slide" id="chart-slide">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0">
+                                    <i class="fas fa-chart-bar me-2"></i>
+                                    Grafik Komponen Estimasi Bulan Ini
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="chart-container">
+                                    <div id="komponenChart" class="chart-placeholder">
+                                        <div class="text-center">
+                                            <i class="fas fa-spinner fa-spin me-2"></i>
+                                            Memuat grafik...
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Carousel Indicators -->
+                <div class="carousel-indicators">
+                    <div class="carousel-indicator active" data-slide="0"></div>
+                    <div class="carousel-indicator" data-slide="1"></div>
+                </div>
+                <!-- Swipe Hint - Akan hilang otomatis -->
+                <div class="swipe-hint" id="swipeHint">
+                    <i class="fas fa-arrows-left-right"></i>
+                    Geser untuk melihat grafik
+                </div>
+                <!-- Estimasi Terbaru -->
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <span>Estimasi Terbaru</span>
+                                <a href="#" data-section="estimasi-saya2" class="btn btn-sm btn-primary">Lihat Semua</a>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th width="50">No</th>
+                                                <th>No. Polisi</th>
+                                                <th>Jenis Mobil</th>
+                                                <th>Tanggal</th>
+                                                <th>Status</th>
+                                                <th width="120">Aksi</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="recentEstimasi">
+                                            <!-- Data akan diisi dari Supabase --></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Input Estimasi Section -->
+            <div class="content-section" id="input-estimasi">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <span>Form Input Estimasi Sparepart</span>
+                        <button type="button" class="btn btn-sm btn-outline-primary" id="enableManualEdit">
+                            <i class="fas fa-edit"></i>
+                            Edit Manual
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <form id="estimasiForm">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="nopol" class="form-label">Nomor Polisi
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        <div class="input-group">
+                                            <input
+                                                type="text"
+                                                class="form-control"
+                                                id="nopol"
+                                                placeholder="Contoh: B 1234 ABC"
+                                                required
+                                                oninput="formatNopol(this)"
+                                            >
+                                            <button class="btn btn-outline-secondary" type="button" id="searchNopolBtn">
+                                                <i class="fas fa-search"></i>
+                                            </button>
+                                        </div>
+                                        <div id="nopolSuggestions" class="dropdown-menu" style="display: none; width: 100%;">
+                                            <!-- Suggestions akan muncul di sini --></div>
+                                        <small class="form-text text-muted">
+                                            Ketik nomor polisi atau klik search untuk
+                                        mencari data existing
+                                        </small>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="jenisMobil" class="form-label">Jenis Mobil</label>
+                                        <span class="text-danger">*</span>
+                                    </label>
+                                    <select
+                                        class="form-select"
+                                        id="jenisMobil"
+                                        required
+                                        disabled
+                                    >
                                         <option value="" selected disabled>Pilih Jenis Mobil</option>
                                         <option value="AGYA">AGYA</option>
                                         <option value="ALL NEW AVANZA">ALL NEW AVANZA</option>
@@ -1715,54 +1723,67 @@
                                 </div>
                             </div>
                         </div>
-
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="telepon" class="form-label">Nomor Telepon Customer</label>
-                                    <input type="tel" class="form-control" id="telepon"
-                                        placeholder="Akan terisi otomatis" required readonly>
+                                    <input
+                                        type="tel"
+                                        class="form-control"
+                                        id="telepon"
+                                        placeholder="Akan terisi otomatis"
+                                        required
+                                        readonly
+                                    >
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="serviceAdvisor" class="form-label">Service Advisor</label><span
-                                        class="text-danger">*</span></label>
-                                    <select class="form-select" id="serviceAdvisor" required>
-                                        <option value="" selected disabled>Pilih Service Advisor</option>
-                                        <option value="Abdul Azis">Abdul Azis</option>
-                                        <option value="Muhammad Hakiki">Muhammad Hakiki</option>
-                                        <option value="Ahmad Baidowi">Ahmad Baidowi</option>
-                                        <option value="Ade Purwanto">Ade Purwanto</option>
-                                        <option value="Akbarudin">Akbarudin</option>
-                                    </select>
-                                </div>
+                                    <label for="serviceAdvisor" class="form-label">Service Advisor</label>
+                                    <span class="text-danger">*</span>
+                                </label>
+                                <select class="form-select" id="serviceAdvisor" required>
+                                    <option value="" selected disabled>Pilih Service Advisor</option>
+                                    <option value="Abdul Azis">Abdul Azis</option>
+                                    <option value="Muhammad Hakiki">Muhammad Hakiki</option>
+                                    <option value="Ahmad Baidowi">Ahmad Baidowi</option>
+                                    <option value="Ade Purwanto">Ade Purwanto</option>
+                                    <option value="Akbarudin">Akbarudin</option>
+                                </select>
                             </div>
                         </div>
-
-                        <div class="form-group">
-                            <label for="nomorRangka" class="form-label">Nomor Rangka</label>
-                            <input type="text" class="form-control" id="nomorRangka" placeholder="Akan terisi otomatis"
-                                readonly>
-                            <small class="form-text text-muted">Nomor rangka biarkan kosong jika tidak ada
-                                datanya.</small>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="komponen" class="form-label">Komponen yang Diestimasi</label><span
-                                class="text-danger">*</span></label>
-                            <input name='tags' class="form-control"
-                                placeholder="Tambahkan komponen (tekan enter untuk menambah)">
-                            <small class="form-text text-muted">Tekan Enter untuk menambah komponen</small>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="keterangan" class="form-label">Keterangan Tambahan</label>
-                            <textarea class="form-control" id="keterangan" rows="3"
-                                placeholder="Tambahkan keterangan jika diperlukan"></textarea>
-                        </div>
-
-                        <!-- <div class="form-group">
+                    </div>
+                    <div class="form-group">
+                        <label for="nomorRangka" class="form-label">Nomor Rangka</label>
+                        <input
+                            type="text"
+                            class="form-control"
+                            id="nomorRangka"
+                            placeholder="Akan terisi otomatis"
+                            readonly
+                        >
+                        <small class="form-text text-muted">
+                            Nomor rangka biarkan kosong jika tidak ada
+                                datanya.
+                        </small>
+                    </div>
+                    <div class="form-group">
+                        <label for="komponen" class="form-label">Komponen yang Diestimasi</label>
+                        <span class="text-danger">*</span>
+                    </label>
+                    <input name="tags" class="form-control" placeholder="Tambahkan komponen (tekan enter untuk menambah)">
+                    <small class="form-text text-muted">Tekan Enter untuk menambah komponen</small>
+                </div>
+                <div class="form-group">
+                    <label for="keterangan" class="form-label">Keterangan Tambahan</label>
+                    <textarea
+                        class="form-control"
+                        id="keterangan"
+                        rows="3"
+                        placeholder="Tambahkan keterangan jika diperlukan"
+                    ></textarea>
+                </div>
+                <!-- <div class="form-group">
                             <label class="form-label">Foto Estimasi (Opsional, Maks 5 gambar)</label>
                             <div class="image-upload-container" id="imageUploadContainer">
                                 <div class="add-image-btn" id="addImageBtn">
@@ -1773,169 +1794,549 @@
                             <small class="form-text text-muted">Klik + untuk menambah gambar. Gambar akan dikompres
                                 otomatis.</small>
                         </div> -->
-
-                        <div class="alert alert-info">
-                            <i class="fas fa-info-circle"></i>
-                            <strong>Info:</strong> Data kendaraan akan dicari dari database master. Jika tidak
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i>
+                    <strong>Info:</strong>
+                    Data kendaraan akan dicari dari database master. Jika tidak
                             ditemukan, Anda dapat mengisi manual dengan mengklik tombol di bawah.
-                            <button type="button" class="btn btn-sm btn-outline-primary mt-2" id="enableManualEdit">
-                                <i class="fas fa-edit"></i> Edit Manual
-                            </button>
-                        </div>
-
-                        <button type="submit" class="btn btn-primary" id="submitBtn">
-                            <i class="fas fa-save me-2"></i> Simpan Estimasi
-                        </button>
-                    </form>
+                    <button type="button" class="btn btn-sm btn-outline-primary mt-2" id="enableManualEdit">
+                        <i class="fas fa-edit"></i>
+                        Edit Manual
+                    </button>
                 </div>
+                <button type="submit" class="btn btn-primary" id="submitBtn">
+                    <i class="fas fa-save me-2"></i>
+                    Simpan Estimasi
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- Estimasi Saya Section -->
+<div class="content-section" id="estimasi-saya">
+    <!-- Ganti card estimasi saya dengan ini -->
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <span>Daftar Estimasi Saya</span>
+            <div class="d-flex gap-2">
+                <div class="input-group input-group-sm" style="width: 200px;">
+                    <input
+                        type="text"
+                        id="searchInput"
+                        class="form-control"
+                        placeholder="Cari no. polisi..."
+                    >
+                    <button class="btn btn-outline-secondary" type="button" id="searchBtn">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+                <button class="btn btn-outline-secondary btn-sm" id="refreshBtn">
+                    <i class="fas fa-sync-alt"></i>
+                </button>
             </div>
         </div>
-
-        <!-- Estimasi Saya Section -->
-        <div class="content-section" id="estimasi-saya">
-            <!-- Ganti card estimasi saya dengan ini -->
-            <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <span>Daftar Estimasi Saya</span>
-                    <div class="d-flex gap-2">
-                        <div class="input-group input-group-sm" style="width: 200px;">
-                            <input type="text" id="searchInput" class="form-control" placeholder="Cari no. polisi...">
-                            <button class="btn btn-outline-secondary" type="button" id="searchBtn">
-                                <i class="fas fa-search"></i>
-                            </button>
-                        </div>
-                        <button class="btn btn-outline-secondary btn-sm" id="refreshBtn">
-                            <i class="fas fa-sync-alt"></i>
-                        </button>
-                    </div>
-                </div>
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-hover">
-                            <thead>
-                                <tr>
-                                    <th width="50">No</th>
-                                    <th>No. Polisi</th>
-                                    <th>Jenis Mobil</th>
-                                    <th>Komponen</th>
-                                    <th>Tanggal</th>
-                                    <th>Status</th>
-                                    <th width="120">Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody id="estimasiList">
-                                <!-- Data akan diisi dari Supabase -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th width="50">No</th>
+                            <th>No. Polisi</th>
+                            <th>Jenis Mobil</th>
+                            <th>Komponen</th>
+                            <th>Tanggal</th>
+                            <th>Status</th>
+                            <th width="120">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="estimasiList">
+                        <!-- Data akan diisi dari Supabase --></tbody>
+                </table>
             </div>
         </div>
-
-        <!-- Profil Section -->
-        <div class="content-section" id="profil">
-            <div class="card">
-                <div class="card-header">
-                    Profil Saya
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label class="form-label">Email</label>
-                                <input type="text" class="form-control" id="profileEmail" readonly>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label class="form-label">Role</label>
-                                <input type="text" class="form-control" id="profileRole" readonly>
-                            </div>
-                        </div>
-                    </div>
+    </div>
+</div>
+<!-- Profil Section -->
+<div class="content-section" id="profil">
+    <div class="card">
+        <div class="card-header">
+            Profil Saya
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
                     <div class="form-group">
-                        <label class="form-label">Bergabung Pada</label>
-                        <input type="text" class="form-control" id="profileCreated" readonly>
+                        <label class="form-label">Email</label>
+                        <input
+                            type="text"
+                            class="form-control"
+                            id="profileEmail"
+                            readonly
+                        >
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="form-label">Role</label>
+                        <input
+                            type="text"
+                            class="form-control"
+                            id="profileRole"
+                            readonly
+                        >
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Bergabung Pada</label>
+                <input
+                    type="text"
+                    class="form-control"
+                    id="profileCreated"
+                    readonly
+                >
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+<!-- Modal untuk Detail Estimasi - PERBAIKAN -->
+<div
+    class="modal fade"
+    id="detailEstimasiModal"
+    tabindex="-1"
+    aria-hidden="true"
+>
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title">
+                    <i class="fas fa-eye me-2"></i>
+                    Detail Estimasi
+                </h5>
+                <button
+                    type="button"
+                    class="btn-close btn-close-white"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"
+                ></button>
+            </div>
+            <div class="modal-body p-4">
+                <!-- Informasi Utama (Collapsible) -->
+                <div class="card mb-3">
+                    <div
+                        class="card-header bg-light d-flex justify-content-between align-items-center collapsed"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#detailInfoKendaraanCollapse"
+                        aria-expanded="false"
+                    >
+                        <h6 class="mb-0">
+                            <i class="fas fa-car me-2"></i>
+                            Informasi Kendaraan
+                        </h6>
+                        <i class="fas fa-chevron-down collapse-icon"></i>
+                    </div>
+                    <div class="collapse" id="detailInfoKendaraanCollapse">
+                        <div class="card-body">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="form-label fw-semibold">Nomor Polisi</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text">
+                                                <i class="fas fa-id-card"></i>
+                                            </span>
+                                            <input
+                                                type="text"
+                                                class="form-control"
+                                                id="detailNopol"
+                                                readonly
+                                            >
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="form-label fw-semibold">Jenis Mobil</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text">
+                                                <i class="fas fa-car-side"></i>
+                                            </span>
+                                            <input
+                                                type="text"
+                                                class="form-control"
+                                                id="detailJenisMobil"
+                                                readonly
+                                            >
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row g-3 mt-2">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="form-label fw-semibold">Nomor Telepon Customer</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text">
+                                                <i class="fas fa-phone"></i>
+                                            </span>
+                                            <input
+                                                type="tel"
+                                                class="form-control"
+                                                id="detailTelepon"
+                                                readonly
+                                            >
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="form-label fw-semibold">Service Advisor</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text">
+                                                <i class="fas fa-user-tie"></i>
+                                            </span>
+                                            <input
+                                                type="text"
+                                                class="form-control"
+                                                id="detailServiceAdvisor"
+                                                readonly
+                                            >
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row g-3 mt-2">
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label class="form-label fw-semibold">Nomor Rangka</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text">
+                                                <i class="fas fa-barcode"></i>
+                                            </span>
+                                            <input
+                                                type="text"
+                                                class="form-control"
+                                                id="detailNomorRangka"
+                                                readonly
+                                            >
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Komponen yang Diestimasi -->
+                <div class="card mb-3">
+                    <div class="card-header bg-light">
+                        <h6 class="mb-0">
+                            <i class="fas fa-tools me-2"></i>
+                            Komponen yang Diestimasi
+                            <span class="badge bg-primary ms-2" id="detailKomponenCount">0 Komponen</span>
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <div id="detailKomponenList">
+                            <!-- Komponen akan diisi melalui JavaScript --></div>
+                    </div>
+                </div>
+                <!-- Detail Sparepart (Read-only) -->
+                <div class="card mb-3">
+                    <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                        <h6 class="mb-0">
+                            <i class="fas fa-cogs me-2"></i>
+                            Detail Sparepart
+                            <span class="badge bg-secondary ms-2" id="detailTotalSparepartCount">0 Item</span>
+                        </h6>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-bordered mb-0" id="detailSparepartTable">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th width="35%">Nama Komponen</th>
+                                        <th width="25%">Harga Satuan</th>
+                                        <th width="5%">jml</th>
+                                        <th width="25%">subtotal</th>
+                                        <th width="10%" class="text-center">status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Baris sparepart akan diisi melalui JavaScript --></tbody>
+                                <tfoot class="table-secondary">
+                                    <tr>
+                                        <td colspan="2" class="text-end fw-bold">Total Harga:</td>
+                                        <td colspan="3" class="fw-bold" id="detailTotalHargaSparepart">Rp 0</td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <!-- Keterangan Tambahan (Collapsible) -->
+                <div class="card mb-3">
+                    <div
+                        class="card-header bg-light d-flex justify-content-between align-items-center collapsed"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#detailKeteranganCollapse"
+                        aria-expanded="false"
+                    >
+                        <h6 class="mb-0">
+                            <i class="fas fa-sticky-note me-2"></i>
+                            Keterangan Tambahan
+                        </h6>
+                        <i class="fas fa-chevron-down collapse-icon"></i>
+                    </div>
+                    <div class="collapse" id="detailKeteranganCollapse">
+                        <div class="card-body">
+                            <div class="form-group">
+                                <textarea
+                                    class="form-control"
+                                    id="detailKeterangan"
+                                    rows="3"
+                                    readonly
+                                ></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Foto Estimasi -->
+                <div class="card mb-3">
+                    <div class="card-header bg-light">
+                        <h6 class="mb-0">
+                            <i class="fas fa-images me-2"></i>
+                            Foto Estimasi
+                            <span class="badge bg-info ms-2" id="detailFotoCount">0 Foto</span>
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <div id="detailFotoContainer" class="image-upload-container">
+                            <!-- Foto akan diisi melalui JavaScript --></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer bg-light">
+                <div class="d-flex flex-wrap justify-content-between w-100 align-items-center">
+                    <div>
+                        <span class="badge bg-info" id="detailStatusBadge">Status</span>
+                    </div>
+                    <div class="d-flex flex-wrap gap-2">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            <i class="fas fa-times me-1"></i>
+                            Tutup
+                        </button>
+                        <button type="button" class="btn btn-outline-primary" id="detailPrintA5">
+                            <i class="fas fa-print me-1"></i>
+                            Cetak A5
+                        </button>
+                        <button type="button" class="btn btn-info" id="detailPrintA4">
+                            <i class="fas fa-print me-1"></i>
+                            Cetak A4
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
-    <!-- Modal untuk Detail Estimasi - PERBAIKAN -->
-    <div class="modal fade" id="detailEstimasiModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-xl">
-            <div class="modal-content">
-                <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title">
-                        <i class="fas fa-eye me-2"></i>Detail Estimasi
-                    </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                        aria-label="Close"></button>
-                </div>
-                <div class="modal-body p-4">
+</div>
+<!-- Modal untuk Edit Estimasi -->
+<div
+    class="modal fade"
+    id="editEstimasiModal"
+    tabindex="-1"
+    aria-hidden="true"
+>
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title">
+                    <i class="fas fa-edit me-2"></i>
+                    Edit Estimasi
+                </h5>
+                <button
+                    type="button"
+                    class="btn-close btn-close-white"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"
+                ></button>
+            </div>
+            <div class="modal-body p-4">
+                <form id="editEstimasiForm">
+                    <input type="hidden" id="editEstimasiId">
                     <!-- Informasi Utama (Collapsible) -->
                     <div class="card mb-3">
-                        <div class="card-header bg-light d-flex justify-content-between align-items-center collapsed"
-                            data-bs-toggle="collapse" data-bs-target="#detailInfoKendaraanCollapse"
-                            aria-expanded="false">
+                        <div
+                            class="card-header bg-light d-flex justify-content-between align-items-center collapsed"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#infoKendaraanCollapse"
+                            aria-expanded="false"
+                        >
                             <h6 class="mb-0">
-                                <i class="fas fa-car me-2"></i>Informasi Kendaraan
+                                <i class="fas fa-car me-2"></i>
+                                Informasi Kendaraan
                             </h6>
                             <i class="fas fa-chevron-down collapse-icon"></i>
                         </div>
-                        <div class="collapse" id="detailInfoKendaraanCollapse">
+                        <div class="collapse" id="infoKendaraanCollapse">
                             <div class="card-body">
                                 <div class="row g-3">
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label class="form-label fw-semibold">Nomor Polisi</label>
+                                            <label for="editNopol" class="form-label fw-semibold">Nomor Polisi
+                                                <span class="text-danger">*</span>
+                                            </label>
                                             <div class="input-group">
-                                                <span class="input-group-text"><i class="fas fa-id-card"></i></span>
-                                                <input type="text" class="form-control" id="detailNopol" readonly>
+                                                <span class="input-group-text">
+                                                    <i class="fas fa-id-card"></i>
+                                                </span>
+                                                <input
+                                                    type="text"
+                                                    class="form-control"
+                                                    id="editNopol"
+                                                    required
+                                                    oninput="formatNopol(this)"
+                                                    placeholder="Contoh: B 1234 ABC"
+                                                >
                                             </div>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label class="form-label fw-semibold">Jenis Mobil</label>
+                                            <label for="editJenisMobil" class="form-label fw-semibold">
+                                                Jenis Mobil
+                                                <span class="text-danger">*</span>
+                                            </label>
                                             <div class="input-group">
-                                                <span class="input-group-text"><i class="fas fa-car-side"></i></span>
-                                                <input type="text" class="form-control" id="detailJenisMobil" readonly>
+                                                <span class="input-group-text">
+                                                    <i class="fas fa-car-side"></i>
+                                                </span>
+                                                <select class="form-select" id="editJenisMobil" required>
+                                                    <option value="" selected disabled>Pilih Jenis Mobil</option>
+                                                    <option value="AGYA">AGYA</option>
+                                                    <option value="ALL NEW AVANZA">ALL NEW AVANZA</option>
+                                                    <option value="ALPHARD">ALPHARD</option>
+                                                    <option value="ALPHARD CBU">ALPHARD CBU</option>
+                                                    <option value="AVANZA">AVANZA</option>
+                                                    <option value="BZ4X">BZ4X</option>
+                                                    <option value="CALYA">CALYA</option>
+                                                    <option value="CAMRY">CAMRY</option>
+                                                    <option value="C-HR">C-HR</option>
+                                                    <option value="COROLLA">COROLLA</option>
+                                                    <option value="COROLLA ALTIS">COROLLA ALTIS</option>
+                                                    <option value="COROLLA CROSS">COROLLA CROSS</option>
+                                                    <option value="CROWN">CROWN</option>
+                                                    <option value="DYNA">DYNA</option>
+                                                    <option value="ETIOS">ETIOS</option>
+                                                    <option value="FORTUNER">FORTUNER</option>
+                                                    <option value="FT86">FT86</option>
+                                                    <option value="GR YARIS">GR YARIS</option>
+                                                    <option value="GR YARIS CBU NON TAM">
+                                                        GR YARIS CBU NON TAM
+                                                    </option>
+                                                    <option value="HARRIER">HARRIER</option>
+                                                    <option value="HARRIER CBU">HARRIER CBU</option>
+                                                    <option value="HIACE">HIACE</option>
+                                                    <option value="HILUX">HILUX</option>
+                                                    <option value="HILUX RANGGA">HILUX RANGGA</option>
+                                                    <option value="INNOVA">INNOVA</option>
+                                                    <option value="INNOVA ZENIX">INNOVA ZENIX</option>
+                                                    <option value="INNOVA ZENIX HYBRID">INNOVA ZENIX HYBRID</option>
+                                                    <option value="INNOVA ZENIX Q">INNOVA ZENIX Q</option>
+                                                    <option value="KIJANG">KIJANG</option>
+                                                    <option value="LANDCRUISER">LANDCRUISER</option>
+                                                    <option value="LANDCRUISER 200">LANDCRUISER 200</option>
+                                                    <option value="LANDCRUISER 300">LANDCRUISER 300</option>
+                                                    <option value="LANDCRUISER CBU">LANDCRUISER CBU</option>
+                                                    <option value="LEXUS">LEXUS</option>
+                                                    <option value="LIMO">LIMO</option>
+                                                    <option value="MARKX">MARKX</option>
+                                                    <option value="NAV1">NAV1</option>
+                                                    <option value="OTHER">OTHER</option>
+                                                    <option value="PRADO">PRADO</option>
+                                                    <option value="PREVIA">PREVIA</option>
+                                                    <option value="PRIUS">PRIUS</option>
+                                                    <option value="RAIZE">RAIZE</option>
+                                                    <option value="RUSH">RUSH</option>
+                                                    <option value="SIENTA">SIENTA</option>
+                                                    <option value="STARLET">STARLET</option>
+                                                    <option value="SUPRA">SUPRA</option>
+                                                    <option value="TRANSMOVER">TRANSMOVER</option>
+                                                    <option value="VELLFIRE">VELLFIRE</option>
+                                                    <option value="VELOZ">VELOZ</option>
+                                                    <option value="VIOS">VIOS</option>
+                                                    <option value="VOXY">VOXY</option>
+                                                    <option value="YARIS">YARIS</option>
+                                                    <option value="YARIS CROSS">YARIS CROSS</option>
+                                                </select>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-
                                 <div class="row g-3 mt-2">
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label class="form-label fw-semibold">Nomor Telepon Customer</label>
+                                            <label for="editTelepon" class="form-label fw-semibold">
+                                                Nomor Telepon
+                                                    Customer
+                                                <span class="text-danger">*</span>
+                                            </label>
                                             <div class="input-group">
-                                                <span class="input-group-text"><i class="fas fa-phone"></i></span>
-                                                <input type="tel" class="form-control" id="detailTelepon" readonly>
+                                                <span class="input-group-text">
+                                                    <i class="fas fa-phone"></i>
+                                                </span>
+                                                <input
+                                                    type="tel"
+                                                    class="form-control"
+                                                    id="editTelepon"
+                                                    required
+                                                    placeholder="Contoh: 081234567890"
+                                                >
                                             </div>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label class="form-label fw-semibold">Service Advisor</label>
+                                            <label for="editServiceAdvisor" class="form-label fw-semibold">
+                                                Service
+                                                    Advisor
+                                                <span class="text-danger">*</span>
+                                            </label>
                                             <div class="input-group">
-                                                <span class="input-group-text"><i class="fas fa-user-tie"></i></span>
-                                                <input type="text" class="form-control" id="detailServiceAdvisor"
-                                                    readonly>
+                                                <span class="input-group-text">
+                                                    <i class="fas fa-user-tie"></i>
+                                                </span>
+                                                <select class="form-select" id="editServiceAdvisor" required>
+                                                    <option value="" selected disabled>
+                                                        Pilih Service Advisor
+                                                    </option>
+                                                    <option value="Abdul Azis">Abdul Azis</option>
+                                                    <option value="Muhammad Hakiki">Muhammad Hakiki</option>
+                                                    <option value="Ahmad Baidowi">Ahmad Baidowi</option>
+                                                    <option value="Ade Purwanto">Ade Purwanto</option>
+                                                    <option value="Akbarudin">Akbarudin</option>
+                                                </select>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-
                                 <div class="row g-3 mt-2">
                                     <div class="col-12">
                                         <div class="form-group">
-                                            <label class="form-label fw-semibold">Nomor Rangka</label>
+                                            <label for="editNomorRangka" class="form-label fw-semibold">
+                                                Nomor
+                                                    Rangka
+                                            </label>
                                             <div class="input-group">
-                                                <span class="input-group-text"><i class="fas fa-barcode"></i></span>
-                                                <input type="text" class="form-control" id="detailNomorRangka" readonly>
+                                                <span class="input-group-text">
+                                                    <i class="fas fa-barcode"></i>
+                                                </span>
+                                                <input
+                                                    type="text"
+                                                    class="form-control"
+                                                    id="editNomorRangka"
+                                                    placeholder="Masukkan nomor rangka kendaraan"
+                                                >
                                             </div>
                                         </div>
                                     </div>
@@ -1943,370 +2344,126 @@
                             </div>
                         </div>
                     </div>
-
                     <!-- Komponen yang Diestimasi -->
                     <div class="card mb-3">
                         <div class="card-header bg-light">
                             <h6 class="mb-0">
-                                <i class="fas fa-tools me-2"></i>Komponen yang Diestimasi
-                                <span class="badge bg-primary ms-2" id="detailKomponenCount">0 Komponen</span>
+                                <i class="fas fa-tools me-2"></i>
+                                Komponen yang Diestimasi
                             </h6>
                         </div>
                         <div class="card-body">
-                            <div id="detailKomponenList">
-                                <!-- Komponen akan diisi melalui JavaScript -->
+                            <div class="form-group">
+                                <label for="editKomponen" class="form-label fw-semibold">Komponen
+                                    <span class="text-danger">*</span>
+                                </label>
+                                <input
+                                    name="editTags"
+                                    class="form-control"
+                                    id="editKomponenInput"
+                                    placeholder="Tambahkan komponen (tekan enter untuk menambah)"
+                                >
+                                <small class="form-text text-muted">Tekan Enter untuk menambah komponen.</small>
                             </div>
                         </div>
                     </div>
-
                     <!-- Detail Sparepart (Read-only) -->
                     <div class="card mb-3">
                         <div class="card-header bg-light d-flex justify-content-between align-items-center">
                             <h6 class="mb-0">
-                                <i class="fas fa-cogs me-2"></i>Detail Sparepart
-                                <span class="badge bg-secondary ms-2" id="detailTotalSparepartCount">0 Item</span>
+                                <i class="fas fa-cogs me-2"></i>
+                                Detail Sparepart
+                                <span class="badge bg-secondary ms-2" id="totalSparepartCount">0 Item</span>
                             </h6>
                         </div>
                         <div class="card-body p-0">
                             <div class="table-responsive">
-                                <table class="table table-bordered mb-0" id="detailSparepartTable">
+                                <table class="table table-bordered mb-0" id="editSparepartTable">
                                     <thead class="table-light">
                                         <tr>
-                                            <th width="35%">Nama Komponen</th>
-                                            <th width="25%">Harga Satuan</th>
+                                            <th width="30%">Nama Komponen</th>
+                                            <th width="15%">No. Part</th>
+                                            <!-- TAMBAH KOLOM INI -->
+                                            <th width="20%">Harga Satuan</th>
                                             <th width="5%">jml</th>
-                                            <th width="25%">subtotal</th>
+                                            <th width="20%">total</th>
+                                            <!-- UBAH subtotal → total -->
                                             <th width="10%" class="text-center">status</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <!-- Baris sparepart akan diisi melalui JavaScript -->
-                                    </tbody>
+                                        <!-- Baris sparepart akan diisi melalui JavaScript --></tbody>
                                     <tfoot class="table-secondary">
                                         <tr>
-                                            <td colspan="2" class="text-end fw-bold">Total Harga:</td>
-                                            <td colspan="3" class="fw-bold" id="detailTotalHargaSparepart">Rp 0</td>
+                                            <td colspan="4" class="text-end fw-bold">Total Harga:</td>
+                                            <td colspan="2" class="fw-bold" id="totalHargaSparepart">Rp 0</td>
                                         </tr>
                                     </tfoot>
                                 </table>
                             </div>
                         </div>
                     </div>
-
                     <!-- Keterangan Tambahan (Collapsible) -->
                     <div class="card mb-3">
-                        <div class="card-header bg-light d-flex justify-content-between align-items-center collapsed"
-                            data-bs-toggle="collapse" data-bs-target="#detailKeteranganCollapse" aria-expanded="false">
+                        <div
+                            class="card-header bg-light d-flex justify-content-between align-items-center collapsed"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#keteranganCollapse"
+                            aria-expanded="false"
+                        >
                             <h6 class="mb-0">
-                                <i class="fas fa-sticky-note me-2"></i>Keterangan Tambahan
+                                <i class="fas fa-sticky-note me-2"></i>
+                                Keterangan Tambahan
                             </h6>
                             <i class="fas fa-chevron-down collapse-icon"></i>
                         </div>
-                        <div class="collapse" id="detailKeteranganCollapse">
+                        <div class="collapse" id="keteranganCollapse">
                             <div class="card-body">
                                 <div class="form-group">
-                                    <textarea class="form-control" id="detailKeterangan" rows="3" readonly></textarea>
+                                    <textarea
+                                        class="form-control"
+                                        id="editKeterangan"
+                                        rows="3"
+                                        placeholder="Tambahkan keterangan jika diperlukan"
+                                    ></textarea>
                                 </div>
                             </div>
                         </div>
                     </div>
-
-                    <!-- Foto Estimasi -->
-                    <div class="card mb-3">
-                        <div class="card-header bg-light">
-                            <h6 class="mb-0">
-                                <i class="fas fa-images me-2"></i>Foto Estimasi
-                                <span class="badge bg-info ms-2" id="detailFotoCount">0 Foto</span>
-                            </h6>
-                        </div>
-                        <div class="card-body">
-                            <div id="detailFotoContainer" class="image-upload-container">
-                                <!-- Foto akan diisi melalui JavaScript -->
-                            </div>
-                        </div>
+                </form>
+            </div>
+            <div class="modal-footer bg-light">
+                <div class="d-flex flex-wrap justify-content-between w-100 align-items-center">
+                    <div>
+                        <button type="button" class="btn btn-danger me-2" id="deleteEstimasiBtn">
+                            <i class="fas fa-trash me-1"></i>
+                            Hapus
+                        </button>
                     </div>
-                </div>
-                <div class="modal-footer bg-light">
-                    <div class="d-flex flex-wrap justify-content-between w-100 align-items-center">
-                        <div>
-                            <span class="badge bg-info" id="detailStatusBadge">Status</span>
-                        </div>
-                        <div class="d-flex flex-wrap gap-2">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                                <i class="fas fa-times me-1"></i> Tutup
-                            </button>
-                            <button type="button" class="btn btn-outline-primary" id="detailPrintA5">
-                                <i class="fas fa-print me-1"></i> Cetak A5
-                            </button>
-                            <button type="button" class="btn btn-info" id="detailPrintA4">
-                                <i class="fas fa-print me-1"></i> Cetak A4
-                            </button>
-                        </div>
+                    <div class="d-flex flex-wrap gap-2">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            <i class="fas fa-times me-1"></i>
+                            Batal
+                        </button>
+                        <button type="button" class="btn btn-warning" id="sendToSparepartBtn">
+                            <i class="fas fa-paper-plane me-1"></i>
+                            Kirim ke Sparepart
+                        </button>
+                        <button type="button" class="btn btn-info" id="sendToSABtn">
+                            <i class="fas fa-share me-1"></i>
+                            Kirim ke SA
+                        </button>
+                        <button type="button" class="btn btn-success" id="updateEstimasiBtn">
+                            <i class="fas fa-save me-1"></i>
+                            Simpan Perubahan
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
-    <!-- Modal untuk Edit Estimasi -->
-    <div class="modal fade" id="editEstimasiModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-xl">
-            <div class="modal-content">
-                <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title">
-                        <i class="fas fa-edit me-2"></i>Edit Estimasi
-                    </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                        aria-label="Close"></button>
-                </div>
-                <div class="modal-body p-4">
-                    <form id="editEstimasiForm">
-                        <input type="hidden" id="editEstimasiId">
-
-                        <!-- Informasi Utama (Collapsible) -->
-                        <div class="card mb-3">
-                            <div class="card-header bg-light d-flex justify-content-between align-items-center collapsed"
-                                data-bs-toggle="collapse" data-bs-target="#infoKendaraanCollapse" aria-expanded="false">
-                                <h6 class="mb-0">
-                                    <i class="fas fa-car me-2"></i>Informasi Kendaraan
-                                </h6>
-                                <i class="fas fa-chevron-down collapse-icon"></i>
-                            </div>
-                            <div class="collapse" id="infoKendaraanCollapse">
-                                <div class="card-body">
-                                    <div class="row g-3">
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label for="editNopol" class="form-label fw-semibold">Nomor Polisi <span
-                                                        class="text-danger">*</span></label>
-                                                <div class="input-group">
-                                                    <span class="input-group-text"><i class="fas fa-id-card"></i></span>
-                                                    <input type="text" class="form-control" id="editNopol" required
-                                                        oninput="formatNopol(this)" placeholder="Contoh: B 1234 ABC">
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label for="editJenisMobil" class="form-label fw-semibold">Jenis Mobil
-                                                    <span class="text-danger">*</span></label>
-                                                <div class="input-group">
-                                                    <span class="input-group-text"><i
-                                                            class="fas fa-car-side"></i></span>
-                                                    <select class="form-select" id="editJenisMobil" required>
-                                                        <option value="" selected disabled>Pilih Jenis Mobil</option>
-                                                        <option value="AGYA">AGYA</option>
-                                                        <option value="ALL NEW AVANZA">ALL NEW AVANZA</option>
-                                                        <option value="ALPHARD">ALPHARD</option>
-                                                        <option value="ALPHARD CBU">ALPHARD CBU</option>
-                                                        <option value="AVANZA">AVANZA</option>
-                                                        <option value="BZ4X">BZ4X</option>
-                                                        <option value="CALYA">CALYA</option>
-                                                        <option value="CAMRY">CAMRY</option>
-                                                        <option value="C-HR">C-HR</option>
-                                                        <option value="COROLLA">COROLLA</option>
-                                                        <option value="COROLLA ALTIS">COROLLA ALTIS</option>
-                                                        <option value="COROLLA CROSS">COROLLA CROSS</option>
-                                                        <option value="CROWN">CROWN</option>
-                                                        <option value="DYNA">DYNA</option>
-                                                        <option value="ETIOS">ETIOS</option>
-                                                        <option value="FORTUNER">FORTUNER</option>
-                                                        <option value="FT86">FT86</option>
-                                                        <option value="GR YARIS">GR YARIS</option>
-                                                        <option value="GR YARIS CBU NON TAM">GR YARIS CBU NON TAM
-                                                        </option>
-                                                        <option value="HARRIER">HARRIER</option>
-                                                        <option value="HARRIER CBU">HARRIER CBU</option>
-                                                        <option value="HIACE">HIACE</option>
-                                                        <option value="HILUX">HILUX</option>
-                                                        <option value="HILUX RANGGA">HILUX RANGGA</option>
-                                                        <option value="INNOVA">INNOVA</option>
-                                                        <option value="INNOVA ZENIX">INNOVA ZENIX</option>
-                                                        <option value="INNOVA ZENIX HYBRID">INNOVA ZENIX HYBRID</option>
-                                                        <option value="INNOVA ZENIX Q">INNOVA ZENIX Q</option>
-                                                        <option value="KIJANG">KIJANG</option>
-                                                        <option value="LANDCRUISER">LANDCRUISER</option>
-                                                        <option value="LANDCRUISER 200">LANDCRUISER 200</option>
-                                                        <option value="LANDCRUISER 300">LANDCRUISER 300</option>
-                                                        <option value="LANDCRUISER CBU">LANDCRUISER CBU</option>
-                                                        <option value="LEXUS">LEXUS</option>
-                                                        <option value="LIMO">LIMO</option>
-                                                        <option value="MARKX">MARKX</option>
-                                                        <option value="NAV1">NAV1</option>
-                                                        <option value="OTHER">OTHER</option>
-                                                        <option value="PRADO">PRADO</option>
-                                                        <option value="PREVIA">PREVIA</option>
-                                                        <option value="PRIUS">PRIUS</option>
-                                                        <option value="RAIZE">RAIZE</option>
-                                                        <option value="RUSH">RUSH</option>
-                                                        <option value="SIENTA">SIENTA</option>
-                                                        <option value="STARLET">STARLET</option>
-                                                        <option value="SUPRA">SUPRA</option>
-                                                        <option value="TRANSMOVER">TRANSMOVER</option>
-                                                        <option value="VELLFIRE">VELLFIRE</option>
-                                                        <option value="VELOZ">VELOZ</option>
-                                                        <option value="VIOS">VIOS</option>
-                                                        <option value="VOXY">VOXY</option>
-                                                        <option value="YARIS">YARIS</option>
-                                                        <option value="YARIS CROSS">YARIS CROSS</option>
-                                                    </select>
-
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="row g-3 mt-2">
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label for="editTelepon" class="form-label fw-semibold">Nomor Telepon
-                                                    Customer <span class="text-danger">*</span></label>
-                                                <div class="input-group">
-                                                    <span class="input-group-text"><i class="fas fa-phone"></i></span>
-                                                    <input type="tel" class="form-control" id="editTelepon" required
-                                                        placeholder="Contoh: 081234567890">
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label for="editServiceAdvisor" class="form-label fw-semibold">Service
-                                                    Advisor <span class="text-danger">*</span></label>
-                                                <div class="input-group">
-                                                    <span class="input-group-text"><i
-                                                            class="fas fa-user-tie"></i></span>
-                                                    <select class="form-select" id="editServiceAdvisor" required>
-                                                        <option value="" selected disabled>Pilih Service Advisor
-                                                        </option>
-                                                        <option value="Abdul Azis">Abdul Azis</option>
-                                                        <option value="Muhammad Hakiki">Muhammad Hakiki</option>
-                                                        <option value="Ahmad Baidowi">Ahmad Baidowi</option>
-                                                        <option value="Ade Purwanto">Ade Purwanto</option>
-                                                        <option value="Akbarudin">Akbarudin</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="row g-3 mt-2">
-                                        <div class="col-12">
-                                            <div class="form-group">
-                                                <label for="editNomorRangka" class="form-label fw-semibold">Nomor
-                                                    Rangka</label>
-                                                <div class="input-group">
-                                                    <span class="input-group-text"><i class="fas fa-barcode"></i></span>
-                                                    <input type="text" class="form-control" id="editNomorRangka"
-                                                        placeholder="Masukkan nomor rangka kendaraan">
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Komponen yang Diestimasi -->
-                        <div class="card mb-3">
-                            <div class="card-header bg-light">
-                                <h6 class="mb-0">
-                                    <i class="fas fa-tools me-2"></i>Komponen yang Diestimasi
-                                </h6>
-                            </div>
-                            <div class="card-body">
-                                <div class="form-group">
-                                    <label for="editKomponen" class="form-label fw-semibold">Komponen <span
-                                            class="text-danger">*</span></label>
-                                    <input name='editTags' class="form-control" id="editKomponenInput"
-                                        placeholder="Tambahkan komponen (tekan enter untuk menambah)">
-                                    <small class="form-text text-muted">Tekan Enter untuk menambah komponen.</small>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Detail Sparepart (Read-only) -->
-                        <div class="card mb-3">
-                            <div class="card-header bg-light d-flex justify-content-between align-items-center">
-                                <h6 class="mb-0">
-                                    <i class="fas fa-cogs me-2"></i>Detail Sparepart
-                                    <span class="badge bg-secondary ms-2" id="totalSparepartCount">0 Item</span>
-                                </h6>
-                            </div>
-                            <div class="card-body p-0">
-                                <div class="table-responsive">
-                                    <table class="table table-bordered mb-0" id="editSparepartTable">
-                                        <thead class="table-light">
-                                            <tr>
-                                                <th width="30%">Nama Komponen</th>
-                                                <th width="15%">No. Part</th> <!-- TAMBAH KOLOM INI -->
-                                                <th width="20%">Harga Satuan</th>
-                                                <th width="5%">jml</th>
-                                                <th width="20%">total</th> <!-- UBAH subtotal → total -->
-                                                <th width="10%" class="text-center">status</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <!-- Baris sparepart akan diisi melalui JavaScript -->
-                                        </tbody>
-                                        <tfoot class="table-secondary">
-                                            <tr>
-                                                <td colspan="4" class="text-end fw-bold">Total Harga:</td>
-                                                <td colspan="2" class="fw-bold" id="totalHargaSparepart">Rp 0</td>
-                                            </tr>
-                                        </tfoot>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Keterangan Tambahan (Collapsible) -->
-                        <div class="card mb-3">
-                            <div class="card-header bg-light d-flex justify-content-between align-items-center collapsed"
-                                data-bs-toggle="collapse" data-bs-target="#keteranganCollapse" aria-expanded="false">
-                                <h6 class="mb-0">
-                                    <i class="fas fa-sticky-note me-2"></i>Keterangan Tambahan
-                                </h6>
-                                <i class="fas fa-chevron-down collapse-icon"></i>
-                            </div>
-                            <div class="collapse" id="keteranganCollapse">
-                                <div class="card-body">
-                                    <div class="form-group">
-                                        <textarea class="form-control" id="editKeterangan" rows="3"
-                                            placeholder="Tambahkan keterangan jika diperlukan"></textarea>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer bg-light">
-                    <div class="d-flex flex-wrap justify-content-between w-100 align-items-center">
-                        <div>
-                            <button type="button" class="btn btn-danger me-2" id="deleteEstimasiBtn">
-                                <i class="fas fa-trash me-1"></i> Hapus
-                            </button>
-                        </div>
-                        <div class="d-flex flex-wrap gap-2">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                                <i class="fas fa-times me-1"></i> Batal
-                            </button>
-                            <button type="button" class="btn btn-warning" id="sendToSparepartBtn">
-                                <i class="fas fa-paper-plane me-1"></i> Kirim ke Sparepart
-                            </button>
-                            <button type="button" class="btn btn-info" id="sendToSABtn">
-                                <i class="fas fa-share me-1"></i> Kirim ke SA
-                            </button>
-                            <button type="button" class="btn btn-success" id="updateEstimasiBtn">
-                                <i class="fas fa-save me-1"></i> Simpan Perubahan
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <style>
+</div>
+<style>
         /* Custom styles untuk modal edit estimasi */
         #editEstimasiModal .modal-xl {
             max-width: 1200px;
@@ -2562,23 +2719,20 @@
         .tagify__input::before {
             color: #6c757d;
         }
-    </style>
-
-    <!-- Bootstrap & jQuery JS -->
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Tagify JS -->
-    <script src="https://unpkg.com/@yaireo/tagify"></script>
-    <script src="https://unpkg.com/@yaireo/tagify/dist/tagify.polyfills.min.js"></script>
-    <!-- Supabase JS -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <!-- html2pdf -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
-
-
-    <script>
+</style>
+<!-- Bootstrap & jQuery JS -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Tagify JS -->
+<script src="https://unpkg.com/@yaireo/tagify"></script>
+<script src="https://unpkg.com/@yaireo/tagify/dist/tagify.polyfills.min.js"></script>
+<!-- Supabase JS -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<!-- html2pdf -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+<script>
         // Inisialisasi Supabase
         const supabaseUrl = 'https://pjawwektzazcxakgopou.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBqYXd3ZWt0emF6Y3hha2dvcG91Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgyNjQ5MTUsImV4cCI6MjA3Mzg0MDkxNX0.dNEB80t7LcTsvAtHHqgIeJfxcwmmZNsWxPTIAlrj11c';
@@ -5149,223 +5303,105 @@ async function handleStorageFull(newFile) {
             toast.show();
         }
 
-        // Sidebar navigation
-        $(document).ready(function () {
-            // PERBAIKAN: Event listener untuk modal detail
-            $('#detailEstimasiModal').on('hidden.bs.modal', function () {
-                // Hapus semua backdrop dan reset styles
-                $('.modal-backdrop').remove();
-                $('body').removeClass('modal-open');
-                $('body').css('padding-right', '');
+// PERBAIKAN: Sidebar navigation - HAPUS DUPLIKAT DAN GUNAKAN INI SAJA
+$(document).ready(function () {
+    // Inisialisasi pertama
+    initializeNavigation();
 
-                // Force cleanup
-                document.body.style.overflow = 'auto';
-                document.body.style.paddingRight = '0px';
-            });
+    // Mobile menu toggle
+    $('#mobileMenuBtn').click(function () {
+        $('#sidebar').toggleClass('show');
+    });
 
-            // PERBAIKAN: Pastikan modal tertutup dengan benar saat klik close
-            $('#detailEstimasiModal .btn-close, #detailEstimasiModal .btn-secondary').click(function () {
-                const modal = bootstrap.Modal.getInstance(document.getElementById('detailEstimasiModal'));
-                modal.hide();
-            });
-            setupNopolAutocomplete();
+    // Logout handler
+    $('#logoutBtn, #logoutBtnDesktop').click(async function () {
+        try {
+            const { error } = await supabase.auth.signOut();
+            if (error) throw error;
+            window.location.href = 'login.html';
+        } catch (error) {
+            console.error('Error signing out:', error);
+        }
+    });
 
-            $('.sidebar-menu a').click(function (e) {
-                e.preventDefault();
+    // Tutup sidebar jika klik di luar saat di mobile
+    $(document).on('click', function (e) {
+        if ($(window).width() < 768) {
+            if ($('#sidebar').hasClass('show') && 
+                !$(e.target).closest('#sidebar, #mobileMenuBtn').length) {
+                $('#sidebar').removeClass('show');
+            }
+        }
+    });
+});
 
-                // Pastikan semua modal tertutup dengan benar
-                $('.modal').modal('hide');
+// FUNGSI TERPISAH UNTUK NAVIGASI
+function initializeNavigation() {
+    // Hapus semua event listener sebelumnya untuk menghindari duplikasi
+    $('.sidebar-menu a').off('click');
+    
+    // Tambahkan event listener baru
+    $('.sidebar-menu a').click(function (e) {
+        e.preventDefault();
+        
+        // Dapatkan section target
+        const sectionId = $(this).data('section');
+        
+        // Validasi section yang boleh diakses
+        const allowedSections = ['dashboard', 'input-estimasi', 'estimasi-saya', 'profil'];
+        if (!allowedSections.includes(sectionId)) {
+            console.warn('Section tidak diizinkan:', sectionId);
+            return;
+        }
+        
+        console.log('Navigating to:', sectionId); // Debug
+        
+        // Update active menu item
+        $('.sidebar-menu a').removeClass('active');
+        $(this).addClass('active');
+        
+        // Show corresponding section
+        $('.content-section').removeClass('active');
+        $(`#${sectionId}`).addClass('active');
+        
+        // Update page title
+        const sectionTitle = $(this).find('span').text();
+        $('#pageTitle').text(sectionTitle);
+        $('#mobileTitle').text(sectionTitle);
+        
+        // Hide sidebar on mobile after selection
+        if ($(window).width() < 768) {
+            $('#sidebar').removeClass('show');
+        }
+        
+        // Load data sesuai section
+        loadSectionData(sectionId);
+        
+        // Scroll ke atas
+        window.scrollTo(0, 0);
+    });
+}
 
-                // Enable scrolling
-                enableBodyScroll();
+// Fungsi untuk load data berdasarkan section
+function loadSectionData(sectionId) {
+    switch(sectionId) {
+        case 'dashboard':
+            loadDashboardData();
+            break;
+        case 'estimasi-saya':
+            loadAllEstimasi();
+            break;
+        case 'profil':
+            // Data profil sudah di-load di checkAuthState
+            break;
+        // 'input-estimasi' tidak perlu load data tambahan
+    }
+}
 
-                // Update active menu item
-                $('.sidebar-menu a').removeClass('active');
-                $(this).addClass('active');
-
-                // Show corresponding section
-                const sectionId = $(this).data('section');
-                $('.content-section').removeClass('active');
-                $('#' + sectionId).addClass('active');
-
-                // Update page title
-                const sectionTitle = $(this).find('span').text();
-                $('#pageTitle').text(sectionTitle);
-                $('#mobileTitle').text(sectionTitle);
-
-                // Hide sidebar on mobile after selection
-                if ($(window).width() < 768) {
-                    $('#sidebar').removeClass('show');
-                }
-
-                // Scroll ke atas halaman
-                window.scrollTo(0, 0);
-            });
-
-            // Handler untuk modal edit estimasi
-            $('#editEstimasiModal').on('hidden.bs.modal', function () {
-                // Hapus kelas yang mencegah scrolling
-                $('body').removeClass('modal-open');
-                $('body').css('padding-right', '');
-                $('.modal-backdrop').remove();
-
-                // Force reflow untuk memastikan perubahan diterapkan
-                document.body.style.overflow = 'auto';
-                document.body.style.paddingRight = '0px';
-            });
-
-            // Handler untuk modal view estimasi
-            $('#viewEstimasiModal').on('hidden.bs.modal', function () {
-                // Hapus kelas yang mencegah scrolling
-                $('body').removeClass('modal-open');
-                $('body').css('padding-right', '');
-                $('.modal-backdrop').remove();
-
-                // Force reflow untuk memastikan perubahan diterapkan
-                document.body.style.overflow = 'auto';
-                document.body.style.paddingRight = '0px';
-            });
-
-            setupSearch();
-            // Mobile menu toggle
-            $('#mobileMenuBtn').click(function () {
-                $('#sidebar').toggleClass('show');
-            });
-
-            // Menu item click
-            $('.sidebar-menu a').click(function (e) {
-                e.preventDefault();
-
-                // Update active menu item
-                $('.sidebar-menu a').removeClass('active');
-                $(this).addClass('active');
-
-                // Show corresponding section
-                const sectionId = $(this).data('section');
-                $('.content-section').removeClass('active');
-                $('#' + sectionId).addClass('active');
-
-                // Update page title
-                const sectionTitle = $(this).find('span').text();
-                $('#pageTitle').text(sectionTitle);
-                $('#mobileTitle').text(sectionTitle);
-
-                // Hide sidebar on mobile after selection
-                if ($(window).width() < 768) {
-                    $('#sidebar').removeClass('show');
-                }
-            });
-
-            // Ganti event listener refresh button dengan ini
-            $('#refreshBtn').click(async function (e) {
-                e.preventDefault();
-                $(this).html('<span class="loading-spinner"></span>');
-                document.getElementById('searchInput').value = ''; // Clear search
-                await loadAllEstimasi();
-                $(this).html('<i class="fas fa-sync-alt"></i>');
-            });
-
-            // Logout handler
-            $('#logoutBtn, #logoutBtnDesktop').click(async function () {
-                try {
-                    const { error } = await supabase.auth.signOut();
-                    if (error) throw error;
-                    window.location.href = 'login.html';
-                } catch (error) {
-                    console.error('Error signing out:', error);
-                    //alert('Terjadi kesalahan saat logout: ' + error.message);
-                }
-            });
-
-            // Tombol update estimasi
-
-            // PERBAIKAN: Event listener untuk tombol-tombol di modal edit estimasi - DIPINDAHKAN ke dalam document ready
-            $('#sendToSABtn').click(function () {
-                updateEstimasi('sent');
-            });
-
-            $('#updateEstimasiBtn').click(async function () {
-                const id = document.getElementById('editEstimasiId').value;
-
-                // Ambil status saat ini dari database
-                const { data: estimasi, error } = await supabase
-                    .from('estimasi')
-                    .select('status')
-                    .eq('id', id)
-                    .single();
-
-                if (error) {
-                    console.error('Gagal mengambil status estimasi:', error);
-                    return;
-                }
-
-                // Gunakan status lama (tidak dipaksa jadi completed)
-                const currentStatus = estimasi?.status || 'pending';
-                updateEstimasi(currentStatus);
-            });
-
-
-            // Tombol Kirim ke Sparepart
-            $('#sendToSparepartBtn').click(function () {
-                const komponen = editTagify ? editTagify.value.map(tag => tag.value) : [];
-
-                if (komponen.length === 0) {
-                    //alert('Harap tambahkan komponen terlebih dahulu!');
-                    return;
-                }
-
-                // Konfirmasi pengiriman ke sparepart
-                if (confirm('Apakah Anda yakin ingin mengirim estimasi ini ke bagian sparepart? Status akan berubah menjadi Pending.')) {
-                    // Periksa apakah ada komponen baru yang belum diisi sparepart
-                    const komponenBaru = sparepartData.filter(item => !item.price || item.price === 0);
-
-                    if (komponenBaru.length > 0) {
-                        //alert(`${komponenBaru.length} komponen baru berhasil dikirim ke bagian sparepart untuk pengisian detail. Status: Pending`);
-                    } else {
-                        //alert('Estimasi berhasil dikirim ke bagian sparepart. Status: Pending');
-                    }
-
-                    // PERBAIKAN: Panggil updateEstimasi dengan status 'pending'
-                    updateEstimasi('pending');
-                }
-            });
-
-            // Tombol hapus estimasi
-            $('#deleteEstimasiBtn').click(function () {
-                const id = document.getElementById('editEstimasiId').value;
-                if (confirm('Apakah Anda yakin ingin menghapus estimasi ini?')) {
-                    deleteEstimasi(id);
-                    bootstrap.Modal.getInstance(document.getElementById('editEstimasiModal')).hide();
-                }
-            });
-            // Tombol cetak A4
-            $('#printEstimasiA4').click(function () {
-                generatePdf('a4');
-            });
-
-            // Tombol cetak A5
-            $('#printEstimasiA5').click(function () {
-                generatePdfA5('a6');
-            });
-
-            // Pastikan backdrop hilang saat modal ditutup
-            $('#viewEstimasiModal, #editEstimasiModal').on('hidden.bs.modal', function () {
-                $('.modal-backdrop').remove();
-                $('body').removeClass('modal-open');
-            });
-
-            // Tutup sidebar jika klik di luar saat di mobile
-            $(document).on('click', function (e) {
-                if ($(window).width() < 768) {
-                    if (
-                        $('#sidebar').hasClass('show') &&
-                        !$(e.target).closest('#sidebar, #mobileMenuBtn').length
-                    ) {
-                        $('#sidebar').removeClass('show');
-                    }
-                }
-            });
-        });
+// PASTIKAN: Panggil initializeNavigation setelah DOM ready
+$(document).ready(function() {
+    initializeNavigation();
+});
 
         function renderSpareparts(spareparts) {
             const tbody = document.querySelector('#editSparepartTable tbody');
@@ -5471,9 +5507,8 @@ async function handleStorageFull(newFile) {
                 }
             });
         }
-
-    </script>
-    <script>
+</script>
+<script>
         document.getElementById("enableManualEdit").addEventListener("click", () => {
             const jenisMobilSelect = document.getElementById("jenisMobil");
             const telepon = document.getElementById("telepon");
@@ -5534,9 +5569,8 @@ async function handleStorageFull(newFile) {
             const diffHours = (serverTime - new Date(createdAt)) / (1000 * 60 * 60);
             return diffHours < 24; // true jika masih < 24 jam
         }
-
-    </script>
-    <script>
+</script>
+<script>
         // Variabel untuk carousel
         let currentSlide = 0;
         const totalSlides = 2;
@@ -5847,23 +5881,47 @@ async function handleStorageFull(newFile) {
         document.addEventListener('DOMContentLoaded', function () {
             initCarousel();
         });
-    </script>
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const editModal = document.getElementById('editEstimasiModal');
 
-    <!-- Tambahkan Chart.js library di head -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  // Ketika modal ditutup
+  editModal.addEventListener('hidden.bs.modal', function () {
+    // Hapus class blur di body atau elemen utama jika ada
+    document.body.classList.remove('modal-open');
+    document.body.style.overflow = 'auto';
 
-    <!-- Toast container -->
-    <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1055">
-        <div id="liveToast" class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive"
-            aria-atomic="true">
-            <div class="d-flex">
-                <div class="toast-body">
-                    ✅ Berhasil
-                </div>
-                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
-                    aria-label="Close"></button>
+    // Hapus backdrop bootstrap secara manual jika belum hilang
+    const backdrops = document.querySelectorAll('.modal-backdrop');
+    backdrops.forEach(bd => bd.remove());
+  });
+});
+</script>
+
+<!-- Tambahkan Chart.js library di head -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!-- Toast container -->
+<div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1055">
+    <div
+        id="liveToast"
+        class="toast align-items-center text-bg-success border-0"
+        role="alert"
+        aria-live="assertive"
+        aria-atomic="true"
+    >
+        <div class="d-flex">
+            <div class="toast-body">
+                ✅ Berhasil
             </div>
+            <button
+                type="button"
+                class="btn-close btn-close-white me-2 m-auto"
+                data-bs-dismiss="toast"
+                aria-label="Close"
+            ></button>
         </div>
     </div>
+</div>
 </body>
 </html>
