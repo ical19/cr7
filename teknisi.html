@@ -5983,59 +5983,43 @@ let existingImages = []; // Untuk menyimpan URL gambar yang sudah ada
 // Inisialisasi image upload untuk modal edit
 function initEditImageUpload() {
     const addImageBtn = document.getElementById('editAddImageBtn');
-    const fileInput = document.getElementById('editFotoEstimasi');
-    const imageContainer = document.getElementById('editImageUploadContainer');
+    let fileInput = document.getElementById('editFotoEstimasi');
+    const imageContainer = document.getElementById('editImagePreviewContainer');
 
-    // Handle click pada tombol tambah gambar
-    addImageBtn.addEventListener('click', () => {
-        fileInput.click();
-    });
+    // 🔄 Ganti input dengan clone baru biar semua listener lama hilang
+    const newFileInput = fileInput.cloneNode(true);
+    fileInput.parentNode.replaceChild(newFileInput, fileInput);
+    fileInput = newFileInput;
 
-    // Handle perubahan file input
-    fileInput.addEventListener('change', async (e) => {
-        const files = e.target.files;
-        if (!files || files.length === 0) return;
+    // Event klik tombol +
+    addImageBtn.onclick = () => fileInput.click();
 
-        // Batasi maksimal 15 gambar
-        if (editSelectedImages.length + files.length > 15) {
-            showToast('error', 'Error', 'Maksimal 15 gambar yang dapat diupload!');
-            return;
-        }
-
-        for (let i = 0; i < files.length; i++) {
-            const file = files[i];
-            
-            // Validasi tipe file
-            if (!file.type.startsWith('image/')) {
-                showToast('error', 'Error', 'Hanya file gambar yang diizinkan!');
-                continue;
-            }
-
-            // Validasi ukuran file (maks 5MB)
-            if (file.size > 5 * 1024 * 1024) {
-                showToast('error', 'Error', `File ${file.name} terlalu besar. Maksimal 5MB!`);
-                continue;
-            }
-
-            // Kompres gambar sebelum ditambahkan
-            const compressedFile = await compressImage(file);
-            editSelectedImages.push(compressedFile);
-
-            // Buat preview gambar
+    // Event ketika user memilih file
+    fileInput.onchange = async (e) => {
+        const files = Array.from(e.target.files);
+        for (const file of files) {
             const reader = new FileReader();
-            reader.onload = (e) => {
-                createImagePreview(e.target.result, true);
+            reader.onload = (event) => {
+                const previewDiv = document.createElement('div');
+                previewDiv.classList.add('image-preview-container');
+                previewDiv.innerHTML = `
+                    <img src="${event.target.result}" class="image-preview">
+                    <button class="remove-image-btn">&times;</button>
+                `;
+                imageContainer.appendChild(previewDiv);
+
+                previewDiv
+                    .querySelector('.remove-image-btn')
+                    .addEventListener('click', () => previewDiv.remove());
             };
-            reader.readAsDataURL(compressedFile);
+            reader.readAsDataURL(file);
         }
 
-        // Update counter
-        updateImageCounter();
-        
-        // Reset file input
+        // reset file input agar bisa pilih file yang sama lagi nanti
         fileInput.value = '';
-    });
+    };
 }
+
 
 // Fungsi untuk membuat preview gambar
 function createImagePreview(src, isNew = false) {
