@@ -4218,6 +4218,8 @@ $('#estimasiForm').submit(async function (e) {
 
         // Load estimasi terbaru
         async function loadRecentEstimasi() {
+        document.querySelector('#recentEstimasi').innerHTML = '';
+
             try {
                 if (!currentUser) return;
 
@@ -4770,25 +4772,17 @@ $('#estimasiForm').submit(async function (e) {
         }
 
         // Hapus estimasi
-        async function deleteEstimasi(id) {
-            if (!confirm('Apakah Anda yakin ingin menghapus estimasi ini?')) return;
+       async function deleteEstimasi(id) {
+    if (!confirm('Yakin ingin menghapus estimasi ini?')) return;
 
-            try {
-                const { error } = await supabase
-                    .from('estimasi')
-                    .delete()
-                    .eq('id', id);
+    const { error } = await supabase.from('estimasi').delete().eq('id', id);
+    if (error) {
+        alert('Gagal menghapus estimasi!');
+        return;
+    }
 
-                if (error) throw error;
-
-                //alert('Estimasi berhasil dihapus');
-                await loadDashboardData();
-
-            } catch (error) {
-                console.error('Error deleting estimasi:', error);
-                //alert('Terjadi kesalahan saat menghapus estimasi: ' + error.message);
-            }
-        }
+    await loadRecentEstimasi(); // ✅ panggil ulang fungsi setelah delete
+}
 
         // Cetak PDF dengan format tertentu
         async function generatePdf(format = 'a4') {
