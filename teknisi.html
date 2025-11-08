@@ -13,6 +13,50 @@
         <link href="https://unpkg.com/@yaireo/tagify/dist/tagify.css" rel="stylesheet">
         <!-- Tambahkan di CSS -->
         <style>
+            /* Styles untuk image preview di modal edit */
+#editImagePreviewContainer .image-preview-container {
+    position: relative;
+    display: inline-block;
+    margin: 5px;
+}
+
+#editImagePreviewContainer .image-preview {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+}
+
+#editImagePreviewContainer .remove-image-btn {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.edit-image-preview {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    cursor: pointer;
+}
+
+.edit-image-preview:hover {
+    opacity: 0.8;
+}
         /* Styles untuk grafik komponen */
         .chart-container {
             position: relative;
@@ -1457,7 +1501,8 @@
         <!-- Sidebar -->
         <div class="sidebar" id="sidebar">
             <div class="sidebar-brand">
-                <h4>CR7
+                <h4>
+                    CR7
                     <span class="d-none d-md-inline">Estimasi</span>
                 </h4>
             </div>
@@ -1488,10 +1533,12 @@
                 </li>
             </ul>
             <div class="user-info">
-                <p class="mb-0">Halo,
+                <p class="mb-0">
+                    Halo,
                     <strong id="userName">Teknisi</strong>
                 </p>
-                <small>Role:
+                <small>
+                    Role:
                     <span class="badge status-badge status-progress">Teknisi</span>
                 </small>
             </div>
@@ -1629,7 +1676,8 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="nopol" class="form-label">Nomor Polisi
+                                        <label for="nopol" class="form-label">
+                                            Nomor Polisi
                                             <span class="text-danger">*</span>
                                         </label>
                                         <div class="input-group">
@@ -2183,7 +2231,8 @@
                                 <div class="row g-3">
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label for="editNopol" class="form-label fw-semibold">Nomor Polisi
+                                            <label for="editNopol" class="form-label fw-semibold">
+                                                Nomor Polisi
                                                 <span class="text-danger">*</span>
                                             </label>
                                             <div class="input-group">
@@ -2354,7 +2403,8 @@
                         </div>
                         <div class="card-body">
                             <div class="form-group">
-                                <label for="editKomponen" class="form-label fw-semibold">Komponen
+                                <label for="editKomponen" class="form-label fw-semibold">
+                                    Komponen
                                     <span class="text-danger">*</span>
                                 </label>
                                 <input
@@ -2428,6 +2478,38 @@
                                     ></textarea>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+                    <!-- Upload Gambar (Opsional, Maks 15 gambar) -->
+                    <div class="card mb-3">
+                        <div class="card-header bg-light">
+                            <h6 class="mb-0">
+                                <i class="fas fa-images me-2"></i>
+                                Upload Gambar (Opsional)
+                                <span class="badge bg-info ms-2" id="editFotoCount">0/15 Foto</span>
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label class="form-label fw-semibold">Foto Estimasi</label>
+                                <div class="image-upload-container" id="editImageUploadContainer">
+                                    <div class="add-image-btn" id="editAddImageBtn">
+                                        <i class="fas fa-plus"></i>
+                                    </div>
+                                    <input
+                                        type="file"
+                                        id="editFotoEstimasi"
+                                        multiple
+                                        accept="image/*"
+                                        style="display: none;"
+                                    >
+                                </div>
+                                <small class="form-text text-muted">
+                                    Klik + untuk menambah gambar. Maksimal 15 gambar. Gambar akan dikompres otomatis.
+                                </small>
+                            </div>
+                            <div id="editImagePreviewContainer" class="image-upload-container mt-3">
+                                <!-- Preview gambar yang sudah ada akan ditampilkan di sini --></div>
                         </div>
                     </div>
                 </form>
@@ -5897,8 +5979,419 @@ document.addEventListener('DOMContentLoaded', function () {
     backdrops.forEach(bd => bd.remove());
   });
 });
-</script>
 
+// Konfigurasi Cloudinary
+const cloudName = 'dawkeel4k';
+const uploadPreset = 'ml_default';
+let editSelectedImages = []; // Untuk menyimpan file baru
+let existingImages = []; // Untuk menyimpan URL gambar yang sudah ada
+
+// Inisialisasi image upload untuk modal edit
+function initEditImageUpload() {
+    const addImageBtn = document.getElementById('editAddImageBtn');
+    const fileInput = document.getElementById('editFotoEstimasi');
+    const imageContainer = document.getElementById('editImageUploadContainer');
+
+    // Handle click pada tombol tambah gambar
+    addImageBtn.addEventListener('click', () => {
+        fileInput.click();
+    });
+
+    // Handle perubahan file input
+    fileInput.addEventListener('change', async (e) => {
+        const files = e.target.files;
+        if (!files || files.length === 0) return;
+
+        // Batasi maksimal 15 gambar
+        if (editSelectedImages.length + files.length > 15) {
+            showToast('error', 'Error', 'Maksimal 15 gambar yang dapat diupload!');
+            return;
+        }
+
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            
+            // Validasi tipe file
+            if (!file.type.startsWith('image/')) {
+                showToast('error', 'Error', 'Hanya file gambar yang diizinkan!');
+                continue;
+            }
+
+            // Validasi ukuran file (maks 5MB)
+            if (file.size > 5 * 1024 * 1024) {
+                showToast('error', 'Error', `File ${file.name} terlalu besar. Maksimal 5MB!`);
+                continue;
+            }
+
+            // Kompres gambar sebelum ditambahkan
+            const compressedFile = await compressImage(file);
+            editSelectedImages.push(compressedFile);
+
+            // Buat preview gambar
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                createImagePreview(e.target.result, true);
+            };
+            reader.readAsDataURL(compressedFile);
+        }
+
+        // Update counter
+        updateImageCounter();
+        
+        // Reset file input
+        fileInput.value = '';
+    });
+}
+
+// Fungsi untuk membuat preview gambar
+function createImagePreview(src, isNew = false) {
+    const previewContainer = document.getElementById('editImagePreviewContainer');
+    
+    const imagePreviewContainer = document.createElement('div');
+    imagePreviewContainer.className = 'image-preview-container';
+
+    const imagePreview = document.createElement('img');
+    imagePreview.src = src;
+    imagePreview.className = 'edit-image-preview';
+
+    const removeBtn = document.createElement('button');
+    removeBtn.className = 'remove-image-btn';
+    removeBtn.innerHTML = '<i class="fas fa-times"></i>';
+    removeBtn.onclick = () => {
+        if (isNew) {
+            // Hapus dari array editSelectedImages
+            const index = editSelectedImages.findIndex(img => 
+                typeof img === 'object' && img.name === imagePreview.dataset.filename
+            );
+            if (index !== -1) {
+                editSelectedImages.splice(index, 1);
+            }
+        } else {
+            // Hapus dari array existingImages
+            const index = existingImages.indexOf(src);
+            if (index !== -1) {
+                existingImages.splice(index, 1);
+            }
+        }
+        imagePreviewContainer.remove();
+        updateImageCounter();
+    };
+
+    // Simpan nama file untuk referensi
+    if (isNew && typeof src !== 'string') {
+        imagePreview.dataset.filename = src.name;
+    }
+
+    imagePreviewContainer.appendChild(imagePreview);
+    imagePreviewContainer.appendChild(removeBtn);
+    previewContainer.appendChild(imagePreviewContainer);
+}
+
+// Fungsi untuk update counter gambar
+function updateImageCounter() {
+    const totalImages = existingImages.length + editSelectedImages.length;
+    document.getElementById('editFotoCount').textContent = `${totalImages}/15 Foto`;
+}
+
+// Fungsi untuk upload gambar ke Cloudinary
+async function uploadToCloudinary(file) {
+    return new Promise((resolve, reject) => {
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('upload_preset', uploadPreset);
+        formData.append('cloud_name', cloudName);
+
+        fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.secure_url) {
+                resolve(data.secure_url);
+            } else {
+                reject(new Error('Upload gagal: ' + JSON.stringify(data)));
+            }
+        })
+        .catch(error => {
+            reject(error);
+        });
+    });
+}
+
+// Fungsi untuk memuat gambar yang sudah ada
+function loadExistingImages(imageUrls) {
+    const previewContainer = document.getElementById('editImagePreviewContainer');
+    previewContainer.innerHTML = '';
+    existingImages = [];
+
+    if (imageUrls && imageUrls.length > 0) {
+        imageUrls.forEach(url => {
+            if (url) {
+                existingImages.push(url);
+                createImagePreview(url, false);
+            }
+        });
+    }
+    updateImageCounter();
+}
+
+// Modifikasi fungsi openEditEstimasi untuk menangani gambar
+async function openEditEstimasi(id) {
+    try {
+        const { data, error } = await supabase
+            .from('estimasi')
+            .select('*')
+            .eq('id', id)
+            .single();
+
+        if (error) throw error;
+
+        // Isi form dengan data estimasi
+        document.getElementById('editEstimasiId').value = data.id;
+        document.getElementById('editNopol').value = data.nopol;
+        document.getElementById('editJenisMobil').value = data.jenis_mobil;
+        document.getElementById('editTelepon').value = data.telepon_customer;
+        document.getElementById('editServiceAdvisor').value = data.service_advisor;
+        document.getElementById('editNomorRangka').value = data.nomor_rangka || '';
+        document.getElementById('editKeterangan').value = data.keterangan || '';
+
+        // Simpan data sparepart asli
+        originalSpareparts = Array.isArray(data.sparepart_data)
+            ? data.sparepart_data
+            : (data.sparepart_data ? JSON.parse(data.sparepart_data) : []);
+
+        // Handle komponen di Tagify
+        if (editTagify) {
+            editTagify.removeAllTags();
+            const komponenArray = Array.isArray(data.komponen) ? data.komponen :
+                (data.komponen ? [data.komponen] : []);
+            
+            if (komponenArray.length > 0) {
+                editTagify.addTags(komponenArray);
+            }
+
+            setTimeout(() => {
+                syncSparepartDataWithKomponen(komponenArray, originalSpareparts);
+                syncSparepartTable();
+                debugSparepartSync('INITIAL LOAD');
+            }, 300);
+        }
+
+        // Handle gambar yang sudah ada
+        editSelectedImages = []; // Reset gambar baru
+        let existingImageUrls = [];
+        
+        if (data.foto_url) {
+            if (Array.isArray(data.foto_url)) {
+                existingImageUrls = data.foto_url;
+            } else if (typeof data.foto_url === 'string') {
+                try {
+                    existingImageUrls = JSON.parse(data.foto_url);
+                    if (!Array.isArray(existingImageUrls)) {
+                        existingImageUrls = [data.foto_url];
+                    }
+                } catch (e) {
+                    existingImageUrls = [data.foto_url];
+                }
+            }
+        }
+        
+        loadExistingImages(existingImageUrls);
+
+        // Tampilkan modal
+        const modal = new bootstrap.Modal(document.getElementById('editEstimasiModal'));
+        modal.show();
+
+    } catch (error) {
+        console.error('Error loading estimasi for edit:', error);
+        showToast('error', 'Error', 'Terjadi kesalahan saat memuat data estimasi: ' + error.message);
+    }
+}
+
+// Modifikasi fungsi updateEstimasi untuk menangani upload gambar
+async function updateEstimasi(statusAction = null) {
+    try {
+        const id = document.getElementById('editEstimasiId').value;
+        const nopol = document.getElementById('editNopol').value.trim();
+        const jenisMobil = document.getElementById('editJenisMobil').value;
+        const telepon = document.getElementById('editTelepon').value.trim();
+        const serviceAdvisor = document.getElementById('editServiceAdvisor').value;
+        const nomorRangka = document.getElementById('editNomorRangka').value.trim();
+        const keterangan = document.getElementById('editKeterangan').value.trim();
+
+        // Ambil komponen dari Tagify
+        const tags = (editTagify && Array.isArray(editTagify.value))
+            ? editTagify.value.map(tag => tag.value)
+            : [];
+
+        if (!nopol || !jenisMobil || !telepon || !serviceAdvisor || tags.length === 0) {
+            alert('Harap isi semua field yang diperlukan!');
+            return;
+        }
+
+        console.log("=== DATA SEBELUM TRANSFORMASI ===");
+        console.log("sparepartData:", sparepartData);
+
+        // Upload gambar baru ke Cloudinary
+        let newImageUrls = [];
+        if (editSelectedImages.length > 0) {
+            showToast('info', 'Upload', 'Mengupload gambar...');
+            
+            for (let i = 0; i < editSelectedImages.length; i++) {
+                const image = editSelectedImages[i];
+                try {
+                    const imageUrl = await uploadToCloudinary(image);
+                    newImageUrls.push(imageUrl);
+                    console.log(`✅ Gambar ${i+1} berhasil diupload:`, imageUrl);
+                } catch (error) {
+                    console.error(`❌ Gagal upload gambar ${i+1}:`, error);
+                    showToast('error', 'Upload Gagal', `Gagal mengupload gambar ${i+1}`);
+                }
+            }
+        }
+
+        // Gabungkan gambar lama dan baru
+        const allImageUrls = [...existingImages, ...newImageUrls];
+        console.log("📊 Semua URL gambar:", allImageUrls);
+
+        // TRANSFORMASI data sparepart
+        const sparepartsToSave = [];
+        let totalHarga = 0;
+
+        sparepartData.forEach((sparepartItem) => {
+            if (!tags.includes(sparepartItem.name)) {
+                console.warn(`Komponen ${sparepartItem.name} tidak ada dalam tags, dilewati`);
+                return;
+            }
+
+            const itemTotal = (sparepartItem.price || 0) * (sparepartItem.qty || 1);
+            totalHarga += itemTotal;
+
+            const transformedItem = {
+                name: sparepartItem.name,
+                number: sparepartItem.number || '',
+                price: sparepartItem.price || 0,
+                availability: sparepartItem.availability || '',
+                qty: sparepartItem.qty || 1,
+                total: itemTotal
+            };
+
+            sparepartsToSave.push(transformedItem);
+        });
+
+        console.log("=== DATA SETELAH TRANSFORMASI ===");
+        console.log("sparepartsToSave:", sparepartsToSave);
+
+        // Validasi data sparepart
+        const validationResults = validateSparepartData(sparepartsToSave);
+        if (!validationResults.isValid) {
+            console.error("VALIDASI GAGAL:", validationResults.errors);
+            alert("Data sparepart tidak valid: " + validationResults.errors.join(", "));
+            return;
+        }
+
+        // Payload untuk update
+        const payload = {
+            nopol,
+            jenis_mobil: jenisMobil,
+            telepon_customer: telepon,
+            service_advisor: serviceAdvisor,
+            nomor_rangka: nomorRangka,
+            komponen: tags,
+            keterangan,
+            sparepart_data: sparepartsToSave,
+            total_harga: totalHarga,
+            updated_at: new Date().toISOString()
+        };
+
+        // Tambahkan foto_url hanya jika ada gambar
+        if (allImageUrls.length > 0) {
+            payload.foto_url = allImageUrls;
+        }
+
+        // Status opsional dari tombol
+        if (statusAction) {
+            payload.status = statusAction;
+        }
+
+        console.log("=== FINAL PAYLOAD KE DATABASE ===");
+        console.log(JSON.stringify(payload, null, 2));
+
+        const { error } = await supabase
+            .from('estimasi')
+            .update(payload)
+            .eq('id', id);
+
+        if (error) throw error;
+
+        // Tampilkan pesan sukses
+        let message = 'Estimasi berhasil diperbarui!';
+        if (newImageUrls.length > 0) {
+            message += ` ${newImageUrls.length} gambar baru diupload.`;
+        }
+        if (statusAction === 'pending') {
+            message = 'Estimasi berhasil dikirim ke bagian sparepart!';
+        } else if (statusAction === 'sent') {
+            message = 'Estimasi berhasil dikirim ke Service Advisor!';
+        }
+
+        showToast('success', 'Berhasil', message);
+
+        // Tutup modal dan reload data
+        const modal = bootstrap.Modal.getInstance(document.getElementById('editEstimasiModal'));
+        if (modal) modal.hide();
+
+        await loadDashboardData();
+
+    } catch (error) {
+        console.error('Error updating estimasi:', error);
+        showToast('error', 'Error', 'Terjadi kesalahan saat memperbarui estimasi: ' + error.message);
+    }
+}
+
+// Panggil inisialisasi saat document ready
+document.addEventListener('DOMContentLoaded', function() {
+    initEditImageUpload();
+});
+
+// Reset data gambar ketika modal edit ditutup
+document.getElementById('editEstimasiModal').addEventListener('hidden.bs.modal', function () {
+    editSelectedImages = [];
+    existingImages = [];
+    document.getElementById('editImagePreviewContainer').innerHTML = '';
+    updateImageCounter();
+});
+
+// Event listener untuk tombol di modal edit
+document.addEventListener('DOMContentLoaded', function() {
+    // Tombol Simpan Perubahan
+    document.getElementById('updateEstimasiBtn').addEventListener('click', function() {
+        updateEstimasi(); // Tanpa status action untuk simpan biasa
+    });
+
+    // Tombol Kirim ke Sparepart
+    document.getElementById('sendToSparepartBtn').addEventListener('click', function() {
+        updateEstimasi('pending'); // Dengan status 'pending'
+    });
+
+    // Tombol Kirim ke SA
+    document.getElementById('sendToSABtn').addEventListener('click', function() {
+        updateEstimasi('sent'); // Dengan status 'sent'
+    });
+
+    // Tombol Hapus
+    document.getElementById('deleteEstimasiBtn').addEventListener('click', function() {
+        const estimasiId = document.getElementById('editEstimasiId').value;
+        if (estimasiId) {
+            deleteEstimasi(estimasiId);
+        }
+    });
+
+    // Inisialisasi upload gambar
+    initEditImageUpload();
+});
+</script>
 <!-- Tambahkan Chart.js library di head -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <!-- Toast container -->
