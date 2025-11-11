@@ -5058,6 +5058,7 @@ async function generatePdfA5(format = 'A5') {
 
         // Handle sparepart
         let sparepartData = [];
+        let totalHargaSparepart = 0;
         if (data.sparepart_data) {
             if (Array.isArray(data.sparepart_data)) {
                 sparepartData = data.sparepart_data;
@@ -5069,15 +5070,71 @@ async function generatePdfA5(format = 'A5') {
                     sparepartData = [];
                 }
             }
+            
+            // Hitung total harga sparepart
+            if (sparepartData.length > 0) {
+                totalHargaSparepart = sparepartData.reduce((total, item) => {
+                    const itemTotal = parseFloat(item.total || item.subtotal || 0);
+                    return total + itemTotal;
+                }, 0);
+            }
         }
 
-        // Hitung total harga manual
-        let totalHargaManual = 0;
-        if (sparepartData.length > 0) {
-            totalHargaManual = sparepartData.reduce((total, item) => {
-                const itemTotal = parseFloat(item.total || item.subtotal || 0);
-                return total + itemTotal;
-            }, 0);
+        // Handle service data
+        let serviceData = [];
+        let totalHargaService = 0;
+        if (data.service_data) {
+            if (Array.isArray(data.service_data)) {
+                serviceData = data.service_data;
+            } else if (typeof data.service_data === 'string') {
+                try {
+                    serviceData = JSON.parse(data.service_data);
+                    if (!Array.isArray(serviceData)) serviceData = [];
+                } catch (e) {
+                    serviceData = [];
+                }
+            }
+            
+            // Hitung total harga service
+            if (serviceData.length > 0) {
+                totalHargaService = serviceData.reduce((total, service) => {
+                    const serviceTotal = parseFloat(service.total || service.subtotal || 0);
+                    return total + serviceTotal;
+                }, 0);
+            }
+        }
+
+        // Hitung total harga keseluruhan
+        const totalHargaKeseluruhan = totalHargaSparepart + totalHargaService;
+
+        // Handle foto URL
+        let fotoArray = [];
+        let fotoImages = [];
+        if (data.foto_url) {
+            try {
+                fotoArray = typeof data.foto_url === 'string' 
+                    ? JSON.parse(data.foto_url) 
+                    : data.foto_url;
+                
+                if (!Array.isArray(fotoArray)) {
+                    fotoArray = [];
+                }
+
+                // Convert foto URLs ke base64 untuk PDF
+                if (fotoArray.length > 0) {
+                    for (const fotoUrl of fotoArray) {
+                        try {
+                            const base64Image = await getBase64FromUrl(fotoUrl);
+                            fotoImages.push(base64Image);
+                        } catch (error) {
+                            console.error('Error converting image to base64:', error);
+                        }
+                    }
+                }
+            } catch (e) {
+                console.error('Error parsing foto_url:', e);
+                fotoArray = [];
+            }
         }
 
         // QR admin
@@ -5089,9 +5146,159 @@ async function generatePdfA5(format = 'A5') {
             "https://pjawwektzazcxakgopou.supabase.co/storage/v1/object/public/static/whatsapp.png"
         );
 
+        const tunasLogo = await getBase64FromUrl(
+            "https://pjawwektzazcxakgopou.supabase.co/storage/v1/object/public/static/tunas.png"
+        );
+
+        // Siapkan content PDF
+        const content = [
+            { text: 'Estimasi Saran Perbaikan', alignment: 'center', fontSize: 12, margin: [0, 0, 0, 12] },
+
+            { text: `Nomor Polisi: ${data.nopol}`, fontSize: 10, margin: [0, 0, 0, 3] },
+            { text: `Nomor Rangka: ${data.nomor_rangka || '-'}`, fontSize: 10, margin: [0, 0, 0, 3] },
+            { text: `Nama Teknisi: ${teknisiNama}`, fontSize: 10, margin: [0, 0, 0, 3] },
+            { text: `Tanggal Estimasi: ${new Date(data.created_at).toLocaleDateString('id-ID')}`, fontSize: 10, margin: [0, 0, 0, 12] }
+        ];
+
+        // Tambahkan tabel sparepart jika ada data
+        if (sparepartData.length > 0) {
+            content.push({
+                table: {
+                    widths: ['*', 'auto', 'auto', 'auto', 'auto'],
+                    body: [
+                        [
+                            { text: 'Nama Barang', fillColor: '#e60000', color: 'white', bold: true },
+                            { text: 'Harga', fillColor: '#e60000', color: 'white', bold: true },
+                            { text: 'Jml', fillColor: '#e60000', color: 'white', bold: true },
+                            { text: 'Total', fillColor: '#e60000', color: 'white', bold: true },
+                            { text: 'Part', fillColor: '#e60000', color: 'white', bold: true }
+                        ],
+                        ...sparepartData.map(item => {
+                            let avail = '-';
+                            if (item.availability) {
+                                const val = item.availability.toLowerCase();
+                                if (val === 'ada') avail = 'Ada';
+                                else if (val === 'kosong') avail = 'Kosong';
+                                else if (val === 'bo') avail = 'BO';
+                                else if (val === 'tam') avail = 'TAM';
+                            }
+                            return [
+                                truncateText(item.name, 25) || '-',
+                                formatRupiah(item.price || 0),
+                                item.qty || 1,
+                                formatRupiah(item.total || item.subtotal || 0),
+                                avail
+                            ];
+                        }),
+                        [
+                            { text: 'Total Harga Sparepart', colSpan: 3, alignment: 'right', bold: true }, {}, {},
+                            { text: formatRupiah(totalHargaSparepart), bold: true },
+                            ''
+                        ]
+                    ]
+                },
+                fontSize: 9,
+                margin: [0, 0, 0, 12]
+            });
+        }
+
+        // Tambahkan tabel service jika ada data
+        if (serviceData.length > 0) {
+            content.push({
+                table: {
+                    widths: ['*', 'auto', 'auto', 'auto'],
+                    body: [
+                        [
+                            { text: 'Jenis Service', fillColor: '#2196F3', color: 'white', bold: true },
+                            { text: 'Jam', fillColor: '#2196F3', color: 'white', bold: true },
+                            { text: 'Harga/Jam', fillColor: '#2196F3', color: 'white', bold: true },
+                            { text: 'Total', fillColor: '#2196F3', color: 'white', bold: true }
+                        ],
+                        ...serviceData.map(service => {
+                            return [
+                                truncateText(service.name || '-', 30),
+                                service.hour || service.jam || 0,
+                                formatRupiah(service.price || service.harga || 0),
+                                formatRupiah(service.total || service.subtotal || 0)
+                            ];
+                        }),
+                        [
+                            { text: 'Total Harga Service', colSpan: 3, alignment: 'right', bold: true }, {}, {},
+                            { text: formatRupiah(totalHargaService), bold: true }
+                        ]
+                    ]
+                },
+                fontSize: 9,
+                margin: [0, 0, 0, 12]
+            });
+        }
+
+        // Tambahkan total harga keseluruhan
+        if (sparepartData.length > 0 || serviceData.length > 0) {
+            content.push({
+                table: {
+                    widths: ['*', 'auto'],
+                    body: [
+                        [
+                            { text: 'TOTAL HARGA KESELURUHAN', alignment: 'right', bold: true, fontSize: 11 },
+                            { text: formatRupiah(totalHargaKeseluruhan), bold: true, fontSize: 11, color: '#e60000' }
+                        ]
+                    ]
+                },
+                margin: [0, 0, 0, 12]
+            });
+        }
+
+       // Tambahkan gambar jika ada
+if (fotoImages.length > 0) {
+    content.push({
+        text: 'Foto Estimasi:',
+        fontSize: 10,
+        bold: true,
+        margin: [0, 10, 0, 5]
+    });
+
+    // Grid 3 kolom responsif dengan margin minimal
+    const fotoPerBaris = 3;
+    const rows = [];
+
+    for (let i = 0; i < fotoImages.length; i += fotoPerBaris) {
+        const rowImages = fotoImages.slice(i, i + fotoPerBaris);
+
+        // masing-masing gambar proporsional
+        const columns = rowImages.map(img => ({
+            image: img,
+            fit: [180, 145], // sedikit lebih besar agar memenuhi lebar halaman
+            alignment: 'center',
+            margin: [2, 0, 2, 0] // sedikit jarak antar gambar
+        }));
+
+        // jika jumlah gambar < 3, tambahkan kolom kosong agar tetap sejajar
+        while (columns.length < fotoPerBaris) {
+            columns.push({ text: '', width: '*' });
+        }
+
+        rows.push({
+            columns: columns,
+            columnGap: 6, // jarak antar kolom kecil saja
+            margin: [0, 0, 0, 6]
+        });
+    }
+
+    content.push(...rows);
+    content.push({ text: '', margin: [0, 0, 0, 10] });
+}
+
+        // Tambahkan keterangan dan footer notes
+        content.push(
+            { text: '*Harga dapat berubah sewaktu-waktu tanpa pemberitahuan', fontSize: 8, italics: true, margin: [0, 0, 0, 2] },
+            { text: '*Ada (Dapat dilakukan penggantian), TAM (Order 3 hari), BO (Order 1 bulan), Kosong (berhenti produksi)', fontSize: 8, italics: true, margin: [0, 0, 0, 12] },
+            { text: `Keterangan: ${data.keterangan || 'Tidak ada keterangan tambahan'}`, fontSize: 10 }
+        );
+
         const docDefinition = {
             pageSize: 'A5',
-            pageMargins: [20, 80, 20, 80], // margin lebih besar untuk A5
+            pageMargins: [20, 80, 20, 80],
 
             header: {
                 margin: [20, 20, 20, 10],
@@ -5100,9 +5307,7 @@ async function generatePdfA5(format = 'A5') {
                         columns: [
                             {
                                 width: 'auto',
-                                image: await getBase64FromUrl(
-                                    "https://pjawwektzazcxakgopou.supabase.co/storage/v1/object/public/static/tunas.png"
-                                ),
+                                image: tunasLogo,
                                 fit: [25, 25],
                                 margin: [0, 0, 8, 0]
                             },
@@ -5186,60 +5391,7 @@ async function generatePdfA5(format = 'A5') {
                 };
             },
 
-            content: [
-                { text: 'Estimasi Saran Perbaikan', alignment: 'center', fontSize: 12, margin: [0, 0, 0, 12] },
-
-                { text: `Nomor Polisi: ${data.nopol}`, fontSize: 10, margin: [0, 0, 0, 3] },
-                { text: `Nomor Rangka: ${data.nomor_rangka || '-'}`, fontSize: 10, margin: [0, 0, 0, 3] },
-                // TAMBAHAN: Nama Teknisi
-                { text: `Nama Teknisi: ${teknisiNama}`, fontSize: 10, margin: [0, 0, 0, 3] },
-                { text: `Tanggal Estimasi: ${new Date(data.created_at).toLocaleDateString('id-ID')}`, fontSize: 10, margin: [0, 0, 0, 12] },
-
-                (sparepartData.length > 0 ? {
-                    table: {
-                        widths: ['*', 'auto', 'auto', 'auto', 'auto'],
-                        body: [
-                            [
-                                { text: 'Nama Barang', fillColor: '#e60000', color: 'white', bold: true },
-                                { text: 'Harga', fillColor: '#e60000', color: 'white', bold: true },
-                                { text: 'Jml', fillColor: '#e60000', color: 'white', bold: true },
-                                { text: 'Total', fillColor: '#e60000', color: 'white', bold: true },
-                                { text: 'Part', fillColor: '#e60000', color: 'white', bold: true }
-                            ],
-                            ...sparepartData.map(item => {
-                                let avail = '-';
-                                if (item.availability) {
-                                    const val = item.availability.toLowerCase();
-                                    if (val === 'ada') avail = 'Ada';
-                                    else if (val === 'kosong') avail = 'Kosong';
-                                    else if (val === 'bo') avail = 'BO';
-                                    else if (val === 'tam') avail = 'TAM';
-                                }
-                                return [
-                                    truncateText(item.name, 25) || '-',
-                                    formatRupiah(item.price || 0),
-                                    item.qty || 1,
-                                    formatRupiah(item.total || item.subtotal || 0),
-                                    avail
-                                ];
-                            }),
-                            // MODIFIKASI: Menggunakan total harga manual
-                            [
-                                { text: 'Total Harga Final', colSpan: 3, alignment: 'right', bold: true }, {}, {},
-                                { text: formatRupiah(totalHargaManual), bold: true },
-                                ''
-                            ]
-                        ]
-                    },
-                    fontSize: 9,
-                    margin: [0, 0, 0, 12]
-                } : { text: '' }),
-
-                { text: '*Harga dapat berubah sewaktu-waktu tanpa pemberitahuan', fontSize: 8, italics: true, margin: [0, 0, 0, 2] },
-                { text: '*Ada (Dapat dilakukan penggantian), TAM (Order 3 hari), BO (Order 1 bulan), Kosong (berhenti produksi)', fontSize: 8, italics: true, margin: [0, 0, 0, 12] },
-
-                { text: `Keterangan: ${data.keterangan || 'Tidak ada keterangan tambahan'}`, fontSize: 10 }
-            ]
+            content: content
         };
 
         // 👉 Download PDF
@@ -5250,7 +5402,6 @@ async function generatePdfA5(format = 'A5') {
         //alert('Terjadi kesalahan saat membuat PDF: ' + error.message);
     }
 }
-
 // Fungsi helper untuk memotong teks
 function truncateText(text, maxLength) {
     if (!text) return '';
