@@ -2820,6 +2820,12 @@
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBqYXd3ZWt0emF6Y3hha2dvcG91Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgyNjQ5MTUsImV4cCI6MjA3Mzg0MDkxNX0.dNEB80t7LcTsvAtHHqgIeJfxcwmmZNsWxPTIAlrj11c';
         const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
+        // Supabase untuk master_kendaraan (database baru)
+const supabaseMaster = window.supabase.createClient(
+  'https://tnrmflapmskngttmqyzm.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRucm1mbGFwbXNrbmd0dG1xeXptIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI0MjEwMjcsImV4cCI6MjA3Nzk5NzAyN30.YZM3-8kN_xJX5lc51B37bFjXxELUrPrbdQO3BSBDe-A'
+);
+
         // Inisialisasi Tagify
         let tagify;
         let editTagify;
@@ -2887,60 +2893,63 @@
         let kendaraanData = [];
 
         // Fungsi untuk mencari data kendaraan dari tabel master_kendaraan
-        async function searchKendaraanByNopol(nopol) {
-            try {
-                if (!nopol || nopol.length < 3) {
-                    hideSuggestions();
-                    return [];
-                }
-
-                // Tampilkan loading indicator
-                showLoadingIndicator(true);
-
-                const { data, error } = await supabase
-                    .from('master_kendaraan')
-                    .select('*')
-                    .ilike('nopol', `%${nopol}%`)
-                    .order('nopol', { ascending: false })
-                    .limit(10);
-
-                if (error) throw error;
-
-                // Sembunyikan loading indicator
-                showLoadingIndicator(false);
-
-                return data || [];
-
-            } catch (error) {
-                console.error('Error searching kendaraan:', error);
-                showLoadingIndicator(false);
-                return [];
-            }
+// Fungsi untuk mencari data kendaraan dari tabel master_kendaraan (database baru)
+async function searchKendaraanByNopol(nopol) {
+    try {
+        if (!nopol || nopol.length < 3) {
+            hideSuggestions();
+            return [];
         }
+
+        // Tampilkan loading indicator
+        showLoadingIndicator(true);
+
+        // Gunakan supabaseMaster untuk koneksi ke database master
+        const { data, error } = await supabaseMaster
+            .from('master_kendaraan')
+            .select('*')
+            .ilike('nopol', `%${nopol}%`)
+            .order('nopol', { ascending: false })
+            .limit(10);
+
+        if (error) throw error;
+
+        // Sembunyikan loading indicator
+        showLoadingIndicator(false);
+
+        return data || [];
+
+    } catch (error) {
+        console.error('Error searching kendaraan:', error);
+        showLoadingIndicator(false);
+        return [];
+    }
+}
 
         // Fungsi untuk mendapatkan data kendaraan by nomor rangka
-        async function getKendaraanByNomorRangka(nomorRangka) {
-            try {
-                const { data, error } = await supabase
-                    .from('master_kendaraan')
-                    .select('*')
-                    .eq('nomor_rangka', nomorRangka)
-                    .single();
+// Fungsi untuk mendapatkan data kendaraan by nomor rangka (database baru)
+async function getKendaraanByNomorRangka(nomorRangka) {
+    try {
+        const { data, error } = await supabaseMaster
+            .from('master_kendaraan')
+            .select('*')
+            .eq('nomor_rangka', nomorRangka)
+            .single();
 
-                if (error) {
-                    if (error.code === 'PGRST116') { // Data tidak ditemukan
-                        return null;
-                    }
-                    throw error;
-                }
-
-                return data;
-
-            } catch (error) {
-                console.error('Error getting kendaraan by nomor rangka:', error);
+        if (error) {
+            if (error.code === 'PGRST116') { // Data tidak ditemukan
                 return null;
             }
+            throw error;
         }
+
+        return data;
+
+    } catch (error) {
+        console.error('Error getting kendaraan by nomor rangka:', error);
+        return null;
+    }
+}
 
         // Fungsi untuk menyimpan data kendaraan ke master
         async function saveToMasterKendaraan(kendaraanData) {
@@ -3633,23 +3642,24 @@ $('#estimasiForm').submit(async function (e) {
             }
         }
         // Fungsi untuk mengecek apakah nomor rangka sudah ada di database
-        async function checkNomorRangkaExists(nomorRangka) {
-            try {
-                const { data, error } = await supabase
-                    .from('master_kendaraan')
-                    .select('nopol')
-                    .eq('nomor_rangka', nomorRangka)
-                    .single();
+// Fungsi untuk mengecek apakah nomor rangka sudah ada di database master
+async function checkNomorRangkaExists(nomorRangka) {
+    try {
+        const { data, error } = await supabaseMaster
+            .from('master_kendaraan')
+            .select('nopol')
+            .eq('nomor_rangka', nomorRangka)
+            .single();
 
-                if (error && error.code !== 'PGRST116') throw error;
+        if (error && error.code !== 'PGRST116') throw error;
 
-                return !!data; // return true jika ada, false jika tidak ada
+        return !!data; // return true jika ada, false jika tidak ada
 
-            } catch (error) {
-                console.error('Error checking nomor rangka:', error);
-                return false;
-            }
-        }
+    } catch (error) {
+        console.error('Error checking nomor rangka:', error);
+        return false;
+    }
+}
 
         // Fungsi untuk validasi nomor rangka
         function validateNomorRangka(nomorRangka) {
