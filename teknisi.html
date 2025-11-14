@@ -3875,27 +3875,7 @@ async function updateEstimasi(statusAction = null) {
             };
         }
 
-        // Event listener untuk tombol Kirim ke Sparepart
-        document.getElementById('sendToSparepartBtn').addEventListener('click', function () {
-            const komponen = editTagify ? editTagify.value.map(tag => tag.value) : [];
 
-            if (komponen.length === 0) {
-                //alert('Harap tambahkan komponen terlebih dahulu!');
-                return;
-            }
-
-            // Periksa apakah ada komponen baru yang belum diisi sparepart
-            const komponenBaru = sparepartData.filter(item => !item.price || item.price === 0);
-
-            if (komponenBaru.length > 0) {
-                //alert(`${komponenBaru.length} komponen baru berhasil dikirim ke bagian sparepart untuk pengisian detail. Status: Pending`);
-            } else {
-                //alert('Estimasi berhasil dikirim ke bagian sparepart. Status: Pending');
-            }
-
-            // PERBAIKAN: Panggil updateEstimasi dengan status 'pending'
-            updateEstimasi('pending');
-        });
 
         // Fungsi untuk memformat angka ke format Rupiah
         function formatRupiah(angka) {
@@ -6598,9 +6578,273 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Tombol Kirim ke Sparepart
-    document.getElementById('sendToSparepartBtn').addEventListener('click', function() {
-        updateEstimasi('pending'); // Dengan status 'pending'
-    });
+// Tombol Kirim ke Sparepart - DENGAN TRIGGER FIREBASE & CLEANUP
+document.getElementById('sendToSparepartBtn').addEventListener('click', async function() {
+    // Simpan reference ke tombol
+    const button = this;
+    const originalText = button.innerHTML;
+    
+    try {
+        // Tampilkan loading state
+        button.innerHTML = '⏳ Mengirim...';
+        button.disabled = true;
+
+        // Panggil fungsi updateEstimasi yang sudah ada
+        await updateEstimasi('pending');
+        
+        // Setelah update berhasil, trigger Firebase notification
+        await triggerFirebaseNotificationAfterUpdate();
+        
+    } catch (error) {
+        console.error('Error in sendToSparepartBtn:', error);
+        showToast('error', 'Error', 'Gagal mengirim ke sparepart: ' + error.message);
+    } finally {
+        // Restore button state
+        button.innerHTML = originalText;
+        button.disabled = false;
+    }
+});
+
+// Fungsi untuk trigger Firebase notification setelah update berhasil
+async function triggerFirebaseNotificationAfterUpdate() {
+    try {
+        // Ambil data dari form yang baru diupdate
+        const id = document.getElementById('editEstimasiId').value;
+        const nopol = document.getElementById('editNopol').value.trim();
+        const jenisMobil = document.getElementById('editJenisMobil').value;
+        const serviceAdvisor = document.getElementById('editServiceAdvisor').value;
+        const nomorRangka = document.getElementById('editNomorRangka').value.trim();
+        const keterangan = document.getElementById('editKeterangan').value.trim();
+
+        // Ambil data sparepart dari form
+        const sparepartRows = document.querySelectorAll('#editSparepartBody tr');
+        const sparepartData = [];
+        
+        sparepartRows.forEach((row, index) => {
+            const name = row.querySelector('.col-name').value.trim();
+            const number = row.querySelector('.col-number').value.trim();
+            const price = parseNumber(row.querySelector('.col-price').value);
+            const availability = row.querySelector('.col-availability').value;
+            const qty = parseInt(row.querySelector('.col-qty').value) || 1;
+            const total = price * qty;
+
+            if (name) {
+                sparepartData.push({
+                    name,
+                    number,
+                    price,
+                    availability,
+                    qty,
+                    total
+                });
+            }
+        });
+
+        // Siapkan data untuk Firebase
+        const firebaseData = {
+            id: parseInt(id),
+            nopol: nopol,
+            jenis_mobil: jenisMobil,
+            nomor_rangka: nomorRangka,
+            keterangan: keterangan || '',
+            service_advisor: serviceAdvisor || '',
+            sparepart_data: JSON.stringify(sparepartData),
+            status: 'pending',
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+            teknisi: { full_name: 'Teknisi' } // Default value, sesuaikan jika ada data teknisi
+        };
+
+        console.log('🎯 Mengirim notifikasi Firebase:', firebaseData);
+
+        // 1. Hapus notifikasi lama dengan ID yang sama (jika ada)
+        await deleteOldFirebaseNotification(id);
+        
+        // 2. Hapus notifikasi lama (lebih dari 1 hari)
+        await cleanupOldFirebaseNotifications();
+        
+        // 3. Kirim notifikasi baru ke Firebase
+        await sendToFirebaseRealtime(firebaseData);
+        
+        showToast('success', 'Berhasil', 'Notifikasi terkirim ke bagian sparepart! 🔔');
+        
+    } catch (error) {
+        console.error('Error triggering Firebase notification:', error);
+        showToast('error', 'Peringatan', 'Estimasi tersimpan tapi notifikasi gagal dikirim: ' + error.message);
+    }
+}
+
+// Fungsi untuk menghapus notifikasi lama dengan ID yang sama
+async function deleteOldFirebaseNotification(estimasiId) {
+    if (!window.firebaseDatabase) {
+        console.warn('Firebase Database tidak tersedia');
+        return;
+    }
+
+    try {
+        const notificationRef = window.firebaseDatabase.ref(`estimasi_notifications/${estimasiId}`);
+        await notificationRef.remove();
+        console.log(`✅ Notifikasi lama dengan ID ${estimasiId} dihapus`);
+    } catch (error) {
+        console.warn(`⚠️ Gagal menghapus notifikasi lama ID ${estimasiId}:`, error);
+    }
+}
+
+// Fungsi untuk membersihkan notifikasi lama (lebih dari 1 hari)
+async function cleanupOldFirebaseNotifications() {
+    if (!window.firebaseDatabase) {
+        console.warn('Firebase Database tidak tersedia');
+        return;
+    }
+
+    try {
+        const notificationsRef = window.firebaseDatabase.ref('estimasi_notifications');
+        const snapshot = await notificationsRef.once('value');
+        
+        if (!snapshot.exists()) {
+            console.log('📭 Tidak ada notifikasi untuk dibersihkan');
+            return;
+        }
+
+        const now = new Date();
+        const oneDayAgo = new Date(now.getTime() - (24 * 60 * 60 * 1000)); // 1 hari yang lalu
+        
+        let deletedCount = 0;
+        const updates = {};
+
+        snapshot.forEach((childSnapshot) => {
+            const notification = childSnapshot.val();
+            const createdDate = new Date(notification.created_at);
+            
+            // Hapus jika notifikasi lebih dari 1 hari
+            if (createdDate < oneDayAgo) {
+                updates[childSnapshot.key] = null; // Mark for deletion
+                deletedCount++;
+            }
+        });
+
+        // Eksekusi penghapusan
+        if (Object.keys(updates).length > 0) {
+            await notificationsRef.update(updates);
+            console.log(`🗑️ ${deletedCount} notifikasi lama dihapus`);
+        } else {
+            console.log('✅ Tidak ada notifikasi lama yang perlu dihapus');
+        }
+        
+    } catch (error) {
+        console.error('❌ Error cleaning up old notifications:', error);
+    }
+}
+
+// Fungsi untuk mengirim data ke Firebase Realtime Database
+async function sendToFirebaseRealtime(estimasiData) {
+    // Gunakan window.firebaseDatabase untuk memastikan variabel terdefinisi
+    if (!window.firebaseDatabase) {
+        // Coba initialize Firebase jika belum ada
+        if (!window.firebaseApp) {
+            await initializeFirebase();
+        }
+        
+        if (!window.firebaseDatabase) {
+            throw new Error('Firebase Database tidak tersedia');
+        }
+    }
+
+    try {
+        const notificationsRef = window.firebaseDatabase.ref('estimasi_notifications');
+        const estimasiRef = notificationsRef.child(estimasiData.id.toString());
+        
+        // Kirim data ke Firebase
+        await estimasiRef.set(estimasiData);
+        
+        console.log('✅ Firebase notification berhasil dikirim:', estimasiData.id);
+        return true;
+        
+    } catch (error) {
+        console.error('❌ Error sending to Firebase:', error);
+        throw error;
+    }
+}
+
+// Fungsi untuk initialize Firebase (jika belum diinisialisasi)
+async function initializeFirebase() {
+    try {
+        // Firebase Config (sama dengan yang di main script)
+        const firebaseConfig = {
+            apiKey: "AIzaSyAUEF9oqJGOS_14qYTI-Jz2xHCd2KpIlMs",
+            authDomain: "tunas-evo.firebaseapp.com",
+            databaseURL: "https://tunas-evo-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "tunas-evo",
+            storageBucket: "tunas-evo.firebasestorage.app",
+            messagingSenderId: "389746033999",
+            appId: "1:389746033999:web:de920c80778cfe41aff13a",
+            measurementId: "G-8NT82P3FFM"
+        };
+
+        // Initialize Firebase
+        window.firebaseApp = window.firebase.initializeApp(firebaseConfig);
+        window.firebaseDatabase = window.firebase.database();
+        
+        console.log('✅ Firebase initialized successfully');
+        return true;
+        
+    } catch (error) {
+        console.error('❌ Firebase initialization failed:', error);
+        return false;
+    }
+}
+
+// Fungsi parseNumber
+function parseNumber(txt) {
+    if (!txt) return 0;
+    let s = String(txt).trim();
+
+    if (s.match(/^\d{1,3}(,\d{3})+(\.\d+)?$/)) {
+        s = s.replace(/,/g, '');
+        s = s.split('.')[0];
+        return parseInt(s, 10) || 0;
+    }
+
+    if (s.match(/^\d{1,3}(\.\d{3})+(,\d+)?$/)) {
+        s = s.replace(/\./g, '');
+        s = s.split(',')[0];
+        return parseInt(s, 10) || 0;
+    }
+
+    s = s.replace(/[^\d]/g, '');
+    return parseInt(s, 10) || 0;
+}
+
+// Fungsi showToast
+function showToast(type, title, message) {
+    const toast = document.createElement('div');
+    toast.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: ${type === 'success' ? '#d4edda' : type === 'error' ? '#f8d7da' : '#fff3cd'};
+        color: ${type === 'success' ? '#155724' : type === 'error' ? '#721c24' : '#856404'};
+        padding: 12px 20px;
+        border-radius: 6px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        z-index: 10000;
+        max-width: 300px;
+        border-left: 4px solid ${type === 'success' ? '#28a745' : type === 'error' ? '#dc3545' : '#ffc107'};
+    `;
+
+    toast.innerHTML = `
+        <strong>${title}</strong><br>
+        ${message}
+    `;
+
+    document.body.appendChild(toast);
+
+    setTimeout(() => {
+        if (toast.parentNode) {
+            toast.parentNode.removeChild(toast);
+        }
+    }, 5000);
+}
 
     // Tombol Kirim ke SA
 // Tombol Kirim ke SA - DENGAN TRIGGER FIREBASE
