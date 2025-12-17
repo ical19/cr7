@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistem Autentikasi - CR7</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      /* 🎨 Palet Warna Fluent Windows 11 */
+      --fluent-brand: #0078D4;         /* Biru brand utama */
+      --fluent-brand-dark: #106EBE;
+      --fluent-success: #107C10;       /* Hijau status sukses */
+      --fluent-warning: #FFB900;       /* Kuning status peringatan */
+      --fluent-danger: #D83B01;        /* Merah error */
+      --fluent-neutral-light: #FAF9F8; /* Netral sangat terang */
+      --fluent-neutral: #F3F2F1;       /* Latar belakang utama */
+      --fluent-neutral-dark: #323130;  /* Teks utama */
+      --fluent-neutral-mid: #605E5C;   /* Teks sekunder */
+      --fluent-border: rgba(255, 255, 255, 0.65);
+      --fluent-card: rgba(255, 255, 255, 0.80);
+      --fluent-frosted: rgba(255, 255, 255, 0.75);
+      --fluent-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+      --fluent-glow: 0 0 20px rgba(0, 120, 212, 0.2);
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background: linear-gradient(135deg, var(--fluent-neutral-light), #EDEBE9);
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      color: var(--fluent-neutral-dark);
+      padding: 20px;
+      overflow: hidden;
+      position: relative;
+    }
+    
+    /* Background dengan efek partikel Fluent */
+    .bg-particles {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+    }
+    
+    .particle {
+      position: absolute;
+      border-radius: 50%;
+      animation: float 20s infinite linear;
+    }
+    
+    /* 🟢 Partikel Latar */
+    .particle.primary {
+      background: rgba(0, 120, 212, 0.06);
+    }
+    
+    .particle.accent {
+      background: rgba(16, 124, 16, 0.05);
+    }
+    
+    @keyframes float {
+      0%, 100% {
+        transform: translate(0, 0) rotate(0deg);
+        opacity: 0.2;
+      }
+      25% {
+        transform: translate(30px, 50px) rotate(90deg);
+        opacity: 0.4;
+      }
+      50% {
+        transform: translate(-30px, 100px) rotate(180deg);
+        opacity: 0.2;
+      }
+      75% {
+        transform: translate(40px, 50px) rotate(270deg);
+        opacity: 0.4;
+      }
+    }
+    
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      max-width: 480px;
+      z-index: 1;
+    }
+    
+    /* 💎 Kartu Utama */
+    .card {
+      background: var(--fluent-frosted);
+      border-radius: 20px;
+      padding: 40px 32px;
+      box-shadow: var(--fluent-shadow);
+      width: 100%;
+      text-align: center;
+      color: var(--fluent-neutral-dark);
+      backdrop-filter: blur(25px) saturate(160%);
+      -webkit-backdrop-filter: blur(25px) saturate(160%);
+      border: 1px solid var(--fluent-border);
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+    
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.14);
+    }
+    
+    /* ✨ Efek Garis Atas & Shimmer */
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(0, 120, 212, 0.4), transparent);
+    }
+    
+    .card::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.9), transparent);
+      animation: shimmer 5s infinite;
+    }
+    
+    @keyframes shimmer {
+      0% { left: -100%; }
+      100% { left: 100%; }
+    }
+    
+    .logo {
+      margin-bottom: 32px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .logo-icon {
+      font-size: 40px;
+      background: linear-gradient(135deg, var(--fluent-brand), var(--fluent-success));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-right: 12px;
+    }
+    
+    /* 🔷 Logo */
+    .logo-text {
+      font-size: 26px;
+      font-weight: 600;
+      background: linear-gradient(135deg, var(--fluent-brand), var(--fluent-success));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: -0.5px;
+    }
+    
+    .loader {
+      position: relative;
+      width: 130px;
+      height: 130px;
+      margin: 0 auto 32px;
+    }
+    
+    /* 🌊 Loader Cair */
+    .liquid-loader {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      border-radius: 50%;
+      background: linear-gradient(135deg, rgba(0, 120, 212, 0.08), rgba(16, 124, 16, 0.06));
+      overflow: hidden;
+      box-shadow:
+        inset 0 0 20px rgba(255, 255, 255, 0.6),
+        0 0 30px rgba(0, 120, 212, 0.1);
+    }
+    
+    .liquid-loader::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(135deg, rgba(0, 120, 212, 0.25), rgba(16, 124, 16, 0.18));
+      border-radius: 40%;
+      animation: liquid-wave 6s linear infinite;
+      filter: blur(12px);
+    }
+    
+    .liquid-loader::after {
+      content: '';
+      position: absolute;
+      top: -60%;
+      left: -60%;
+      width: 220%;
+      height: 220%;
+      background: linear-gradient(135deg, rgba(0, 120, 212, 0.15), rgba(16, 124, 16, 0.10));
+      border-radius: 42%;
+      animation: liquid-wave 8s linear infinite;
+      animation-delay: 0.5s;
+      filter: blur(16px);
+    }
+    
+    @keyframes liquid-wave {
+      0% {
+        transform: rotate(0deg);
+      }
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+    
+    .liquid-loader-inner {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      right: 10px;
+      bottom: 10px;
+      background: var(--fluent-frosted);
+      border-radius: 50%;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      box-shadow: 
+        inset 0 0 25px rgba(255, 255, 255, 0.7),
+        0 0 20px rgba(0, 0, 0, 0.03);
+    }
+    
+    .liquid-loader-inner i {
+      font-size: 32px;
+      background: linear-gradient(135deg, var(--fluent-brand), var(--fluent-success));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: pulse 2.4s ease-in-out infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+      50% {
+        transform: scale(1.1);
+        opacity: 0.9;
+      }
+    }
+    
+    /* 💫 Teks Loading */
+    .loading-text {
+      margin-top: 24px;
+      font-size: 15px;
+      text-align: center;
+      font-weight: 500;
+      line-height: 1.6;
+      color: var(--fluent-neutral-mid);
+    }
+    
+    .status-dots {
+      display: flex;
+      justify-content: center;
+      margin-top: 28px;
+      gap: 10px;
+    }
+    
+    /* 🔵 Status Dots */
+    .status-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: rgba(96, 94, 92, 0.25);
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+      box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.05);
+    }
+    
+    .status-dot::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, 
+        transparent, 
+        rgba(255, 255, 255, 0.9), 
+        transparent
+      );
+      transition: all 0.4s ease;
+    }
+    
+    .status-dot.active {
+      transform: scale(1.3);
+    }
+    
+    .status-dot:nth-child(1).active {
+      background: var(--fluent-brand);
+      box-shadow: 0 0 10px var(--fluent-brand), inset 0 0 4px rgba(255, 255, 255, 0.6);
+    }
+    
+    .status-dot:nth-child(2).active {
+      background: var(--fluent-success);
+      box-shadow: 0 0 10px var(--fluent-success), inset 0 0 4px rgba(255, 255, 255, 0.6);
+    }
+    
+    .status-dot:nth-child(3).active {
+      background: var(--fluent-warning);
+      box-shadow: 0 0 10px var(--fluent-warning), inset 0 0 4px rgba(255, 255, 255, 0.6);
+    }
+    
+    .status-dot:nth-child(4).active {
+      background: var(--fluent-danger);
+      box-shadow: 0 0 10px var(--fluent-danger), inset 0 0 4px rgba(255, 255, 255, 0.6);
+    }
+    
+    .status-dot.active::before {
+      left: 100%;
+    }
+    
+    /* ⚙️ Footer */
+    .footer {
+      margin-top: 28px;
+      text-align: center;
+      font-size: 12px;
+      color: var(--fluent-neutral-mid);
+      opacity: 0.7;
+    }
+
+    /* Error message styling */
+    .error-message {
+      background: rgba(216, 59, 1, 0.1);
+      border: 1px solid rgba(216, 59, 1, 0.3);
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin-top: 20px;
+      color: var(--fluent-danger);
+      font-size: 14px;
+      display: none;
+    }
+
+    /* Debug console styling */
+    .debug-console {
+      position: fixed;
+      bottom: 10px;
+      left: 10px;
+      right: 10px;
+      background: rgba(0, 0, 0, 0.85);
+      color: #0f0;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      padding: 10px;
+      border-radius: 5px;
+      max-height: 200px;
+      overflow-y: auto;
+      z-index: 1000;
+      display: none;
+      border: 1px solid #0f0;
+    }
+    
+    .debug-toggle {
+      position: fixed;
+      bottom: 220px;
+      left: 10px;
+      background: #333;
+      color: #0f0;
+      border: 1px solid #0f0;
+      padding: 5px 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      z-index: 1001;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+    }
+    
+    .debug-line {
+      margin: 2px 0;
+      padding: 2px 0;
+      border-bottom: 1px dashed rgba(0, 255, 0, 0.2);
+    }
+    
+    .debug-timestamp {
+      color: #ff0;
+      margin-right: 10px;
+    }
+    
+    .debug-info {
+      color: #0ff;
+    }
+    
+    .debug-success {
+      color: #0f0;
+    }
+    
+    .debug-error {
+      color: #f00;
+    }
+    
+    .debug-warning {
+      color: #ff0;
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-particles" id="particles"></div>
+  
+  <div class="container">
+    <div class="card">
+      <div class="logo">
+        <i class="fas fa-cogs logo-icon"></i>
+        <div class="logo-text">CR7 SYSTEM</div>
+      </div>
+      
+      <div class="loader">
+        <div class="liquid-loader">
+          <div class="liquid-loader-inner">
+            <i class="fas fa-fingerprint"></i>
+          </div>
+        </div>
+      </div>
+      
+      <div class="loading-text" id="loadingText">Memulai sistem autentikasi...</div>
+      
+      <div class="status-dots">
+        <div class="status-dot" id="step1"></div>
+        <div class="status-dot" id="step2"></div>
+        <div class="status-dot" id="step3"></div>
+        <div class="status-dot" id="step4"></div>
+      </div>
+
+      <div class="error-message" id="errorMessage"></div>
+    </div>
+    
+    <div class="footer">
+      &copy; 2023 CR7 System - All rights reserved
+    </div>
+  </div>
+
+  <!-- Debug Console -->
+  <div class="debug-toggle" id="debugToggle">🔧 Toggle Debug Console</div>
+  <div class="debug-console" id="debugConsole"></div>
+
+  <script>
+    // ==================== DEBUG CONSOLE FUNCTIONS ====================
+    let debugLogs = [];
+    let consoleVisible = false;
+    const debugConsole = document.getElementById('debugConsole');
+    const debugToggle = document.getElementById('debugToggle');
+    
+    function debugLog(message, type = 'info') {
+      const timestamp = new Date().toLocaleTimeString();
+      const logEntry = {
+        timestamp,
+        message,
+        type
+      };
+      
+      debugLogs.push(logEntry);
+      
+      // Update console if visible
+      if (consoleVisible) {
+        updateDebugConsole();
+      }
+      
+      // Always log to browser console too
+      const consoleMessage = `[DEBUG ${timestamp}] ${message}`;
+      switch(type) {
+        case 'error': console.error(consoleMessage); break;
+        case 'warning': console.warn(consoleMessage); break;
+        case 'success': console.log('%c' + consoleMessage, 'color: green'); break;
+        default: console.log(consoleMessage);
+      }
+    }
+    
+    function updateDebugConsole() {
+      let html = '';
+      debugLogs.forEach(log => {
+        html += `<div class="debug-line">
+          <span class="debug-timestamp">[${log.timestamp}]</span>
+          <span class="debug-${log.type}">${log.message}</span>
+        </div>`;
+      });
+      debugConsole.innerHTML = html;
+      debugConsole.scrollTop = debugConsole.scrollHeight;
+    }
+    
+    function toggleDebugConsole() {
+      consoleVisible = !consoleVisible;
+      debugConsole.style.display = consoleVisible ? 'block' : 'none';
+      if (consoleVisible) {
+        updateDebugConsole();
+      }
+    }
+    
+    debugToggle.addEventListener('click', toggleDebugConsole);
+    
+    // ==================== MAIN APPLICATION CODE ====================
+    
+    // --- Konfigurasi Supabase ---
+    const supabaseUrl = "https://pjawwektzazcxakgopou.supabase.co";
+    const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBqYXd3ZWt0emF6Y3hha2dvcG91Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgyNjQ5MTUsImV4cCI6MjA3Mzg0MDkxNX0.dNEB80t7LcTsvAtHHqgIeJfxcwmmZNsWxPTIAlrj11c";
+
+    debugLog(`Supabase URL: ${supabaseUrl}`, 'info');
+    debugLog(`Supabase Key length: ${supabaseKey.length} characters`, 'info');
+    
+    const { createClient } = window.supabase;
+    const supabase = createClient(supabaseUrl, supabaseKey);
+    
+    debugLog('Supabase client created successfully', 'success');
+    debugLog(`Supabase client object: ${typeof supabase}`, 'info');
+
+    const loadingText = document.getElementById("loadingText");
+    const step1 = document.getElementById("step1");
+    const step2 = document.getElementById("step2");
+    const step3 = document.getElementById("step3");
+    const step4 = document.getElementById("step4");
+    const errorMessage = document.getElementById("errorMessage");
+    const particlesContainer = document.getElementById("particles");
+
+    // Create background particles dengan tema Fluent
+    function createParticles() {
+      debugLog('Creating background particles...', 'info');
+      for (let i = 0; i < 18; i++) {
+        const particle = document.createElement('div');
+        particle.classList.add('particle');
+        
+        // Random pilih warna primary atau accent
+        if (Math.random() > 0.5) {
+          particle.classList.add('primary');
+        } else {
+          particle.classList.add('accent');
+        }
+        
+        const size = Math.random() * 45 + 10;
+        particle.style.width = `${size}px`;
+        particle.style.height = `${size}px`;
+        
+        particle.style.left = `${Math.random() * 100}%`;
+        particle.style.top = `${Math.random() * 100}%`;
+        
+        particle.style.animationDelay = `${Math.random() * 20}s`;
+        
+        particlesContainer.appendChild(particle);
+      }
+      debugLog(`Created ${particlesContainer.children.length} particles`, 'success');
+    }
+
+    function showError(message) {
+      debugLog(`Displaying error: ${message}`, 'error');
+      errorMessage.textContent = message;
+      errorMessage.style.display = 'block';
+    }
+
+    function hideError() {
+      debugLog('Hiding error message', 'info');
+      errorMessage.style.display = 'none';
+    }
+
+    function updateStep(stepElement) {
+      const stepName = stepElement.id;
+      debugLog(`Updating step: ${stepName}`, 'info');
+      stepElement.classList.add('active');
+    }
+
+    async function checkAuth() {
+      debugLog('=== START AUTHENTICATION CHECK ===', 'info');
+      try {
+        hideError();
+
+        // ========== STEP 1: Cek session ==========
+        debugLog('Step 1: Checking session...', 'info');
+        loadingText.textContent = "Menghubungkan ke database...";
+        updateStep(step1);
+        
+        debugLog('Calling supabase.auth.getSession()...', 'info');
+        const { data, error } = await supabase.auth.getSession();
+        debugLog(`Session data received: ${JSON.stringify(data)}`, 'info');
+        debugLog(`Session error: ${error ? error.message : 'none'}`, error ? 'error' : 'success');
+        
+        if (error) {
+          debugLog(`Session error details: ${JSON.stringify(error)}`, 'error');
+          showError("Kesalahan koneksi database: " + error.message);
+          loadingText.textContent = "Error koneksi database, mengarahkan ke halaman login...";
+          debugLog('Redirecting to login due to session error', 'warning');
+          return setTimeout(() => window.location.href="login.html", 2000);
+        }
+        
+        if (!data.session) {
+          debugLog('No session found, user is not logged in', 'warning');
+          loadingText.textContent = "Sesi tidak ditemukan, mengarahkan ke halaman login...";
+          debugLog('Redirecting to login page', 'info');
+          return setTimeout(() => window.location.href="login.html", 2000);
+        }
+        
+        debugLog(`Session found. User ID: ${data.session.user.id}`, 'success');
+        debugLog(`Session expires at: ${data.session.expires_at}`, 'info');
+
+        // ========== STEP 2: Ambil data user ==========
+        debugLog('Step 2: Getting user data...', 'info');
+        loadingText.textContent = "Memverifikasi autentikasi pengguna...";
+        updateStep(step2);
+        
+        debugLog('Calling supabase.auth.getUser()...', 'info');
+        const { data: userRes, error: userError } = await supabase.auth.getUser();
+        debugLog(`User data received: ${userRes ? 'User object exists' : 'No user data'}`, 'info');
+        debugLog(`User error: ${userError ? userError.message : 'none'}`, userError ? 'error' : 'success');
+        
+        if (userError || !userRes.user) {
+          const errorMsg = userError ? userError.message : "User tidak ditemukan";
+          debugLog(`Authentication failed: ${errorMsg}`, 'error');
+          showError("Autentikasi pengguna gagal: " + errorMsg);
+          loadingText.textContent = "Autentikasi pengguna tidak valid, mengarahkan ke halaman login...";
+          debugLog('Redirecting to login due to user authentication error', 'warning');
+          return setTimeout(() => window.location.href="login.html", 2000);
+        }
+        
+        const user = userRes.user;
+        debugLog(`User authenticated successfully. User ID: ${user.id}`, 'success');
+        debugLog(`User email: ${user.email}`, 'info');
+        debugLog(`User metadata: ${JSON.stringify(user.user_metadata)}`, 'info');
+
+        // ========== STEP 3: Ambil role pengguna ==========
+        debugLog('Step 3: Getting user role from database...', 'info');
+        loadingText.textContent = "Mendeteksi level akses pengguna...";
+        updateStep(step3);
+        
+        debugLog(`Querying users table for ID: ${user.id}`, 'info');
+        debugLog('Executing: supabase.from("users").select("role").eq("id", user.id).single()', 'info');
+        
+        const { data: userData, error: roleError } = await supabase
+          .from("users")
+          .select("role")
+          .eq("id", user.id)
+          .single();
+        
+        debugLog(`Role query result: ${JSON.stringify(userData)}`, 'info');
+        debugLog(`Role query error: ${roleError ? roleError.message : 'none'}`, roleError ? 'error' : 'success');
+        
+        if (roleError) {
+          debugLog(`Role error details: ${JSON.stringify(roleError)}`, 'error');
+          debugLog(`Error code: ${roleError.code}`, 'error');
+          debugLog(`Error hint: ${roleError.hint}`, 'error');
+          debugLog(`Error details: ${roleError.details}`, 'error');
+        }
+
+        if (roleError || !userData) {
+          const errorMsg = roleError ? roleError.message : "Data user tidak tersedia";
+          debugLog(`Role not found: ${errorMsg}`, 'error');
+          showError("Level akses tidak ditemukan: " + errorMsg);
+          loadingText.textContent = "Level akses tidak ditemukan, mengarahkan ke halaman login...";
+          debugLog('Redirecting to login due to role not found', 'warning');
+          return setTimeout(() => window.location.href="login.html", 2000);
+        }
+
+        const role = userData.role;
+        debugLog(`Role found: ${role}`, 'success');
+        loadingText.textContent = `Akses terdeteksi: ${role.toUpperCase()}, mengarahkan...`;
+        updateStep(step4);
+
+        // ========== STEP 4: Redirect sesuai role ==========
+        debugLog('Step 4: Redirecting based on role...', 'info');
+        debugLog(`User role: ${role}`, 'info');
+        
+        // 4. Redirect sesuai role
+        setTimeout(() => {
+          debugLog(`Attempting redirect for role: ${role}`, 'info');
+          switch(role){
+            case "teknisi": 
+              debugLog('Redirecting to teknisi.html', 'success');
+              window.location.href="teknisi.html"; 
+              break;
+            case "sparepart": 
+              debugLog('Redirecting to sparepart.html', 'success');
+              window.location.href="sparepart.html"; 
+              break;
+            case "service-advisor": 
+              debugLog('Redirecting to sa.html', 'success');
+              window.location.href="sa.html"; 
+              break;
+            case "mra": 
+              debugLog('Redirecting to mra.html', 'success');
+              window.location.href="mra.html"; 
+              break;
+            case "administrator": 
+              debugLog('Redirecting to admin.html', 'success');
+              window.location.href="admin.html"; 
+              break;
+            default: 
+              debugLog(`Unknown role: ${role}. Redirecting to login.`, 'error');
+              showError("Role tidak dikenali: " + role);
+              setTimeout(() => window.location.href="login.html", 2000);
+          }
+        }, 1500);
+
+        debugLog('=== AUTHENTICATION CHECK COMPLETED SUCCESSFULLY ===', 'success');
+
+      } catch(err) {
+        debugLog(`=== UNEXPECTED ERROR IN AUTH PROCESS ===`, 'error');
+        debugLog(`Error type: ${typeof err}`, 'error');
+        debugLog(`Error message: ${err.message}`, 'error');
+        debugLog(`Error stack: ${err.stack}`, 'error');
+        debugLog(`Full error object: ${JSON.stringify(err)}`, 'error');
+        
+        console.error("Error check auth:", err);
+        showError("Terjadi kesalahan sistem: " + err.message);
+        loadingText.textContent = "Terjadi kesalahan sistem, mengarahkan ke halaman login...";
+        debugLog('Redirecting to login due to system error', 'warning');
+        setTimeout(() => window.location.href="login.html", 2000);
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      debugLog('DOM fully loaded and parsed', 'success');
+      debugLog('Starting authentication process...', 'info');
+      createParticles();
+      checkAuth();
+    });
+
+    // Log additional info
+    debugLog(`Current URL: ${window.location.href}`, 'info');
+    debugLog(`User Agent: ${navigator.userAgent}`, 'info');
+    debugLog(`Online status: ${navigator.onLine ? 'Online' : 'Offline'}`, 'info');
+    
+    // Auto-show debug console if there are errors after 5 seconds
+    setTimeout(() => {
+      if (debugLogs.some(log => log.type === 'error')) {
+        debugLog('Errors detected, auto-showing debug console', 'warning');
+        toggleDebugConsole();
+      }
+    }, 5000);
+  </script>
+</body>
+</html>
